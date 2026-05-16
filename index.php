@@ -91,10 +91,10 @@
 <section class="py-5 text-white text-center" style="background-color: var(--primary);">
     <div class="container">
         <div class="row g-4">
-            <div class="col-md-3"><h3>50+</h3><p class="mb-0 text-white opacity-75">Airlines</p></div>
-            <div class="col-md-3"><h3>100k+</h3><p class="mb-0 text-white opacity-75">Happy Travelers</p></div>
-            <div class="col-md-3"><h3>500+</h3><p class="mb-0 text-white opacity-75">Daily Flights</p></div>
-            <div class="col-md-3"><h3>20+</h3><p class="mb-0 text-white opacity-75">Major Cities</p></div>
+            <div class="col-md-3"><h3>50+</h3><p class="mb-0 text-white" style="color: #ffffff !important; opacity: 0.9;">Airlines</p></div>
+            <div class="col-md-3"><h3>100k+</h3><p class="mb-0 text-white" style="color: #ffffff !important; opacity: 0.9;">Happy Travelers</p></div>
+            <div class="col-md-3"><h3>500+</h3><p class="mb-0 text-white" style="color: #ffffff !important; opacity: 0.9;">Daily Flights</p></div>
+            <div class="col-md-3"><h3>20+</h3><p class="mb-0 text-white" style="color: #ffffff !important; opacity: 0.9;">Major Cities</p></div>
         </div>
     </div>
 </section>
