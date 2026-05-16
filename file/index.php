@@ -1,6 +1,9 @@
 <?php $pageTitle = 'Home'; require_once 'includes/header.php'; ?>
 <!-- Hero Section -->
 <section class="hero-section position-relative">
+    <div class="video-background position-absolute top-0 start-0 w-100 h-100" style="z-index: 0; overflow: hidden; background: #000;">
+        <iframe src="https://www.youtube.com/embed/XqP1YkO25_g?autoplay=1&mute=1&loop=1&playlist=XqP1YkO25_g&controls=0&showinfo=0&rel=0&disablekb=1" frameborder="0" allow="autoplay; fullscreen" style="position: absolute; top: 50%; left: 50%; width: 150vw; height: 150vh; transform: translate(-50%, -50%); pointer-events: none; opacity: 0.5;"></iframe>
+    </div>
     <div class="container position-relative" style="z-index: 1;">
         <div class="row align-items-center">
             <div class="col-lg-7">
