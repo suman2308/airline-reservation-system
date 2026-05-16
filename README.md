@@ -12,7 +12,7 @@ AeroBook is a professional, production-ready airline reservation system built wi
   - User Dashboard for booking history
   - E-Ticket generation (Download/Print)
   - Profile management & Password update
-  - Professional, modern UI with Bootstrap 5
+  - Premium, modern UI with high-contrast split themes and Bootstrap 5
 - **Admin Side:**
   - Comprehensive dashboard with analytics
   - Flight management (Add, Update status, Delete)
