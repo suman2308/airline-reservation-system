@@ -38,7 +38,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             mysqli_stmt_close($stmt);
             $hashed = password_hash($password, PASSWORD_DEFAULT);
             $stmt = mysqli_prepare($conn, "INSERT INTO users (name, email, phone, password) VALUES (?, ?, ?, ?)");
-            mysqli_stmt_param_bind($stmt, "ssss", $name, $email, $phone, $hashed); // Note: Fix function name in next turn if needed, it should be mysqli_stmt_bind_param
             mysqli_stmt_bind_param($stmt, "ssss", $name, $email, $phone, $hashed);
             if (mysqli_stmt_execute($stmt)) {
                 $_SESSION['success'] = 'Registration successful! Please login.';

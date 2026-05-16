@@ -1,7 +1,10 @@
 <?php $pageTitle = 'Home'; require_once 'includes/header.php'; ?>
 <!-- Hero Section -->
-<section class="hero-section">
-    <div class="container">
+<section class="hero-section position-relative">
+    <div class="video-background position-absolute top-0 start-0 w-100 h-100" style="z-index: 0; overflow: hidden; background: #000;">
+        <iframe src="https://www.youtube.com/embed/XqP1YkO25_g?autoplay=1&mute=1&loop=1&playlist=XqP1YkO25_g&controls=0&showinfo=0&rel=0&disablekb=1" frameborder="0" allow="autoplay; fullscreen" style="position: absolute; top: 50%; left: 50%; width: 150vw; height: 150vh; transform: translate(-50%, -50%); pointer-events: none; opacity: 0.5;"></iframe>
+    </div>
+    <div class="container position-relative" style="z-index: 1;">
         <div class="row align-items-center">
             <div class="col-lg-7">
                 <div class="hero-content">
@@ -88,10 +91,10 @@
 <section class="py-5 text-white text-center" style="background-color: var(--primary);">
     <div class="container">
         <div class="row g-4">
-            <div class="col-md-3"><h3>50+</h3><p class="mb-0 text-muted">Airlines</p></div>
-            <div class="col-md-3"><h3>100k+</h3><p class="mb-0 text-muted">Happy Travelers</p></div>
-            <div class="col-md-3"><h3>500+</h3><p class="mb-0 text-muted">Daily Flights</p></div>
-            <div class="col-md-3"><h3>20+</h3><p class="mb-0 text-muted">Major Cities</p></div>
+            <div class="col-md-3"><h3>50+</h3><p class="mb-0 text-white-50">Airlines</p></div>
+            <div class="col-md-3"><h3>100k+</h3><p class="mb-0 text-white-50">Happy Travelers</p></div>
+            <div class="col-md-3"><h3>500+</h3><p class="mb-0 text-white-50">Daily Flights</p></div>
+            <div class="col-md-3"><h3>20+</h3><p class="mb-0 text-white-50">Major Cities</p></div>
         </div>
     </div>
 </section>
