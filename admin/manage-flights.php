@@ -16,7 +16,7 @@ if (isset($_GET['delete'])) {
     redirect(BASE_URL . 'admin/manage-flights.php');
 }
 
-$flights = mysqli_query($conn, "SELECT * FROM flights ORDER BY departure_time DESC");
+$flights = mysqli_query($conn, "SELECT * FROM flights ORDER BY departure_time ASC");
 ?>
 
 <div class="card border-0 shadow-sm rounded-4">
