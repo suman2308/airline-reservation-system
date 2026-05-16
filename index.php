@@ -7,18 +7,18 @@
     <div class="container position-relative" style="z-index: 1;">
         <div class="row align-items-center">
             <div class="col-lg-7">
-                <div class="hero-content">
-                    <span class="section-badge">✈ India's Trusted Flight Booking</span>
-                    <h1 class="display-4 fw-bold mb-3">Fly Beyond Your <br><span class="text-accent">Imagination</span></h1>
-                    <p class="lead mb-4">Discover the easiest way to book flights across India. Smart, fast and reliable platform with real-time availability.</p>
+                <div class="hero-content text-white">
+                    <span class="section-badge bg-primary text-white border-0">✈ India's Trusted Flight Booking</span>
+                    <h1 class="display-4 fw-bold mb-3">Fly Beyond Your <br><span style="color: #00d4ff;">Imagination</span></h1>
+                    <p class="lead mb-4 text-white-50">Discover the easiest way to book flights across India. Smart, fast and reliable platform with real-time availability.</p>
                     <div class="d-flex gap-3 mb-5">
                         <a href="<?php echo BASE_URL; ?>search-flights.php" class="btn btn-accent btn-lg px-4"><i class="bi bi-airplane me-2"></i>Book a Flight</a>
-                        <a href="<?php echo BASE_URL; ?>register.php" class="btn btn-outline-secondary btn-lg px-4 fw-bold">Join Now</a>
+                        <a href="<?php echo BASE_URL; ?>register.php" class="btn btn-outline-light btn-lg px-4 fw-bold">Join Now</a>
                     </div>
                     <div class="hero-stats d-flex gap-4">
-                        <div class="stat-item"><h3>500+</h3><p>Daily Flights</p></div>
-                        <div class="stat-item"><h3>50+</h3><p>Destinations</p></div>
-                        <div class="stat-item"><h3>10K+</h3><p>Happy Travelers</p></div>
+                        <div class="stat-item text-white"><h3>500+</h3><p class="text-white-50">Daily Flights</p></div>
+                        <div class="stat-item text-white"><h3>50+</h3><p class="text-white-50">Destinations</p></div>
+                        <div class="stat-item text-white"><h3>10K+</h3><p class="text-white-50">Happy Travelers</p></div>
                     </div>
                 </div>
             </div>

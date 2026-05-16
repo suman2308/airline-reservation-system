@@ -7,7 +7,7 @@
                 <div class="col-lg-4 col-md-6">
                     <div class="footer-brand">
                         <i class="bi bi-airplane-engines"></i>
-                        <span>Aero<span class="text-accent">Book</span></span>
+                        <span>Aero<span class="text-info">Book</span></span>
                     </div>
                     <p class="footer-desc">Smart, Fast and Easy Flight Booking Platform. Book your next journey with confidence and ease.</p>
                     <div class="social-links">
