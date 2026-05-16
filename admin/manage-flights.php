@@ -44,9 +44,11 @@ $flights = mysqli_query($conn, "SELECT * FROM flights ORDER BY departure_time DE
                         <td><?php echo statusBadge($f['status']); ?></td>
                         <td>
                             <div class="d-flex gap-2">
+                                <a href="edit-flight.php?id=<?php echo $f['flight_id']; ?>" class="btn btn-sm btn-outline-primary" title="Edit Flight"><i class="bi bi-pencil"></i></a>
                                 <a href="manage-seats.php?flight_id=<?php echo $f['flight_id']; ?>" class="btn btn-sm btn-outline-info" title="Manage Seats"><i class="bi bi-grid-3x3"></i></a>
                                 <a href="?delete=<?php echo $f['flight_id']; ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure? This will delete the flight permanentely.')" title="Delete"><i class="bi bi-trash"></i></a>
                             </div>
+
                         </td>
                     </tr>
                     <?php endwhile; ?>

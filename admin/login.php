@@ -19,14 +19,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['error'] = 'Please fill in all fields.';
     } else {
         // Use Prepared Statements to prevent SQL Injection
-        $stmt = mysqli_prepare($conn, "SELECT id, username, password FROM admins WHERE username = ?");
+        $stmt = mysqli_prepare($conn, "SELECT admin_id, username, password FROM admins WHERE username = ?");
         mysqli_stmt_bind_param($stmt, "s", $username);
         mysqli_stmt_execute($stmt);
         $result = mysqli_stmt_get_result($stmt);
 
         if ($admin = mysqli_fetch_assoc($result)) {
             if (password_verify($password, $admin['password'])) {
-                $_SESSION['admin_id'] = $admin['id'];
+                $_SESSION['admin_id'] = $admin['admin_id'];
+
                 $_SESSION['admin_username'] = $admin['username'];
                 $_SESSION['success'] = 'Welcome to Admin Panel!';
                 redirect(BASE_URL . 'admin/dashboard.php');
