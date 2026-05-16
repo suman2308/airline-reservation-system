@@ -92,6 +92,28 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // Flight Search Source and Destination Logic
+    const sourceSelects = document.querySelectorAll('select[name="source"]');
+    const destSelects = document.querySelectorAll('select[name="destination"]');
+    sourceSelects.forEach((sourceSelect, index) => {
+        const destSelect = destSelects[index];
+        if (destSelect) {
+            sourceSelect.addEventListener('change', function() {
+                const selectedSource = this.value;
+                Array.from(destSelect.options).forEach(opt => {
+                    if (opt.value && opt.value === selectedSource) {
+                        opt.disabled = true;
+                        if (destSelect.value === selectedSource) {
+                            destSelect.value = '';
+                        }
+                    } else {
+                        opt.disabled = false;
+                    }
+                });
+            });
+        }
+    });
+
     // Remove invalid class on input
     document.querySelectorAll('.form-control, .form-select').forEach(function (el) {
         el.addEventListener('input', function () {

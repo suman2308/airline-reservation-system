@@ -23,7 +23,7 @@ if (!isAdminLoggedIn()) { redirect(BASE_URL . 'admin/login.php'); }
 
     <aside class="admin-sidebar collapse d-lg-block" id="adminSidebar">
         <div class="sidebar-brand">
-            <h4><i class="bi bi-airplane-engines me-2 text-accent"></i>Aero<span class="text-accent">Book</span></h4>
+            <h4><i class="bi bi-airplane-engines me-2" style="color: #00d4ff;"></i><span class="text-white">Aero</span><span style="color: #00d4ff;">Book</span></h4>
             <small>Admin Panel</small>
         </div>
         <ul class="sidebar-nav">
