@@ -17,6 +17,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         redirect('profile.php');
     }
 
+    if (isset($_POST['delete_account'])) {
+        $del_stmt = mysqli_prepare($conn, "DELETE FROM users WHERE id = ?");
+        mysqli_stmt_bind_param($del_stmt, "i", $user_id);
+        if (mysqli_stmt_execute($del_stmt)) {
+            session_destroy();
+            session_start();
+            $_SESSION['success'] = 'Your account has been deleted successfully.';
+            redirect('index.php');
+        } else {
+            $_SESSION['error'] = 'Failed to delete account.';
+            redirect('profile.php');
+        }
+        mysqli_stmt_close($del_stmt);
+    }
+    if (!validateCSRFToken($_POST['csrf_token'] ?? '')) {
+        $_SESSION['error'] = 'Invalid request.';
+        redirect('profile.php');
+    }
+
     $name = trim($_POST['name']);
     $phone = trim($_POST['phone']);
     $password = $_POST['new_password'];
@@ -90,6 +109,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     <button type="submit" class="btn btn-accent w-100 py-2 mt-2"><i class="bi bi-check-circle me-2"></i>Update Profile</button>
                 </form>
+                
+                <hr class="my-4">
+                <div class="text-center mt-4">
+                    <h5 class="text-danger mb-3">Danger Zone</h5>
+                    <p class="text-muted small">Once you delete your account, there is no going back. Please be certain.</p>
+                    <form method="POST" onsubmit="return confirm('Are you sure you want to completely delete your account? This action cannot be undone.');">
+                        <?php csrfField(); ?>
+                        <input type="hidden" name="delete_account" value="1">
+                        <button type="submit" class="btn btn-outline-danger w-100"><i class="bi bi-trash me-2"></i>Delete My Account</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
