@@ -26,7 +26,6 @@ require_once __DIR__ . '/functions.php';
             <a class="navbar-brand d-flex align-items-center" href="<?php echo BASE_URL; ?>index.php">
                 <i class="bi bi-airplane-engines me-2 brand-icon" style="color: #00d4ff;"></i>
                 <span class="brand-text text-white">Aero<span style="color: #00d4ff;">Book</span></span>
-                <span class="text-white">Aero<span style="color: #00d4ff;">Book</span></span>
             </a>
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
