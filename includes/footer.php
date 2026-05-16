@@ -5,9 +5,11 @@
         <div class="container">
             <div class="row g-4">
                 <div class="col-lg-4 col-md-6">
-                    <div class="footer-brand">
-                        <i class="bi bi-airplane-engines" style="color: #00d4ff;"></i>
-                        <span class="text-white">Aero<span style="color: #00d4ff;">Book</span></span>
+                    <div class="footer-brand mb-3">
+                        <a href="<?php echo isset($isSubDir) ? '../index.php' : 'index.php'; ?>" class="text-decoration-none d-flex align-items-center">
+                            <i class="bi bi-airplane-engines fs-3 me-2" style="color: #00d4ff;"></i>
+                            <span class="brand-text fs-3 text-white fw-bold" style="font-family: var(--font-heading);">Aero<span style="color: #00d4ff;">Book</span></span>
+                        </a>
                     </div>
                     <p class="footer-desc">Smart, Fast and Easy Flight Booking Platform. Book your next journey with confidence and ease.</p>
                     <div class="social-links">
