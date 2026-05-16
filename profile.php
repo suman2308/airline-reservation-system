@@ -31,10 +31,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         mysqli_stmt_close($del_stmt);
     }
-    if (!validateCSRFToken($_POST['csrf_token'] ?? '')) {
-        $_SESSION['error'] = 'Invalid request.';
-        redirect('profile.php');
-    }
 
     $name = trim($_POST['name']);
     $phone = trim($_POST['phone']);
