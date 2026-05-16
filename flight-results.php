@@ -19,9 +19,11 @@ if ($source === $destination) { $_SESSION['error'] = 'Origin and destination can
     $sql = "SELECT * FROM flights WHERE source=? AND destination=? AND status='Scheduled' AND seats_available > 0";
     if (!empty($travel_date)) {
         $sql .= " AND DATE(departure_time) = ?";
+        $sql .= " ORDER BY departure_time ASC";
         $stmt = mysqli_prepare($conn, $sql);
         mysqli_stmt_bind_param($stmt, "sss", $source, $destination, $travel_date);
     } else {
+        $sql .= " ORDER BY departure_time ASC";
         $stmt = mysqli_prepare($conn, $sql);
         mysqli_stmt_bind_param($stmt, "ss", $source, $destination);
     }
