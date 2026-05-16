@@ -20,14 +20,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = mysqli_prepare($conn, "SELECT id, name, email, password FROM users WHERE email = ?");
         mysqli_stmt_bind_param($stmt, "s", $email);
         mysqli_stmt_execute($stmt);
-        $result = mysqli_stmt_get_result($stmt);
+        mysqli_stmt_bind_result($stmt, $db_id, $db_name, $db_email, $db_password);
 
-        if ($user = mysqli_fetch_assoc($result)) {
-            if (password_verify($password, $user['password'])) {
-                $_SESSION['user_id'] = $user['id'];
-                $_SESSION['user_name'] = $user['name'];
-                $_SESSION['user_email'] = $user['email'];
-                $_SESSION['success'] = 'Welcome back, ' . $user['name'] . '!';
+        if (mysqli_stmt_fetch($stmt)) {
+            if (password_verify($password, $db_password)) {
+                $_SESSION['user_id'] = $db_id;
+                $_SESSION['user_name'] = $db_name;
+                $_SESSION['user_email'] = $db_email;
+                $_SESSION['success'] = 'Welcome back, ' . $db_name . '!';
                 redirect('index.php');
             } else {
                 $_SESSION['error'] = 'Invalid password. Please try again.';

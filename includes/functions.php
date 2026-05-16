@@ -16,12 +16,16 @@ function sanitize($data) {
     return mysqli_real_escape_string($conn, $data);
 }
 
-/**
- * Redirect to a given URL
- */
 function redirect($url) {
-    header("Location: $url");
-    exit();
+    if (ob_get_length()) ob_clean();
+    if (!headers_sent()) {
+        header("Location: $url");
+        exit();
+    } else {
+        echo "<script>window.location.href='$url';</script>";
+        echo "<noscript><meta http-equiv='refresh' content='0;url=$url'></noscript>";
+        exit();
+    }
 }
 
 /**
