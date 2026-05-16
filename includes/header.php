@@ -21,7 +21,7 @@ require_once __DIR__ . '/functions.php';
 </head>
 <body>
     <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNavbar">
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNavbar">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="<?php echo BASE_URL; ?>index.php">
                 <i class="bi bi-airplane-engines me-2 brand-icon" style="color: #00d4ff;"></i>
