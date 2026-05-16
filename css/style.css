@@ -35,7 +35,7 @@ img { max-width: 100%; }
 
 #mainNavbar { background: var(--primary); padding: 0.7rem 0; border-bottom: 1px solid rgba(255,255,255,0.1); transition: var(--transition); }
 #mainNavbar.scrolled { box-shadow: 0 4px 20px rgba(0,0,0,0.2); padding: 0.5rem 0; }
-.brand-icon { font-size: 1.6rem; color: var(--primary); display: none; }
+.brand-icon { font-size: 1.6rem; color: var(--primary); display: inline-block; }
 .brand-text { font-family: var(--font-heading); font-weight: 800; font-size: 1.45rem; color: var(--primary); }
 .text-accent { color: var(--accent) !important; }
 .navbar-nav .nav-link { color: rgba(255,255,255,0.8); font-weight: 500; font-size: 0.95rem; padding: 0.6rem 1rem; border-radius: var(--radius-sm); transition: var(--transition); }
