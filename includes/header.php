@@ -55,20 +55,29 @@ require_once __DIR__ . '/functions.php';
                 </ul>
                 <div class="d-flex align-items-center gap-2">
                     <?php if (isLoggedIn()): ?>
-                        <a href="<?php echo BASE_URL; ?>user-dashboard.php" class="btn btn-outline-secondary btn-sm fw-bold">
-                            <i class="bi bi-speedometer2 me-1"></i>Dashboard
-                        </a>
-                        <div class="dropdown">
-                            <button class="btn btn-accent btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                <i class="bi bi-person-circle me-1"></i><?php echo htmlspecialchars($_SESSION['user_name']); ?>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>user-dashboard.php"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a></li>
-                                <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>my-bookings.php"><i class="bi bi-ticket-perforated me-2"></i>My Bookings</a></li>
-                                <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>profile.php"><i class="bi bi-person-gear me-2"></i>Profile Settings</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item text-danger" href="<?php echo BASE_URL; ?>logout.php"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
-                            </ul>
+                        <div class="d-flex align-items-center gap-3">
+                            <a href="<?php echo BASE_URL; ?>my-bookings.php" class="text-white text-decoration-none d-none d-md-block">
+                                <i class="bi bi-ticket-perforated me-1"></i> My Bookings
+                            </a>
+                            <div class="dropdown">
+                                <button class="btn btn-link p-0 border-0 text-white d-flex align-items-center gap-2 dropdown-toggle no-caret" type="button" data-bs-toggle="dropdown">
+                                    <div class="profile-avatar bg-info text-primary fw-bold d-flex align-items-center justify-content-center rounded-circle" style="width: 35px; height: 35px; font-size: 0.9rem;">
+                                        <?php echo strtoupper(substr($_SESSION['user_name'], 0, 1)); ?>
+                                    </div>
+                                    <span class="d-none d-lg-inline"><?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2">
+                                    <li class="px-3 py-2 border-bottom mb-2">
+                                        <div class="fw-bold"><?php echo htmlspecialchars($_SESSION['user_name']); ?></div>
+                                        <small class="text-muted"><?php echo htmlspecialchars($_SESSION['user_email']); ?></small>
+                                    </li>
+                                    <li><a class="dropdown-item py-2" href="<?php echo BASE_URL; ?>user-dashboard.php"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a></li>
+                                    <li><a class="dropdown-item py-2" href="<?php echo BASE_URL; ?>my-bookings.php"><i class="bi bi-ticket-perforated me-2"></i>My Bookings</a></li>
+                                    <li><a class="dropdown-item py-2" href="<?php echo BASE_URL; ?>profile.php"><i class="bi bi-person-gear me-2"></i>Profile Settings</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item py-2 text-danger" href="<?php echo BASE_URL; ?>logout.php"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                                </ul>
+                            </div>
                         </div>
                     <?php else: ?>
                         <a href="<?php echo BASE_URL; ?>login.php" class="btn btn-outline-secondary btn-sm fw-bold">

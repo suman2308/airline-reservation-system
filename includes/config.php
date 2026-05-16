@@ -1,4 +1,5 @@
 <?php
+ob_start();
 /**
  * AeroBook – Database & Environment Configuration
  */

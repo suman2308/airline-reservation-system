@@ -40,8 +40,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = mysqli_prepare($conn, "INSERT INTO users (name, email, phone, password) VALUES (?, ?, ?, ?)");
             mysqli_stmt_bind_param($stmt, "ssss", $name, $email, $phone, $hashed);
             if (mysqli_stmt_execute($stmt)) {
-                $_SESSION['success'] = 'Registration successful! Please login.';
-                redirect('login.php');
+                $user_id = mysqli_insert_id($conn);
+                $_SESSION['user_id'] = $user_id;
+                $_SESSION['user_name'] = $name;
+                $_SESSION['user_email'] = $email;
+                $_SESSION['success'] = 'Registration successful! Welcome to AeroBook.';
+                redirect('index.php');
             } else {
                 $_SESSION['error'] = 'Something went wrong. Please try again.';
             }
