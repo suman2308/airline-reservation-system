@@ -10,7 +10,7 @@
                     <p class="lead mb-4">Discover the easiest way to book flights across India. Smart, fast and reliable platform with real-time availability.</p>
                     <div class="d-flex gap-3 mb-5">
                         <a href="<?php echo BASE_URL; ?>search-flights.php" class="btn btn-accent btn-lg px-4"><i class="bi bi-airplane me-2"></i>Book a Flight</a>
-                        <a href="<?php echo BASE_URL; ?>register.php" class="btn btn-outline-light btn-lg px-4">Join Now</a>
+                        <a href="<?php echo BASE_URL; ?>register.php" class="btn btn-outline-secondary btn-lg px-4 fw-bold">Join Now</a>
                     </div>
                     <div class="hero-stats d-flex gap-4">
                         <div class="stat-item"><h3>500+</h3><p>Daily Flights</p></div>
@@ -85,7 +85,7 @@
 </section>
 
 <!-- Stats Section -->
-<section class="py-5 bg-dark text-white text-center">
+<section class="py-5 text-white text-center" style="background-color: var(--primary);">
     <div class="container">
         <div class="row g-4">
             <div class="col-md-3"><h3>50+</h3><p class="mb-0 text-muted">Airlines</p></div>
@@ -128,7 +128,7 @@
 </section>
 
 <!-- CTA Section -->
-<section class="cta-section py-5 text-center bg-accent text-white">
+<section class="cta-section py-5 text-center text-white">
     <div class="container py-4">
         <h2 class="display-5 fw-bold mb-3">Ready to Take Off?</h2>
         <p class="lead mb-4">Join thousands of happy travelers who trust AeroBook for their flight bookings.</p>

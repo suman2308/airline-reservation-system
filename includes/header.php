@@ -21,7 +21,7 @@ require_once __DIR__ . '/functions.php';
 </head>
 <body>
     <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNavbar">
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNavbar">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="<?php echo BASE_URL; ?>index.php">
                 <i class="bi bi-airplane-engines me-2 brand-icon"></i>
@@ -55,7 +55,7 @@ require_once __DIR__ . '/functions.php';
                 </ul>
                 <div class="d-flex align-items-center gap-2">
                     <?php if (isLoggedIn()): ?>
-                        <a href="<?php echo BASE_URL; ?>user-dashboard.php" class="btn btn-outline-light btn-sm">
+                        <a href="<?php echo BASE_URL; ?>user-dashboard.php" class="btn btn-outline-secondary btn-sm fw-bold">
                             <i class="bi bi-speedometer2 me-1"></i>Dashboard
                         </a>
                         <div class="dropdown">
@@ -71,7 +71,7 @@ require_once __DIR__ . '/functions.php';
                             </ul>
                         </div>
                     <?php else: ?>
-                        <a href="<?php echo BASE_URL; ?>login.php" class="btn btn-outline-light btn-sm">
+                        <a href="<?php echo BASE_URL; ?>login.php" class="btn btn-outline-secondary btn-sm fw-bold">
                             <i class="bi bi-box-arrow-in-right me-1"></i>Login
                         </a>
                         <a href="<?php echo BASE_URL; ?>register.php" class="btn btn-accent btn-sm">
