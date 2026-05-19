@@ -79,6 +79,8 @@ document.addEventListener('DOMContentLoaded', function () {
             let valid = true;
             const passengerName = document.getElementById('passenger_name');
             const age = document.getElementById('age');
+            const cardNumber = document.getElementById('card_number');
+            const cvv = document.getElementById('cvv');
 
             if (passengerName && passengerName.value.trim().length < 3) {
                 passengerName.classList.add('is-invalid');
@@ -86,6 +88,14 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             if (age && (parseInt(age.value) < 1 || parseInt(age.value) > 120)) {
                 age.classList.add('is-invalid');
+                valid = false;
+            }
+            if (cardNumber && !/^\d{16}$/.test(cardNumber.value.replace(/\s+/g, ''))) {
+                cardNumber.classList.add('is-invalid');
+                valid = false;
+            }
+            if (cvv && !/^\d{3}$/.test(cvv.value.trim())) {
+                cvv.classList.add('is-invalid');
                 valid = false;
             }
             if (!valid) e.preventDefault();

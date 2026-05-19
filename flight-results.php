@@ -5,28 +5,23 @@ $travel_date = trim($_GET['travel_date'] ?? '');
 
 if (empty($source) || empty($destination)) { $_SESSION['error'] = 'Please select origin and destination.'; redirect('search-flights.php'); }
 if ($source === $destination) { $_SESSION['error'] = 'Origin and destination cannot be the same.'; redirect('search-flights.php'); }
+
+$display_date = !empty($travel_date) ? $travel_date : date('Y-m-d');
+$display_day = date('l', strtotime($display_date));
 ?>
 <div class="page-header">
     <div class="container">
         <h1><i class="bi bi-airplane me-2"></i><?php echo htmlspecialchars("$source → $destination"); ?></h1>
-        <p><?php echo $travel_date ? formatDate($travel_date) : 'All available flights'; ?></p>
+        <p><?php echo formatDate($display_date) . ' (' . $display_day . ')'; ?></p>
     </div>
 </div>
 <div class="container py-5">
     <?php showAlert(); ?>
     <a href="<?php echo BASE_URL; ?>search-flights.php" class="btn btn-outline-secondary mb-4"><i class="bi bi-arrow-left me-2"></i>Modify Search</a>
     <?php
-    $sql = "SELECT * FROM flights WHERE source=? AND destination=? AND status='Scheduled' AND seats_available > 0";
-    if (!empty($travel_date)) {
-        $sql .= " AND DATE(departure_time) = ?";
-        $sql .= " ORDER BY departure_time ASC";
-        $stmt = mysqli_prepare($conn, $sql);
-        mysqli_stmt_bind_param($stmt, "sss", $source, $destination, $travel_date);
-    } else {
-        $sql .= " ORDER BY departure_time ASC";
-        $stmt = mysqli_prepare($conn, $sql);
-        mysqli_stmt_bind_param($stmt, "ss", $source, $destination);
-    }
+    $sql = "SELECT * FROM flights WHERE source=? AND destination=? AND status='Scheduled' AND seats_available > 0 AND DAYOFWEEK(departure_time) = DAYOFWEEK(?) ORDER BY TIME(departure_time) ASC";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "sss", $source, $destination, $display_date);
     
     mysqli_stmt_execute($stmt);
     $flights = mysqli_stmt_get_result($stmt);
@@ -63,7 +58,7 @@ if ($source === $destination) { $_SESSION['error'] = 'Origin and destination can
                 <div class="flight-price"><?php echo formatPrice($f['price']); ?></div>
             </div>
             <div class="col-md-2 text-end">
-                <a href="<?php echo BASE_URL; ?>flight-details.php?id=<?php echo $f['flight_id']; ?>" class="btn btn-accent w-100">Book Now</a>
+                <a href="<?php echo BASE_URL; ?>flight-details.php?id=<?php echo $f['flight_id']; ?>&date=<?php echo $display_date; ?>" class="btn btn-accent w-100">Book Now</a>
             </div>
         </div>
     </div>
@@ -71,7 +66,7 @@ if ($source === $destination) { $_SESSION['error'] = 'Origin and destination can
     <div class="empty-state">
         <i class="bi bi-emoji-frown"></i>
         <h4>No flights found</h4>
-        <p>No flights available for <strong><?php echo htmlspecialchars("$source → $destination"); ?></strong><?php echo $travel_date ? ' on ' . formatDate($travel_date) : ''; ?>.</p>
+        <p>No flights available for <strong><?php echo htmlspecialchars("$source → $destination"); ?></strong> on <strong><?php echo formatDate($display_date) . ' (' . $display_day . ')'; ?></strong>.</p>
         <a href="<?php echo BASE_URL; ?>search-flights.php" class="btn btn-accent mt-3">Try Another Search</a>
     </div>
     <?php endif; ?>

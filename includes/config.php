@@ -5,7 +5,7 @@ ob_start();
  */
 
 // Environment Detection
-$is_localhost = ($_SERVER['SERVER_NAME'] === 'localhost' || $_SERVER['SERVER_ADDR'] === '127.0.0.1');
+$is_localhost = (php_sapi_name() === 'cli' || ($_SERVER['SERVER_NAME'] ?? '') === 'localhost' || ($_SERVER['SERVER_ADDR'] ?? '') === '127.0.0.1');
 
 if ($is_localhost) {
     // Localhost XAMPP Settings

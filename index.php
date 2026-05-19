@@ -41,7 +41,7 @@
                         </div>
                         <div class="mb-4">
                             <label class="form-label">Travel Date</label>
-                            <input type="date" name="travel_date" class="form-control" required min="<?php echo date('Y-m-d'); ?>">
+                            <input type="date" name="travel_date" class="form-control" min="<?php echo date('Y-m-d'); ?>">
                         </div>
                         <button type="submit" class="btn btn-search w-100 py-2"><i class="bi bi-search me-2"></i>Search Flights</button>
                     </form>

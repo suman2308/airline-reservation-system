@@ -94,12 +94,18 @@ mysqli_stmt_close($stmt);
             </div>
         </div>
 
+        <?php
+        $dep_time = date('H:i:s', strtotime($b['departure_time']));
+        $arr_time = date('H:i:s', strtotime($b['arrival_time']));
+        $dep_datetime = $b['travel_date'] . ' ' . $dep_time;
+        $arr_datetime = $b['travel_date'] . ' ' . $arr_time;
+        ?>
         <div class="route-info">
             <div class="route-point text-start">
                 <h3><?php echo strtoupper(substr($b['source'], 0, 3)); ?></h3>
                 <p><?php echo $b['source']; ?></p>
-                <span class="fw-bold mt-2 d-block"><?php echo formatTime($b['departure_time']); ?></span>
-                <small class="text-muted"><?php echo formatDate($b['departure_time']); ?></small>
+                <span class="fw-bold mt-2 d-block"><?php echo formatTime($dep_datetime); ?></span>
+                <small class="text-muted"><?php echo formatDate($dep_datetime); ?></small>
             </div>
             <div class="route-icon">
                 <i class="bi bi-airplane"></i>
@@ -108,8 +114,8 @@ mysqli_stmt_close($stmt);
             <div class="route-point text-end">
                 <h3><?php echo strtoupper(substr($b['destination'], 0, 3)); ?></h3>
                 <p><?php echo $b['destination']; ?></p>
-                <span class="fw-bold mt-2 d-block"><?php echo formatTime($b['arrival_time']); ?></span>
-                <small class="text-muted"><?php echo formatDate($b['arrival_time']); ?></small>
+                <span class="fw-bold mt-2 d-block"><?php echo formatTime($arr_datetime); ?></span>
+                <small class="text-muted"><?php echo formatDate($arr_datetime); ?></small>
             </div>
         </div>
 

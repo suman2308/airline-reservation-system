@@ -14,6 +14,16 @@ if (mysqli_num_rows($result) === 0) {
 }
 $f = mysqli_fetch_assoc($result);
 mysqli_stmt_close($stmt);
+
+$selected_date = $_GET['date'] ?? '';
+if (!empty($selected_date)) {
+    $d = DateTime::createFromFormat('Y-m-d', $selected_date);
+    if (!$d || $d->format('Y-m-d') !== $selected_date) {
+        $selected_date = date('Y-m-d', strtotime($f['departure_time']));
+    }
+} else {
+    $selected_date = date('Y-m-d', strtotime($f['departure_time']));
+}
 ?>
 <div class="page-header">
     <div class="container">
@@ -35,13 +45,13 @@ mysqli_stmt_close($stmt);
                     <div class="route-point">
                         <div class="route-time" style="font-size:1.8rem;"><?php echo formatTime($f['departure_time']); ?></div>
                         <div class="route-city" style="font-size:1rem;"><?php echo htmlspecialchars($f['source']); ?></div>
-                        <small class="text-muted"><?php echo formatDate($f['departure_time']); ?></small>
+                        <small class="text-muted"><?php echo formatDate($selected_date); ?></small>
                     </div>
                     <div class="route-line"><i class="bi bi-airplane-fill"></i></div>
                     <div class="route-point">
                         <div class="route-time" style="font-size:1.8rem;"><?php echo formatTime($f['arrival_time']); ?></div>
                         <div class="route-city" style="font-size:1rem;"><?php echo htmlspecialchars($f['destination']); ?></div>
-                        <small class="text-muted"><?php echo formatDate($f['arrival_time']); ?></small>
+                        <small class="text-muted"><?php echo formatDate($selected_date); ?></small>
                     </div>
                 </div>
                 <hr>
@@ -59,7 +69,7 @@ mysqli_stmt_close($stmt);
                 <hr>
                 <?php if ($f['seats_available'] > 0 && $f['status'] === 'Scheduled'): ?>
                     <?php if (isLoggedIn()): ?>
-                        <a href="<?php echo BASE_URL; ?>booking.php?flight_id=<?php echo $f['flight_id']; ?>" class="btn btn-accent w-100 py-2 btn-lg"><i class="bi bi-ticket-perforated me-2"></i>Book This Flight</a>
+                        <a href="<?php echo BASE_URL; ?>booking.php?flight_id=<?php echo $f['flight_id']; ?>&date=<?php echo $selected_date; ?>" class="btn btn-accent w-100 py-2 btn-lg"><i class="bi bi-ticket-perforated me-2"></i>Book This Flight</a>
                     <?php else: ?>
                         <a href="<?php echo BASE_URL; ?>login.php" class="btn btn-accent w-100 py-2 btn-lg"><i class="bi bi-box-arrow-in-right me-2"></i>Login to Book</a>
                         <p class="text-muted small mt-2">You need to login to book a flight</p>
