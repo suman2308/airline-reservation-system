@@ -56,28 +56,35 @@
     <div class="container py-5">
         <div class="text-center mb-5">
             <h2 class="fw-bold">Why Choose AeroBook?</h2>
-            <p class="text-muted">Experience the next generation of flight booking</p>
+            <p class="text-muted">Experience the next generation of flight booking with interactive seat selection</p>
         </div>
         <div class="row g-4">
-            <div class="col-md-4">
+            <div class="col-md-3">
+                <div class="feature-card h-100 p-4 border rounded-4 text-center">
+                    <div class="feature-icon mb-3 fs-1 text-accent"><i class="bi bi-grid-3x3-gap-fill"></i></div>
+                    <h3 class="h5 fw-bold">Interactive Seat Map</h3>
+                    <p class="text-muted mb-0">View live vacant & occupied seats on an airplane layout and pick your exact seats.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
                 <div class="feature-card h-100 p-4 border rounded-4 text-center">
                     <div class="feature-icon mb-3 fs-1 text-accent"><i class="bi bi-lightning-charge"></i></div>
-                    <h3 class="h4">Fast Booking</h3>
-                    <p class="text-muted mb-0">Book your tickets in less than 2 minutes with our streamlined checkout process.</p>
+                    <h3 class="h5 fw-bold">Instant Booking</h3>
+                    <p class="text-muted mb-0">Book your tickets in less than 2 minutes with automated real-time seat locks.</p>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="feature-card h-100 p-4 border rounded-4 text-center">
                     <div class="feature-icon mb-3 fs-1 text-accent"><i class="bi bi-shield-check"></i></div>
-                    <h3 class="h4">Secure Payments</h3>
-                    <p class="text-muted mb-0">Your data and transactions are protected by industry-leading security protocols.</p>
+                    <h3 class="h5 fw-bold">Secure Payments</h3>
+                    <p class="text-muted mb-0">Your data and transactions are protected by industry-grade encryption.</p>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="feature-card h-100 p-4 border rounded-4 text-center">
                     <div class="feature-icon mb-3 fs-1 text-accent"><i class="bi bi-headset"></i></div>
-                    <h3 class="h4">24/7 Support</h3>
-                    <p class="text-muted mb-0">Our dedicated team is always here to help you with your travel needs anytime.</p>
+                    <h3 class="h5 fw-bold">24/7 Assistance</h3>
+                    <p class="text-muted mb-0">Dedicated support team to assist with reservations and cancellations anytime.</p>
                 </div>
             </div>
         </div>

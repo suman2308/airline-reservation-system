@@ -119,18 +119,23 @@ mysqli_stmt_close($stmt);
             </div>
         </div>
 
+        <?php 
+        $seat_row = intval(substr($b['seat_number'], 0, -1));
+        $seat_class = ($seat_row >= 1 && $seat_row <= 2) ? 'Business Class' : 'Economy Class';
+        ?>
         <div class="info-grid">
             <div class="info-item">
                 <label>Airline</label>
-                <span><?php echo $b['airline_name']; ?></span>
+                <span><?php echo htmlspecialchars($b['airline_name']); ?></span>
             </div>
             <div class="info-item">
                 <label>Flight No</label>
-                <span><?php echo $b['flight_number']; ?></span>
+                <span><?php echo htmlspecialchars($b['flight_number']); ?></span>
             </div>
             <div class="info-item">
-                <label>Seat Number</label>
-                <span class="text-primary fs-4"><?php echo $b['seat_number']; ?></span>
+                <label>Seat & Class</label>
+                <span class="text-primary fs-4 fw-bold"><?php echo $b['seat_number']; ?></span>
+                <small class="d-block text-muted fw-semibold"><?php echo $seat_class; ?></small>
             </div>
         </div>
 
