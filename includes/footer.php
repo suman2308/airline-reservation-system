@@ -24,6 +24,7 @@
                     <ul class="footer-links">
                         <li><a href="<?php echo isset($isSubDir) ? '../index.php' : 'index.php'; ?>">Home</a></li>
                         <li><a href="<?php echo isset($isSubDir) ? '../search-flights.php' : 'search-flights.php'; ?>">Search Flights</a></li>
+                        <li><a href="<?php echo isset($isSubDir) ? '../flight-status.php' : 'flight-status.php'; ?>">Flight Status</a></li>
                         <li><a href="<?php echo isset($isSubDir) ? '../about.php' : 'about.php'; ?>">About Us</a></li>
                         <li><a href="<?php echo isset($isSubDir) ? '../contact.php' : 'contact.php'; ?>">Contact</a></li>
                         <li><a href="<?php echo isset($isSubDir) ? '../admin/login.php' : 'admin/login.php'; ?>">Admin Login</a></li>

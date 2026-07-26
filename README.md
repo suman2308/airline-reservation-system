@@ -1,78 +1,93 @@
-# AeroBook — Airline Reservation & Flight Management System
+# AeroBook — Airline Reservation & Flight Management Platform
 
-AeroBook is a modern web application for searching flights, booking tickets with an interactive airplane seat map, and managing reservations. Built with PHP 8, MySQL, and modern CSS/JS, it features dynamic seat availability tracking, multi-passenger selection, real-time fare calculation, printable e-tickets, and a comprehensive admin control panel.
+AeroBook is a full-stack airline reservation and flight operations management platform. Engineered with modern PHP, MySQL, Bootstrap 5, and JavaScript, it provides an end-to-end flight booking engine featuring real-time 2D aircraft seat map selection, in-flight add-on customization, live flight operations radar tracking, automated e-ticket boarding pass generation, and an administrator management suite.
 
-## Key Features
+---
 
-### User & Passenger Portal
-- **Flight Search & Schedule**: Search flights across Indian metro routes with flexible date selection and real-time seat availability.
-- **Interactive Aircraft Seat Map**: Visual 2D cabin layout (Cockpit, Business Class, Economy Class) with real-time status indicators (Vacant, Selected, Occupied).
-- **Multi-Passenger Selection**: Choose 1 to 6 seats per booking with dynamic form fields and auto-filled passenger details.
-- **Dynamic Fare Breakdown**: Real-time fare summary calculating base ticket prices, seat class upgrades (Business vs. Economy), and instant total pricing.
-- **E-Ticket Generation**: Generate, view, and print PDF-ready digital boarding passes with QR/Ref details.
-- **My Bookings & Cancellation**: View all past and upcoming flights, with single-click booking cancellation.
-- **Secure Authentication**: Password hashing using `password_hash`, CSRF token validation on all forms, and session management.
+## Technical Highlights & Features
 
-### Admin Dashboard
-- **System Metrics Overview**: Track total users, active flights, total bookings, and system revenue.
-- **Flight Management**: Schedule new flights, update departure/arrival times, manage total capacity, and set pricing.
-- **Seat Availability & Status Control**: Real-time control over seats left and flight operational status (`Scheduled`, `Delayed`, `Cancelled`, `Completed`).
-- **User & Booking Auditing**: View all registered users and manage active/cancelled reservations.
+### Passenger Booking Portal
+- **Real-Time Aircraft Cabin Map**: Interactive 2D aircraft seating chart (Airbus A320 arrangement with Business & Economy class layout, aisle separation, and occupied status tracking).
+- **Multi-Passenger Booking Engine**: Single or multi-seat selection (1–6 passengers) with dynamic field generation and auto-calculated class surcharges.
+- **In-Flight Customization & Add-Ons**: Flexible check-in baggage allowance upgrades (+10kg, +20kg) and in-flight meal preferences (Vegetarian, Non-Veg, Jain Thali).
+- **Promo Discount System**: Instant promo code verification engine (`AERO10` for 10% off, `FLY2026` for ₹500 off) with live price recalculation.
+- **Live Flight Operations Tracker**: Search flight schedules by flight number or route to view real-time gate assignments, terminal numbers, baggage belts, and destination weather updates.
+- **Digital Boarding Pass Generator**: Printable e-ticket boarding passes styled with barcode verification stubs, PNR references, and print CSS layout.
+- **Account & Booking Management**: User authentication, password hashing, active reservation history, and single-click cancellation.
+
+### Administrative Control Panel
+- **Operational Metrics**: Total revenue analytics, active flight counts, user registrations, and system booking stats.
+- **Flight & Inventory Management**: Create new flights, adjust departure/arrival schedules, manage total seat capacities, and update base pricing.
+- **Seat Occupancy Auditing**: Real-time monitoring of booked vs available seats across all scheduled flights.
 
 ---
 
 ## Tech Stack
 
-- **Frontend**: HTML5, CSS3 (Vanilla CSS with design tokens), Bootstrap 5, Bootstrap Icons, JavaScript (ES6)
-- **Backend**: PHP 8 (Procedural with Prepared Statements)
-- **Database**: MySQL 8.0 (InnoDB, Foreign Key Constraints, Transactions)
-- **Environment**: Apache Web Server (XAMPP / LAMP)
+| Component | Tech / Library |
+| :--- | :--- |
+| **Frontend** | HTML5, Modern CSS3 (CSS Variables, Flexbox/Grid, Keyframe Animations), Bootstrap 5.3, Bootstrap Icons |
+| **Client Scripting** | Vanilla JavaScript (ES6+, DOM Manipulation, Dynamic Pricing Engine) |
+| **Backend Engine** | PHP 8.x (Prepared Statements, Session Management, CSRF Validation) |
+| **Database Server** | MySQL 8.0 / MariaDB (InnoDB, Foreign Key Constraints, Transactions) |
+| **Development Host** | Apache (XAMPP / WAMP / LAMP Stack) |
 
 ---
 
-## Database Architecture Overview
+## Database Architecture
 
-The system uses a relational database schema (`aerobook_db`) designed with ACID compliance and row-level locking for seat reservations:
+The relational schema (`aerobook_db`) guarantees data integrity and prevents double-booking using transactional database locks:
 
-- `users`: Stores passenger accounts (`id`, `name`, `email`, `phone`, `password`, `created_at`).
-- `admins`: Stores administrator credentials.
-- `flights`: Stores flight details (`flight_id`, `flight_number`, `airline_name`, `source`, `destination`, `departure_time`, `arrival_time`, `total_seats`, `seats_available`, `price`, `status`).
-- `bookings`: Stores confirmed reservations (`booking_id`, `booking_ref`, `user_id`, `flight_id`, `passenger_name`, `age`, `gender`, `travel_date`, `seat_number`, `booking_status`).
+- `users`: Registered passenger profiles (`id`, `name`, `email`, `phone`, `password`, `created_at`).
+- `admins`: Administrative accounts (`id`, `username`, `password`).
+- `flights`: Master flight listings (`flight_id`, `flight_number`, `airline_name`, `source`, `destination`, `departure_time`, `arrival_time`, `total_seats`, `seats_available`, `price`, `status`).
+- `bookings`: Passenger ticket records (`booking_id`, `booking_ref`, `user_id`, `flight_id`, `passenger_name`, `age`, `gender`, `travel_date`, `seat_number`, `booking_status`, `booking_date`).
 
 ---
 
-## Installation & Local Setup
+## Local Setup & Quickstart Guide
 
 ### Prerequisites
-- [XAMPP](https://www.apachefriends.org/index.html) (PHP 8.0+ and MySQL)
-- Git
+- PHP 8.0 or higher
+- MySQL Server / phpMyAdmin
+- Apache Web Server (XAMPP recommended)
 
-### Quickstart Guide
+### Step-by-Step Installation
 
 1. **Clone Repository**
    ```bash
    git clone git@github.com:suman2308/airline-reservation-system.git
    ```
-   Place the project directory inside `C:\xampp\htdocs\airline-reservation-system`.
+   Copy or move the repository folder into your server's root web directory (e.g., `C:\xampp\htdocs\airline-reservation-system`).
 
-2. **Configure Database**
-   - Start Apache and MySQL from XAMPP Control Panel.
-   - Open phpMyAdmin (`http://localhost/phpmyadmin`).
-   - Create a database named `aerobook_db`.
-   - Import `database/aerobook.sql`.
+2. **Import Database Schema**
+   - Start **Apache** and **MySQL** in XAMPP.
+   - Access phpMyAdmin at `http://localhost/phpmyadmin`.
+   - Create a new database named `aerobook_db`.
+   - Import the SQL dump located at `database/aerobook.sql`.
 
-3. **Launch Application**
-   - User Interface: `http://localhost/airline-reservation-system`
-   - Admin Panel: `http://localhost/airline-reservation-system/admin`
+3. **Database Configuration**
+   - Verify connection settings in `includes/config.php`:
+     ```php
+     define('DB_HOST', 'localhost');
+     define('DB_USER', 'root');
+     define('DB_PASS', '');
+     define('DB_NAME', 'aerobook_db');
+     ```
+
+4. **Launch Application**
+   - Open your browser and navigate to:
+     - **Main Portal**: `http://localhost/airline-reservation-system`
+     - **Admin Panel**: `http://localhost/airline-reservation-system/admin`
 
 ---
 
-## Demo Account Credentials
+## System Credentials
 
 | Portal | Username / Email | Password |
 | :--- | :--- | :--- |
-| **Admin Panel** | `admin` | `admin123` |
-| **User Account** | *(Register a new account or log in)* | |
+| **Admin Control Panel** | `admin` | `admin123` |
+| **User Account** | *(Register a new account on the portal)* | |
 
 ---
 
@@ -80,32 +95,33 @@ The system uses a relational database schema (`aerobook_db`) designed with ACID 
 
 ```
 airline-reservation-system/
-├── admin/                     # Admin control panel pages & actions
+├── admin/                     # Administrator dashboard & management scripts
 │   ├── dashboard.php
 │   ├── manage-bookings.php
 │   ├── manage-flights.php
 │   └── manage-seats.php
-├── css/                       # Core stylesheet & UI design system
+├── css/                       # Master CSS stylesheet with animation keyframes
 │   └── style.css
-├── database/                  # SQL schema & initial dataset
+├── database/                  # Relational SQL schema dump
 │   └── aerobook.sql
-├── includes/                  # PHP helper functions & DB configuration
+├── includes/                  # Database config & core PHP functions
 │   ├── config.php
 │   ├── db.php
 │   ├── functions.php
 │   ├── header.php
 │   └── footer.php
-├── js/                        # Client-side JavaScript
+├── js/                        # Client-side validation & interactivity
 │   └── script.js
-├── booking.php                # Interactive seat map & booking page
-├── booking-confirmation.php   # Reservation confirmation & refs summary
-├── generate-ticket.php        # Printable digital e-ticket view
-├── index.php                  # Landing page & quick flight search
-└── my-bookings.php            # User reservation history
+├── booking.php                # Interactive seat map & booking checkout
+├── booking-confirmation.php   # Confirmation summary page
+├── flight-status.php          # Live flight status & radar tracker
+├── generate-ticket.php        # Printable digital boarding pass
+├── index.php                  # Landing page & quick search
+└── my-bookings.php            # User booking history
 ```
 
 ---
 
 ## License & Attribution
 
-Developed for academic demonstration and portfolio showcase. Free to modify for educational purposes.
+Distributed under the MIT License. Designed and developed for academic showcase and portfolio demonstration.

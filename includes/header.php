@@ -43,6 +43,11 @@ require_once __DIR__ . '/functions.php';
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="<?php echo BASE_URL; ?>flight-status.php">
+                            <i class="bi bi-radar me-1 text-accent"></i>Flight Status
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="<?php echo BASE_URL; ?>about.php">
                             <i class="bi bi-info-circle me-1"></i>About
                         </a>

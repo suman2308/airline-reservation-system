@@ -254,6 +254,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                 </div>
 
+                <!-- In-Flight Add-Ons & Baggage -->
+                <div class="flight-card mb-4">
+                    <h4 class="mb-3"><i class="bi bi-box-seam me-2 text-accent"></i>Baggage & In-Flight Add-Ons</h4>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Check-in Baggage Allowance</label>
+                            <select id="baggageOption" class="form-select">
+                                <option value="0">Standard 15kg (Included)</option>
+                                <option value="800">+10kg Extra Baggage (+₹800)</option>
+                                <option value="1400">+20kg Heavy Baggage (+₹1,400)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">In-Flight Meal Preference</label>
+                            <select id="mealOption" class="form-select">
+                                <option value="0">No Meal Selected</option>
+                                <option value="350">Vegetarian Gourmet Meal (+₹350)</option>
+                                <option value="450">Non-Veg Chicken Feast (+₹450)</option>
+                                <option value="350">Special Jain Thali (+₹350)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Payment Details Card -->
                 <div class="flight-card mb-4">
                     <h4 class="mb-3"><i class="bi bi-credit-card-2-front me-2 text-accent"></i>Payment & Confirmation</h4>
@@ -275,7 +299,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                 </div>
 
-                <!-- Price Breakdown & Submit -->
+                <!-- Price Breakdown & Promo Code -->
                 <div class="price-breakdown-card">
                     <h5 class="fw-bold mb-3"><i class="bi bi-receipt me-2 text-accent"></i>Fare Summary</h5>
                     <div class="price-row">
@@ -286,10 +310,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <span class="text-muted">Business Class Upgrade</span>
                         <span class="fw-bold text-warning" id="summarySurcharge">+ ₹0.00</span>
                     </div>
+                    <div class="price-row" id="addonSurchargeRow" style="display:none;">
+                        <span class="text-muted">Baggage & Meals Add-On</span>
+                        <span class="fw-bold text-info" id="summaryAddonSurcharge">+ ₹0.00</span>
+                    </div>
+                    <div class="price-row" id="promoDiscountRow" style="display:none;">
+                        <span class="text-success"><i class="bi bi-tag-fill me-1"></i>Promo Discount Applied</span>
+                        <span class="fw-bold text-success" id="summaryDiscount">- ₹0.00</span>
+                    </div>
                     <div class="price-row">
                         <span class="text-muted">Taxes & Airport Fee</span>
                         <span class="fw-bold text-success">Included</span>
                     </div>
+                    
+                    <!-- Promo Code Box -->
+                    <div class="my-3 p-2 bg-light rounded-3 border">
+                        <div class="input-group input-group-sm">
+                            <input type="text" id="promoInput" class="form-control text-uppercase" placeholder="Enter Promo Code (e.g. AERO10, FLY2026)">
+                            <button type="button" id="applyPromoBtn" class="btn btn-outline-primary fw-bold">Apply Code</button>
+                        </div>
+                        <div id="promoMsg" class="small mt-1 font-semibold" style="display:none;"></div>
+                    </div>
+
                     <div class="price-row total-row">
                         <span>Total Amount</span>
                         <span class="text-accent" id="summaryTotalPrice">₹<?php echo number_format($f['price'], 2); ?></span>
@@ -430,6 +472,55 @@ document.addEventListener('DOMContentLoaded', function () {
         updateUI();
     });
 
+    let appliedDiscount = 0;
+    let appliedPromoCode = '';
+
+    const baggageOption = document.getElementById('baggageOption');
+    const mealOption = document.getElementById('mealOption');
+    const addonSurchargeRow = document.getElementById('addonSurchargeRow');
+    const summaryAddonSurcharge = document.getElementById('summaryAddonSurcharge');
+
+    const promoInput = document.getElementById('promoInput');
+    const applyPromoBtn = document.getElementById('applyPromoBtn');
+    const promoDiscountRow = document.getElementById('promoDiscountRow');
+    const summaryDiscount = document.getElementById('summaryDiscount');
+    const promoMsg = document.getElementById('promoMsg');
+
+    if (baggageOption) baggageOption.addEventListener('change', updateUI);
+    if (mealOption) mealOption.addEventListener('change', updateUI);
+
+    if (applyPromoBtn) {
+        applyPromoBtn.addEventListener('click', function () {
+            const code = promoInput.value.trim().toUpperCase();
+            if (code === 'AERO10') {
+                appliedDiscount = 0.10; // 10% off
+                appliedPromoCode = 'AERO10 (10% Off)';
+                promoMsg.className = 'small mt-1 text-success fw-bold';
+                promoMsg.textContent = '✓ Code AERO10 applied! 10% discount subtracted.';
+                promoMsg.style.display = 'block';
+            } else if (code === 'FLY2026') {
+                appliedDiscount = 500; // ₹500 flat off
+                appliedPromoCode = 'FLY2026 (₹500 Off)';
+                promoMsg.className = 'small mt-1 text-success fw-bold';
+                promoMsg.textContent = '✓ Code FLY2026 applied! ₹500 discount subtracted.';
+                promoMsg.style.display = 'block';
+            } else if (code === 'WELCOME') {
+                appliedDiscount = 300; // ₹300 off
+                appliedPromoCode = 'WELCOME (₹300 Off)';
+                promoMsg.className = 'small mt-1 text-success fw-bold';
+                promoMsg.textContent = '✓ Welcome offer applied! ₹300 discount subtracted.';
+                promoMsg.style.display = 'block';
+            } else {
+                appliedDiscount = 0;
+                appliedPromoCode = '';
+                promoMsg.className = 'small mt-1 text-danger fw-bold';
+                promoMsg.textContent = '✕ Invalid promo code. Try AERO10 or FLY2026.';
+                promoMsg.style.display = 'block';
+            }
+            updateUI();
+        });
+    }
+
     function updateUI() {
         // Highlight seats on layout
         document.querySelectorAll('.seat-item').forEach(btn => {
@@ -491,8 +582,21 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
+        const baggageCost = baggageOption ? parseFloat(baggageOption.value) : 0;
+        const mealCost = mealOption ? parseFloat(mealOption.value) : 0;
+        const totalAddonCost = (baggageCost + mealCost) * selectedSeats.length;
+
         const totalBaseFare = basePrice * selectedSeats.length;
-        const totalAmount = totalBaseFare + totalBusinessUpgrades;
+        const subTotal = totalBaseFare + totalBusinessUpgrades + totalAddonCost;
+
+        let discountAmount = 0;
+        if (typeof appliedDiscount === 'number' && appliedDiscount < 1 && appliedDiscount > 0) {
+            discountAmount = subTotal * appliedDiscount;
+        } else if (typeof appliedDiscount === 'number' && appliedDiscount >= 1) {
+            discountAmount = appliedDiscount;
+        }
+
+        const totalAmount = Math.max(0, subTotal - discountAmount);
 
         summarySeatCount.textContent = selectedSeats.length;
         summaryBasePrice.textContent = `₹${totalBaseFare.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
@@ -502,6 +606,20 @@ document.addEventListener('DOMContentLoaded', function () {
             summarySurcharge.textContent = `+ ₹${totalBusinessUpgrades.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
         } else {
             businessSurchargeRow.style.display = 'none';
+        }
+
+        if (totalAddonCost > 0) {
+            addonSurchargeRow.style.display = 'flex';
+            summaryAddonSurcharge.textContent = `+ ₹${totalAddonCost.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
+        } else {
+            addonSurchargeRow.style.display = 'none';
+        }
+
+        if (discountAmount > 0) {
+            promoDiscountRow.style.display = 'flex';
+            summaryDiscount.textContent = `- ₹${discountAmount.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
+        } else {
+            promoDiscountRow.style.display = 'none';
         }
 
         summaryTotalPrice.textContent = `₹${totalAmount.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
