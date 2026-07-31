@@ -6,7 +6,6 @@
 # Logs
 logs/*.log
 logs/*.log.*
-logs/.htaccess
 
 # Uploads (user-generated content)
 uploads/avatars/*
@@ -33,3 +32,7 @@ lib/tfpdf/
 
 # System
 .freebuff/
+
+# Deployment artifacts
+*.zip
+*.tar.gz

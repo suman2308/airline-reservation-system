@@ -123,7 +123,7 @@ The complete schema is in `database/aerobook.sql`. Key tables:
 | Table | Purpose | Records |
 |-------|---------|---------|
 | `users` | User accounts | Core |
-| `flights` | Flight schedules | 56 sample flights (8/day) |
+| `flights` | Flight schedules | 84 sample flights (12/day) |
 | `bookings` | Booking records | User bookings |
 | `notifications` | In-app notifications | Auto-created |
 | `transactions` | Payment records | Demo payment transactions |

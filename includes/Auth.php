@@ -243,8 +243,7 @@ function createRememberMe($userId) {
     // Set cookie (valid 30 days)
     $cookieValue = $userId . ':' . $token;
     $cookieExpires = time() + 2592000;
-    $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
-            || ($_SERVER['SERVER_PORT'] ?? 80) == 443;
+    $isHttps = isSecureRequest();
 
     setcookie(
         'remember_me',
@@ -339,8 +338,7 @@ function clearRememberMe($userId = null) {
 
     // Delete cookie
     if (isset($_COOKIE['remember_me'])) {
-        $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
-                || ($_SERVER['SERVER_PORT'] ?? 80) == 443;
+        $isHttps = isSecureRequest();
 
         setcookie('remember_me', '', time() - 86400, '/', '', $isHttps, true);
         unset($_COOKIE['remember_me']);

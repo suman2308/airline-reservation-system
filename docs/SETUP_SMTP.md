@@ -36,7 +36,7 @@ Required files:
 
 ```env
 MAIL_MODE=smtp
-MAIL_FROM=noreply@yourdomain.com
+MAIL_FROM=noreply@aerobook.in
 MAIL_HOST=smtp.gmail.com
 MAIL_PORT=587
 MAIL_USER=your-email@gmail.com

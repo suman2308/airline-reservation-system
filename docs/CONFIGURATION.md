@@ -25,7 +25,8 @@ DB_NAME=aerobook_db         # MySQL database name
 ## Application URL
 
 ```env
-BASE_URL=http://localhost/airline-reservation-system/
+BASE_URL=http://localhost/airline-reservation-system/   # local development
+# Render: BASE_URL=https://aerobook.onrender.com/ (or leave empty — auto-detected)
 SITE_NAME=AeroBook
 SITE_TAGLINE="Smart, Fast and Easy Flight Booking Platform"
 ```
@@ -122,7 +123,7 @@ export DB_PASS=secure_password
 | `DB_USER` | `root` | MySQL username |
 | `DB_PASS` | `` | MySQL password |
 | `DB_NAME` | `aerobook_db` | MySQL database name |
-| `BASE_URL` | `http://localhost/...` | Application base URL (with trailing /) |
+| `BASE_URL` | `http://localhost/...` | Application base URL (with trailing /) — auto-detected on Render |
 | `SITE_NAME` | `AeroBook` | Site name used in emails and titles |
 | `SITE_TAGLINE` | `Smart, Fast and Easy...` | Site tagline |
 | `SESSION_TIMEOUT_MINUTES` | `30` | Session idle timeout |

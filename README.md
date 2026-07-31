@@ -32,7 +32,7 @@
 | **Travel Hub Dashboard** | ✅ Stats + milestones | ❌ | ✅ |
 | **Email Integration** | ✅ PHPMailer | ❌ | ✅ |
 | **Payment** | ✅ Demo (Simulated) | ❌ | ✅ |
-| **Admin Operations Center** | ✅ 15-page panel | ❌ Basic CRUD | ✅ |
+| **Admin Operations Center** | ✅ 16-page panel | ❌ Basic CRUD | ✅ |
 | **Airline Analytics** | ✅ Revenue + trends | ❌ | ✅ |
 | **CSV Reports** | ✅ 5 report types | ❌ | ✅ |
 | **Activity Log / Audit Trail** | ✅ Search + filter | ❌ | ✅ |
@@ -427,6 +427,15 @@ MAIL_ENCRYPTION=tls
 - MySQL 8.0 / MariaDB
 - Apache 2.4+ with mod_rewrite
 
+### Deploy on Render (recommended)
+
+AeroBook ships a `render.yaml` Blueprint + `Dockerfile` for one-click deployment on [Render](https://render.com):
+
+1. Push this repo to GitHub → **dashboard.render.com/blueprints → New Blueprint Instance**.
+2. Select this repository — Render reads `render.yaml` automatically.
+3. Provide your external MySQL credentials (`DB_HOST`, `DB_USER`, `DB_PASS`, `DB_NAME`). Render doesn't offer managed MySQL — see [docs/DEPLOY_RENDER.md](docs/DEPLOY_RENDER.md) for free MySQL options.
+4. Click **Apply** → verify `https://aerobook.onrender.com/health.php` returns `{"status":"ok",...}`.
+
 ### Standard Installation
 
 ```bash
@@ -477,6 +486,7 @@ docker-compose up -d --build
 | 📦 [Installation Guide](docs/INSTALLATION.md) | Step-by-step setup for all environments |
 | ⚙️ [Configuration Guide](docs/CONFIGURATION.md) | All config options explained |
 | 🚢 [Deployment Guide](PRODUCTION.md) | Production deployment instructions |
+| 🌐 [Render Deployment](docs/DEPLOY_RENDER.md) | One-click Render + MySQL setup |
 | 🏗️ [Architecture Overview](ARCHITECTURE.md) | System design, ER diagram, decisions |
 | 🤝 [Contributing Guide](CONTRIBUTING.md) | How to contribute to AeroBook |
 | 🔒 [Security Policy](SECURITY.md) | Security practices and vulnerability reporting |

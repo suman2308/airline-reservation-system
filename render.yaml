@@ -1,0 +1,54 @@
+# =============================================
+# AeroBook – Render Blueprint
+# =============================================
+# Deploy with one click:
+#   1. Push this file to GitHub (it's in the repo root)
+#   2. https://dashboard.render.com/blueprints → New Blueprint Instance
+#   3. Select this repository → Render reads render.yaml automatically
+#   4. Fill in the required environment variables (DB_HOST, DB_USER, DB_PASS,
+#      DB_NAME, BASE_URL) and click Apply
+#
+# Requires an external MySQL database (Render does NOT offer managed MySQL —
+# only PostgreSQL and Redis). See docs/DEPLOY_RENDER.md for free MySQL options
+# (Aiven, TiDB Cloud, etc.) and the SQL import steps.
+#
+# ⚠️ A free-plan web service spins down after ~15 min of inactivity and has an
+#    ephemeral filesystem (uploads/logs/sessions reset on restart/redeploy).
+#    Use the paid Starter plan for an always-on instance with a persistent disk.
+# =============================================
+
+services:
+  - type: web
+    name: aerobook
+    runtime: docker
+    repo: https://github.com/suman2308/airline-reservation-system
+    plan: free          # or starter (always-on)
+    region: singapore   # pick closest to your MySQL provider
+    dockerfilePath: ./Dockerfile
+    port: 80            # matches EXPOSE 80 in the Dockerfile
+    healthCheckPath: /health.php
+    envVars:
+      - key: DB_HOST
+        sync: false     # you provide this (host:port if non-3306)
+      - key: DB_USER
+        sync: false
+      - key: DB_PASS
+        sync: false
+      - key: DB_NAME
+        sync: false
+      # BASE_URL can be left empty — the app auto-detects https behind
+      # Render's TLS proxy (X-Forwarded-Proto). Set it explicitly only if
+      # you use a custom domain and want a hardcoded URL.
+      - key: BASE_URL
+        sync: false
+      # ─── Optional ───
+      - key: MAIL_MODE
+        value: log
+      - key: MAIL_FROM
+        value: noreply@aerobook.in
+      - key: MAINTENANCE_MODE
+        value: 'false'
+      - key: AVIATIONSTACK_ENABLED
+        value: 'false'
+      - key: AVIATIONSTACK_API_KEY
+        sync: false

@@ -55,6 +55,20 @@ function env($key, $default = null) {
 }
 }
 
+/**
+ * Helper: detect HTTPS requests, including when TLS is terminated by a
+ * reverse proxy (e.g. Render) that forwards the original scheme via
+ * X-Forwarded-Proto. Used for BASE_URL scheme and secure cookies.
+ */
+if (!function_exists('isSecureRequest')) {
+function isSecureRequest() {
+    $forwarded = strtolower((string)($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? ''));
+    if ($forwarded === 'https') return true;
+    return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || ($_SERVER['SERVER_PORT'] ?? 80) == 443;
+}
+}
+
 // ──────────────────────────────────────────────
 // 3. Environment Detection
 // ──────────────────────────────────────────────
@@ -100,7 +114,7 @@ if ($baseUrlOverride !== '') {
             $basePath = substr($resolvedProject, strlen($resolvedDoc));
         }
     }
-    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $scheme = isSecureRequest() ? 'https' : 'http';
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
     define('BASE_URL', $scheme . '://' . $host . $basePath . '/');
 }
@@ -139,8 +153,7 @@ define('MAINTENANCE_MODE', env('MAINTENANCE_MODE', 'false') === 'true');
 // ──────────────────────────────────────────────
 // 6. Secure Session Configuration
 // ──────────────────────────────────────────────
-$isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
-        || ($_SERVER['SERVER_PORT'] ?? 80) == 443;
+$isHttps = isSecureRequest();
 
 session_set_cookie_params([
     'lifetime' => 0,

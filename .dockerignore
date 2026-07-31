@@ -1,0 +1,28 @@
+# Git & tooling
+.git
+.github
+.freebuff
+
+# Docs & metadata (not needed at runtime)
+docs
+*.md
+LICENSE
+CHANGELOG.md
+
+# Dev artifacts
+*.zip
+*.tar.gz
+*.sql
+screenshots
+
+# Runtime state (excluded from image; writable at runtime)
+logs/*.log
+uploads/avatars/*
+uploads/documents/*
+!uploads/avatars/.gitkeep
+!uploads/documents/.gitkeep
+
+# Environment (never baked into the image)
+.env
+.env.*
+!*.example

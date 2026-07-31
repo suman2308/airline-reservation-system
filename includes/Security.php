@@ -42,8 +42,7 @@ function emitSecurityHeaders() {
 function configureSecureSession() {
     if (session_status() === PHP_SESSION_NONE) {
         // Set secure cookie parameters before session start
-        $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
-                || ($_SERVER['SERVER_PORT'] ?? 80) == 443;
+        $isHttps = isSecureRequest();
 
         session_set_cookie_params([
             'lifetime' => 0,
