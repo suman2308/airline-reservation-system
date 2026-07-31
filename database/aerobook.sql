@@ -16,12 +16,21 @@ CREATE TABLE IF NOT EXISTS admins (
 -- =============================================
 -- Table: users
 -- =============================================
+-- =============================================
+-- Table: users
+-- =============================================
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
     phone VARCHAR(15) NOT NULL,
     password VARCHAR(255) NOT NULL,
+    avatar VARCHAR(255) DEFAULT NULL,
+    email_verified_at DATETIME DEFAULT NULL,
+    last_login_at DATETIME DEFAULT NULL,
+    last_login_ip VARCHAR(45) DEFAULT NULL,
+    failed_logins INT DEFAULT 0,
+    locked_until DATETIME DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
@@ -68,6 +77,107 @@ CREATE TABLE IF NOT EXISTS bookings (
 -- =============================================
 INSERT INTO admins (username, password) VALUES 
 ('admin', '$2y$10$8K1p/a0dR1xLX8uGq7mnSOGy0O9xTBKrecYFQr0JBV3xbRvN1Dxqi');
+
+-- =============================================
+-- Table: email_verifications
+-- Stores tokens for email verification.
+-- =============================================
+CREATE TABLE IF NOT EXISTS email_verifications (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    token VARCHAR(64) NOT NULL,
+    expires_at DATETIME NOT NULL,
+    used TINYINT(1) DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_token (token),
+    INDEX idx_user_id (user_id)
+) ENGINE=InnoDB;
+
+-- =============================================
+-- Table: password_resets
+-- Stores tokens for password reset requests.
+-- =============================================
+CREATE TABLE IF NOT EXISTS password_resets (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    token VARCHAR(64) NOT NULL,
+    expires_at DATETIME NOT NULL,
+    used TINYINT(1) DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_token (token),
+    INDEX idx_user_id (user_id)
+) ENGINE=InnoDB;
+
+-- =============================================
+-- Table: remember_tokens
+-- Stores persistent login tokens for "Remember Me".
+-- =============================================
+CREATE TABLE IF NOT EXISTS remember_tokens (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    token_hash VARCHAR(64) NOT NULL,
+    expires_at DATETIME NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_token_hash (token_hash),
+    INDEX idx_user_id (user_id)
+) ENGINE=InnoDB;
+
+-- =============================================
+-- Table: login_history
+-- Records all login attempts (successful and failed).
+-- =============================================
+CREATE TABLE IF NOT EXISTS login_history (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT DEFAULT NULL,
+    email VARCHAR(100) DEFAULT NULL,
+    ip_address VARCHAR(45) NOT NULL,
+    user_agent TEXT DEFAULT NULL,
+    success TINYINT(1) DEFAULT 0,
+    login_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_user_id (user_id),
+    INDEX idx_success (success),
+    INDEX idx_login_at (login_at)
+) ENGINE=InnoDB;
+
+-- =============================================
+-- Table: user_sessions
+-- Tracks active sessions for multi-device management.
+-- =============================================
+CREATE TABLE IF NOT EXISTS user_sessions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    session_identifier VARCHAR(64) NOT NULL,
+    ip_address VARCHAR(45) DEFAULT NULL,
+    user_agent TEXT DEFAULT NULL,
+    device_name VARCHAR(255) DEFAULT NULL,
+    is_active TINYINT(1) DEFAULT 1,
+    logged_in_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_activity TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_user_id (user_id),
+    INDEX idx_session (session_identifier),
+    INDEX idx_active (is_active)
+) ENGINE=InnoDB;
+
+-- =============================================
+-- Table: admin_activity_log
+-- Records all admin actions for audit trail.
+-- =============================================
+CREATE TABLE IF NOT EXISTS admin_activity_log (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    admin_id INT NOT NULL,
+    action VARCHAR(100) NOT NULL,
+    details TEXT DEFAULT NULL,
+    ip_address VARCHAR(45) DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (admin_id) REFERENCES admins(admin_id) ON DELETE CASCADE,
+    INDEX idx_admin_id (admin_id),
+    INDEX idx_action (action),
+    INDEX idx_created_at (created_at)
+) ENGINE=InnoDB;
 
 -- =============================================
 -- Sample Flights Data (Weekly Schedule June 14 - June 20, 2026)
@@ -141,8 +251,81 @@ INSERT INTO flights (airline_name, flight_number, source, destination, departure
 ('IndiGo', '6E-705', 'Kolkata', 'Delhi', '2026-06-20 08:15:00', '2026-06-20 10:40:00', 180, 180, 4250.00, 'Scheduled'),
 ('Air India', 'AI-706', 'Kolkata', 'Delhi', '2026-06-20 19:45:00', '2026-06-20 22:10:00', 200, 200, 4950.00, 'Scheduled'),
 ('Go First', 'G8-707', 'Chennai', 'Hyderabad', '2026-06-20 12:30:00', '2026-06-20 13:45:00', 180, 180, 3500.00, 'Scheduled'),
-('Vistara', 'UK-708', 'Chennai', 'Hyderabad', '2026-06-20 15:00:00', '2026-06-20 16:15:00', 160, 160, 4100.00, 'Scheduled');
+('Vistara', 'UK-708', 'Chennai', 'Hyderabad', '2026-06-20 15:00:00', '2026-06-20 16:15:00', 160, 160, 4100.00, 'Scheduled'),
 
+-- =============================================
+-- International Flights (weekly schedule)
+-- =============================================
+-- Delhi → Dubai (daily)
+('Air India', 'AI-901', 'Delhi', 'Dubai', '2026-06-14 02:30:00', '2026-06-14 05:45:00', 220, 220, 16500.00, 'Scheduled'),
+('Air India', 'AI-902', 'Delhi', 'Dubai', '2026-06-15 02:30:00', '2026-06-15 05:45:00', 220, 220, 16900.00, 'Scheduled'),
+('Air India', 'AI-903', 'Delhi', 'Dubai', '2026-06-16 02:30:00', '2026-06-16 05:45:00', 220, 220, 16200.00, 'Scheduled'),
+('Air India', 'AI-904', 'Delhi', 'Dubai', '2026-06-17 02:30:00', '2026-06-17 05:45:00', 220, 220, 15800.00, 'Scheduled'),
+('Air India', 'AI-905', 'Delhi', 'Dubai', '2026-06-18 02:30:00', '2026-06-18 05:45:00', 220, 220, 17100.00, 'Scheduled'),
+('Air India', 'AI-906', 'Delhi', 'Dubai', '2026-06-19 02:30:00', '2026-06-19 05:45:00', 220, 220, 16600.00, 'Scheduled'),
+('Air India', 'AI-907', 'Delhi', 'Dubai', '2026-06-20 02:30:00', '2026-06-20 05:45:00', 220, 220, 17400.00, 'Scheduled'),
+
+-- Dubai → Delhi (return)
+('Emirates', 'EK-910', 'Dubai', 'Delhi', '2026-06-14 11:00:00', '2026-06-14 16:15:00', 250, 250, 18900.00, 'Scheduled'),
+('Emirates', 'EK-911', 'Dubai', 'Delhi', '2026-06-15 11:00:00', '2026-06-15 16:15:00', 250, 250, 19500.00, 'Scheduled'),
+('Emirates', 'EK-912', 'Dubai', 'Delhi', '2026-06-16 11:00:00', '2026-06-16 16:15:00', 250, 250, 18200.00, 'Scheduled'),
+('Emirates', 'EK-913', 'Dubai', 'Delhi', '2026-06-17 11:00:00', '2026-06-17 16:15:00', 250, 250, 17600.00, 'Scheduled'),
+('Emirates', 'EK-914', 'Dubai', 'Delhi', '2026-06-18 11:00:00', '2026-06-18 16:15:00', 250, 250, 19800.00, 'Scheduled'),
+('Emirates', 'EK-915', 'Dubai', 'Delhi', '2026-06-19 11:00:00', '2026-06-19 16:15:00', 250, 250, 18400.00, 'Scheduled'),
+('Emirates', 'EK-916', 'Dubai', 'Delhi', '2026-06-20 11:00:00', '2026-06-20 16:15:00', 250, 250, 20100.00, 'Scheduled'),
+
+-- Mumbai → Singapore (daily)
+('Singapore Airlines', 'SQ-921', 'Mumbai', 'Singapore', '2026-06-14 23:45:00', '2026-06-15 07:50:00', 260, 260, 21500.00, 'Scheduled'),
+('Singapore Airlines', 'SQ-922', 'Mumbai', 'Singapore', '2026-06-15 23:45:00', '2026-06-16 07:50:00', 260, 260, 22100.00, 'Scheduled'),
+('Singapore Airlines', 'SQ-923', 'Mumbai', 'Singapore', '2026-06-16 23:45:00', '2026-06-17 07:50:00', 260, 260, 20900.00, 'Scheduled'),
+('Singapore Airlines', 'SQ-924', 'Mumbai', 'Singapore', '2026-06-17 23:45:00', '2026-06-18 07:50:00', 260, 260, 20300.00, 'Scheduled'),
+('Singapore Airlines', 'SQ-925', 'Mumbai', 'Singapore', '2026-06-18 23:45:00', '2026-06-19 07:50:00', 260, 260, 22800.00, 'Scheduled'),
+('Singapore Airlines', 'SQ-926', 'Mumbai', 'Singapore', '2026-06-19 23:45:00', '2026-06-20 07:50:00', 260, 260, 21200.00, 'Scheduled'),
+('Singapore Airlines', 'SQ-927', 'Mumbai', 'Singapore', '2026-06-20 23:45:00', '2026-06-21 07:50:00', 260, 260, 23500.00, 'Scheduled'),
+
+-- Delhi → Bangkok (daily)
+('Thai Airways', 'TG-931', 'Delhi', 'Bangkok', '2026-06-14 01:15:00', '2026-06-14 06:30:00', 230, 230, 14800.00, 'Scheduled'),
+('Thai Airways', 'TG-932', 'Delhi', 'Bangkok', '2026-06-15 01:15:00', '2026-06-15 06:30:00', 230, 230, 15200.00, 'Scheduled'),
+('Thai Airways', 'TG-933', 'Delhi', 'Bangkok', '2026-06-16 01:15:00', '2026-06-16 06:30:00', 230, 230, 14500.00, 'Scheduled'),
+('Thai Airways', 'TG-934', 'Delhi', 'Bangkok', '2026-06-17 01:15:00', '2026-06-17 06:30:00', 230, 230, 13900.00, 'Scheduled'),
+('Thai Airways', 'TG-935', 'Delhi', 'Bangkok', '2026-06-18 01:15:00', '2026-06-18 06:30:00', 230, 230, 15500.00, 'Scheduled'),
+('Thai Airways', 'TG-936', 'Delhi', 'Bangkok', '2026-06-19 01:15:00', '2026-06-19 06:30:00', 230, 230, 14900.00, 'Scheduled'),
+('Thai Airways', 'TG-937', 'Delhi', 'Bangkok', '2026-06-20 01:15:00', '2026-06-20 06:30:00', 230, 230, 15700.00, 'Scheduled');
+
+-- =============================================
+-- Performance Indexes
+-- =============================================
+-- All indexes are documented with the query patterns they accelerate.
+-- Run `EXPLAIN SELECT ...` to verify index usage.
+
+-- Flight search by route and date (flight-results.php, search-flights.php, Smart Fare Engine)
+CREATE INDEX idx_flights_route ON flights (source, destination);
+
+-- Flight lookups by number (flight-status.php, admin)
+CREATE INDEX idx_flights_number ON flights (flight_number);
+
+-- Departure time queries (today's flights, ordering, scheduling)
+CREATE INDEX idx_flights_departure ON flights (departure_time);
+
+-- Flight status filter (admin flight listing, search filtering)
+CREATE INDEX idx_flights_status ON flights (status);
+
+-- User booking history (my-bookings.php, user-dashboard.php)
+CREATE INDEX idx_bookings_user_status ON bookings (user_id, booking_status);
+
+-- Seat availability checks (booking.php, seat selection)
+CREATE INDEX idx_bookings_flight_date ON bookings (flight_id, travel_date, booking_status);
+
+-- Booking date ordering (admin, user dashboard)
+CREATE INDEX idx_bookings_created ON bookings (booking_date);
+
+-- User management sorting (admin/manage-users.php)
+CREATE INDEX idx_users_created ON users (created_at);
+
+-- Admin activity log date queries (admin/activity-log.php)
+CREATE INDEX idx_adminlog_action ON admin_activity_log (action, created_at);
+
+-- =============================================
 -- Table structure for table `contacts`
 CREATE TABLE IF NOT EXISTS `contacts` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -153,3 +336,105 @@ CREATE TABLE IF NOT EXISTS `contacts` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Contacts listing (admin/manage-contacts.php)
+CREATE INDEX idx_contacts_created ON contacts (created_at);
+
+-- =============================================
+-- Table: saved_passengers
+-- Stores frequently-used passenger details for quick booking.
+-- =============================================
+CREATE TABLE IF NOT EXISTS saved_passengers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    age INT NOT NULL,
+    gender ENUM('Male', 'Female', 'Other') NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_user_id (user_id)
+) ENGINE=InnoDB;
+
+-- =============================================
+-- Table: booking_addons
+-- Stores add-ons (baggage, meals) per booking.
+-- =============================================
+CREATE TABLE IF NOT EXISTS booking_addons (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    booking_id INT NOT NULL,
+    addon_type VARCHAR(50) NOT NULL,
+    addon_name VARCHAR(100) NOT NULL,
+    amount DECIMAL(10,2) NOT NULL DEFAULT 0,
+    FOREIGN KEY (booking_id) REFERENCES bookings(booking_id) ON DELETE CASCADE,
+    INDEX idx_booking_id (booking_id)
+) ENGINE=InnoDB;
+
+-- =============================================
+-- Table: saved_routes
+-- Stores user's favorite routes for quick search.
+-- =============================================
+CREATE TABLE IF NOT EXISTS saved_routes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    source VARCHAR(100) NOT NULL,
+    destination VARCHAR(100) NOT NULL,
+    label VARCHAR(200) DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_user_id (user_id),
+    UNIQUE KEY unique_user_route (user_id, source, destination)
+) ENGINE=InnoDB;
+
+-- =============================================
+-- Table: notifications
+-- Stores in-app notifications for users.
+-- =============================================
+CREATE TABLE IF NOT EXISTS notifications (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    type VARCHAR(50) NOT NULL,
+    title VARCHAR(200) NOT NULL,
+    message TEXT DEFAULT NULL,
+    link VARCHAR(255) DEFAULT NULL,
+    is_read TINYINT(1) DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_user_read (user_id, is_read),
+    INDEX idx_created_at (created_at)
+) ENGINE=InnoDB;
+
+-- =============================================
+-- Table: transactions
+-- Stores demo payment transaction records.
+-- =============================================
+CREATE TABLE IF NOT EXISTS transactions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    booking_ref VARCHAR(10) NOT NULL,
+    payment_order_id VARCHAR(100) DEFAULT NULL,
+    payment_payment_id VARCHAR(100) DEFAULT NULL,
+    amount DECIMAL(10,2) NOT NULL,
+    currency VARCHAR(3) DEFAULT 'INR',
+    status ENUM('created', 'paid', 'failed') DEFAULT 'created',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    paid_at DATETIME DEFAULT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_booking_ref (booking_ref),
+    INDEX idx_payment_order (payment_order_id)
+) ENGINE=InnoDB;
+
+-- =============================================
+-- Table: price_watches
+-- Stores user's price watch alerts for routes.
+-- =============================================
+CREATE TABLE IF NOT EXISTS price_watches (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    source VARCHAR(100) NOT NULL,
+    destination VARCHAR(100) NOT NULL,
+    max_fare DECIMAL(10,2) DEFAULT NULL,
+    preferred_month VARCHAR(20) DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_user_id (user_id)
+) ENGINE=InnoDB;

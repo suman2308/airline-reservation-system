@@ -1,27 +1,20 @@
-<?php 
-$pageTitle = 'Edit Flight'; 
+<?php
+$pageTitle = 'Edit Flight';
 require_once __DIR__ . '/includes/admin-header.php';
+require_once __DIR__ . '/../../includes/helpers.php';
 
 $id = intval($_GET['id'] ?? 0);
 if ($id <= 0) redirect(BASE_URL . 'admin/manage-flights.php');
 
-// Fetch flight details safely
-$stmt = mysqli_prepare($conn, "SELECT * FROM flights WHERE flight_id = ?");
-mysqli_stmt_bind_param($stmt, "i", $id);
-mysqli_stmt_execute($stmt);
-$result = mysqli_stmt_get_result($stmt);
-
-if (mysqli_num_rows($result) === 0) {
-    $_SESSION['error'] = 'Flight not found.';
+$f = getFlightById($id);
+if (!$f) {
+    setFlash('error', 'Flight not found.');
     redirect(BASE_URL . 'admin/manage-flights.php');
 }
-$f = mysqli_fetch_assoc($result);
-mysqli_stmt_close($stmt);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // CSRF Validation
     if (!validateCSRFToken($_POST['csrf_token'] ?? '')) {
-        $_SESSION['error'] = 'Invalid request.';
+        setFlash('error', 'Invalid request.');
     } else {
         $airline_name = trim($_POST['airline_name']);
         $source = $_POST['source'];
@@ -34,18 +27,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $status = $_POST['status'];
 
         if (empty($airline_name) || $source === $destination) {
-            $_SESSION['error'] = 'Please fill all fields correctly. Source and destination cannot be the same.';
+            setFlash('error', 'Please fill all fields correctly. Source and destination cannot be the same.');
         } else {
-            $upd_stmt = mysqli_prepare($conn, "UPDATE flights SET airline_name = ?, source = ?, destination = ?, departure_time = ?, arrival_time = ?, total_seats = ?, seats_available = ?, price = ?, status = ? WHERE flight_id = ?");
-            mysqli_stmt_bind_param($upd_stmt, "sssssiidsi", $airline_name, $source, $destination, $departure_time, $arrival_time, $total_seats, $seats_available, $price, $status, $id);
-            
-            if (mysqli_stmt_execute($upd_stmt)) {
-                $_SESSION['success'] = 'Flight updated successfully!';
-                redirect(BASE_URL . 'admin/manage-flights.php');
-            } else {
-                $_SESSION['error'] = 'Failed to update flight.';
-            }
-            mysqli_stmt_close($upd_stmt);
+            dbUpdate(
+                "UPDATE flights SET airline_name=?, source=?, destination=?, departure_time=?, arrival_time=?, total_seats=?, seats_available=?, price=?, status=? WHERE flight_id=?",
+                "sssssiidsi",
+                $airline_name, $source, $destination, $departure_time, $arrival_time, $total_seats, $seats_available, $price, $status, $id
+            );
+            logAdminAction($_SESSION['admin_id'], 'edit_flight', "Updated flight $f[flight_number] ($source→$destination)");
+            setFlash('success', 'Flight updated successfully!');
+            redirect(BASE_URL . 'admin/manage-flights.php');
         }
     }
 }
@@ -77,17 +68,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Source City</label>
                             <select name="source" class="form-select" required>
-                                <?php foreach(['Delhi','Mumbai','Bangalore','Kolkata','Chennai','Hyderabad','Pune'] as $city): ?>
-                                    <option value="<?php echo $city; ?>" <?php echo $f['source'] == $city ? 'selected' : ''; ?>><?php echo $city; ?></option>
-                                <?php endforeach; ?>
+                                <?php cityOptions($f['source']); ?>
                             </select>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Destination City</label>
                             <select name="destination" class="form-select" required>
-                                <?php foreach(['Delhi','Mumbai','Bangalore','Kolkata','Chennai','Hyderabad','Pune'] as $city): ?>
-                                    <option value="<?php echo $city; ?>" <?php echo $f['destination'] == $city ? 'selected' : ''; ?>><?php echo $city; ?></option>
-                                <?php endforeach; ?>
+                                <?php cityOptions($f['destination']); ?>
                             </select>
                         </div>
                     </div>
@@ -118,9 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="mb-4">
                         <label class="form-label">Flight Status</label>
                         <select name="status" class="form-select">
-                            <?php foreach(['Scheduled','Delayed','Cancelled','Completed'] as $status): ?>
-                                <option value="<?php echo $status; ?>" <?php echo $f['status'] == $status ? 'selected' : ''; ?>><?php echo $status; ?></option>
-                            <?php endforeach; ?>
+                            <?php statusOptions($f['status']); ?>
                         </select>
                     </div>
                     <button type="submit" class="btn btn-primary btn-lg w-100">Update Flight Schedule</button>

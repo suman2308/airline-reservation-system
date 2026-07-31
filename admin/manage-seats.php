@@ -1,11 +1,11 @@
-<?php 
-$pageTitle = 'Manage Seats'; 
+<?php
+$pageTitle = 'Manage Seats';
 require_once __DIR__ . '/includes/admin-header.php';
+require_once __DIR__ . '/../../includes/helpers.php';
 
-// Handle Update
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_seats'])) {
     if (!validateCSRFToken($_POST['csrf_token'] ?? '')) {
-        $_SESSION['error'] = 'Invalid request.';
+        setFlash('error', 'Invalid request.');
     } else {
         $flight_id = intval($_POST['flight_id']);
         $new_seats = intval($_POST['seats_available']);
@@ -13,22 +13,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_seats'])) {
         $status = $_POST['status'];
 
         if ($new_seats < 0 || $new_seats > $total_seats) {
-            $_SESSION['error'] = 'Available seats cannot exceed total seats or be negative.';
+            setFlash('error', 'Available seats cannot exceed total seats or be negative.');
         } else {
-            $stmt = mysqli_prepare($conn, "UPDATE flights SET seats_available = ?, status = ? WHERE flight_id = ?");
-            mysqli_stmt_bind_param($stmt, "isi", $new_seats, $status, $flight_id);
-            if (mysqli_stmt_execute($stmt)) {
-                $_SESSION['success'] = 'Flight status and seats updated!';
-            } else {
-                $_SESSION['error'] = 'Failed to update flight.';
-            }
-            mysqli_stmt_close($stmt);
+            dbUpdate("UPDATE flights SET seats_available = ?, status = ? WHERE flight_id = ?", "isi", $new_seats, $status, $flight_id);
+            setFlash('success', 'Flight status and seats updated!');
         }
     }
     redirect(BASE_URL . 'admin/manage-seats.php');
 }
 
-$flights = mysqli_query($conn, "SELECT * FROM flights ORDER BY departure_time ASC");
+$flights = getAllFlights('departure_time ASC');
 ?>
 
 <div class="row">
@@ -46,7 +40,7 @@ $flights = mysqli_query($conn, "SELECT * FROM flights ORDER BY departure_time AS
                             </tr>
                         </thead>
                         <tbody>
-                            <?php while($f = mysqli_fetch_assoc($flights)): ?>
+                            <?php foreach ($flights as $f): ?>
                             <tr>
                                 <form method="POST">
                                     <?php csrfField(); ?>
@@ -69,10 +63,7 @@ $flights = mysqli_query($conn, "SELECT * FROM flights ORDER BY departure_time AS
                                             <div class="col-6">
                                                 <label class="small text-muted">Status</label>
                                                 <select name="status" class="form-select form-select-sm">
-                                                    <option value="Scheduled" <?php echo $f['status']=='Scheduled'?'selected':''; ?>>Scheduled</option>
-                                                    <option value="Delayed" <?php echo $f['status']=='Delayed'?'selected':''; ?>>Delayed</option>
-                                                    <option value="Cancelled" <?php echo $f['status']=='Cancelled'?'selected':''; ?>>Cancelled</option>
-                                                    <option value="Completed" <?php echo $f['status']=='Completed'?'selected':''; ?>>Completed</option>
+                                                    <?php statusOptions($f['status']); ?>
                                                 </select>
                                             </div>
                                         </div>
@@ -82,7 +73,7 @@ $flights = mysqli_query($conn, "SELECT * FROM flights ORDER BY departure_time AS
                                     </td>
                                 </form>
                             </tr>
-                            <?php endwhile; ?>
+                            <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>

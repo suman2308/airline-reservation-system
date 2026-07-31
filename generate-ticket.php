@@ -1,28 +1,21 @@
-<?php 
+<?php
 require_once 'includes/config.php';
 require_once 'includes/functions.php';
+require_once 'includes/helpers.php';
+require_once 'includes/QRCode.php';
+require_once 'includes/PDF.php';
+require_once 'includes/ICS.php';
 
 if (!isLoggedIn()) redirect('login.php');
 
 $ref = trim($_GET['ref'] ?? '');
 if (empty($ref)) redirect('my-bookings.php');
 
-// Fetch booking details securely
-$stmt = mysqli_prepare($conn, "SELECT b.*, f.airline_name, f.flight_number, f.source, f.destination, f.departure_time, f.arrival_time, f.price, u.name as booked_by 
-                                FROM bookings b 
-                                JOIN flights f ON b.flight_id = f.flight_id 
-                                JOIN users u ON b.user_id = u.id
-                                WHERE b.booking_ref=? AND b.user_id=?");
-mysqli_stmt_bind_param($stmt, "si", $ref, $_SESSION['user_id']);
-mysqli_stmt_execute($stmt);
-$result = mysqli_stmt_get_result($stmt);
-
-if (mysqli_num_rows($result) === 0) { 
-    $_SESSION['error'] = 'Ticket not found.'; 
-    redirect('my-bookings.php'); 
+$b = getBookingByRef($ref, $_SESSION['user_id']);
+if (!$b) {
+    setFlash('error', 'Ticket not found.');
+    redirect('my-bookings.php');
 }
-$b = mysqli_fetch_assoc($result);
-mysqli_stmt_close($stmt);
 
 $seat_row = intval(substr($b['seat_number'], 0, -1));
 $seat_class = ($seat_row >= 1 && $seat_row <= 2) ? 'Business Class' : 'Economy Class';
@@ -38,11 +31,23 @@ $arr_datetime = $b['travel_date'] . ' ' . $arr_time;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>E-Ticket Boarding Pass - <?php echo $b['booking_ref']; ?></title>
+    <script>
+        // Apply saved/system theme before CSS paints to avoid a flash of the wrong theme.
+        (function () {
+            try { var t = localStorage.getItem('aerobook-theme');
+                if (!t) t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', t);
+            } catch (e) { document.documentElement.setAttribute('data-theme', 'light'); }
+        })();
+    </script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Libre+Barcode+39+Text&family=Outfit:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { background: #eef2f7; font-family: 'Inter', sans-serif; padding: 40px 0; }
+        [data-theme="dark"] body { background: #0b1220; }
+        [data-theme="dark"] .ticket-card { background: #fff; }
+        .ticket-page-toggle { position: fixed; top: 16px; right: 16px; z-index: 50; }
         .ticket-card { max-width: 860px; margin: auto; background: #fff; border-radius: 20px; box-shadow: 0 15px 35px rgba(5, 19, 54, 0.1); overflow: hidden; border: 1px solid #e2e8f0; }
         .ticket-header { background: linear-gradient(135deg, #051336 0%, #0b1f4d 100%); color: #fff; padding: 28px 36px; display: flex; justify-content: space-between; align-items: center; }
         .brand-logo { font-family: 'Outfit', sans-serif; font-size: 26px; font-weight: 800; }
@@ -59,7 +64,7 @@ $arr_datetime = $b['travel_date'] . ' ' . $arr_time;
         .info-cell label { color: #64748b; font-size: 11px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.8px; display: block; margin-bottom: 4px; }
         .info-cell span { font-weight: 700; font-size: 16px; color: #0f172a; }
         .status-badge-confirmed { background: #dcfce7; color: #15803d; padding: 4px 12px; border-radius: 50px; font-size: 12px; font-weight: 700; display: inline-block; }
-        .barcode-section { background: #f8fafc; border-top: 2px dashed #cbd5e1; padding: 24px 36px; display: flex; justify-content: space-between; align-items: center; }
+        .barcode-section { background: #f8fafc; border-top: 2px dashed #cbd5e1; padding: 24px 36px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
         .barcode-font { font-family: 'Libre Barcode 39 Text', cursive; font-size: 46px; line-height: 1; color: #0f172a; }
         .tear-stub-notice { font-size: 12px; color: #64748b; margin: 0; text-align: center; }
         @media print {
@@ -70,13 +75,25 @@ $arr_datetime = $b['travel_date'] . ' ' . $arr_time;
     </style>
 </head>
 <body>
-
-<div class="container text-center mb-4 no-print">
-    <button onclick="window.print()" class="btn btn-primary btn-lg px-5 fw-bold shadow-sm">
-        <i class="bi bi-printer me-2"></i>Print Boarding Pass
+    <button type="button" class="theme-toggle theme-toggle-light ticket-page-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode" aria-pressed="false">
+        <i class="bi bi-moon-stars-fill"></i>
     </button>
-    <a href="my-bookings.php" class="btn btn-outline-secondary btn-lg ms-2 fw-bold">Back to Bookings</a>
-</div>
+    <?php
+    $qr = new AeroQR();
+    $qrDataUri = $qr->bookingQR($b['booking_ref'], 120);
+    $pdf = new AeroPDF();
+    $ics = new AeroICS();
+    $gcalUrl = AeroICS::googleCalLink($b, $b);
+    ?>
+    <div class="container text-center mb-4 no-print">
+        <button onclick="window.print()" class="btn btn-primary btn-lg px-5 fw-bold shadow-sm">
+            <i class="bi bi-printer me-2"></i>Print Boarding Pass
+        </button>
+        <a href="<?php echo $gcalUrl; ?>" target="_blank" class="btn btn-outline-success btn-lg ms-2 fw-bold">
+            <i class="bi bi-calendar-plus me-2"></i>Add to Calendar
+        </a>
+        <a href="my-bookings.php" class="btn btn-outline-secondary btn-lg ms-2 fw-bold">Back to Bookings</a>
+    </div>
 
 <div class="ticket-card">
     <div class="ticket-header">
@@ -152,11 +169,14 @@ $arr_datetime = $b['travel_date'] . ' ' . $arr_time;
         </div>
     </div>
 
-    <!-- Barcode & Gate Pass Stub -->
+    <!-- QR Code + Barcode -->
     <div class="barcode-section">
-        <div>
-            <div class="barcode-font">*<?php echo htmlspecialchars($b['booking_ref']); ?>*</div>
-            <div class="small text-muted fw-semibold mt-1"><i class="bi bi-shield-check me-1 text-success"></i>Verified Electronic Boarding Pass</div>
+        <div class="d-flex align-items-center gap-3">
+            <img src="<?php echo $qrDataUri; ?>" alt="QR" style="width:70px;height:70px;">
+            <div>
+                <div class="barcode-font">*<?php echo htmlspecialchars($b['booking_ref']); ?>*</div>
+                <div class="small text-muted fw-semibold mt-1"><i class="bi bi-shield-check me-1 text-success"></i>Verified Electronic Boarding Pass</div>
+            </div>
         </div>
         <div class="text-end">
             <span class="badge bg-dark text-white px-3 py-2 fs-6">BOARDING TIME: 45 MINS BEFORE DEP</span>
@@ -169,5 +189,6 @@ $arr_datetime = $b['travel_date'] . ' ' . $arr_time;
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="<?php echo asset('js/script.js'); ?>"></script>
 </body>
 </html>

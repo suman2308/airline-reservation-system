@@ -1,29 +1,21 @@
-<?php $pageTitle = 'Flight Details'; require_once 'includes/header.php';
+<?php
+$pageTitle = 'Flight Details';
+require_once 'includes/header.php';
+require_once 'includes/helpers.php';
+
 $id = intval($_GET['id'] ?? 0);
-if ($id <= 0) { $_SESSION['error'] = 'Invalid flight.'; redirect('search-flights.php'); }
-
-$stmt = mysqli_prepare($conn, "SELECT * FROM flights WHERE flight_id = ?");
-mysqli_stmt_bind_param($stmt, "i", $id);
-mysqli_stmt_execute($stmt);
-$result = mysqli_stmt_get_result($stmt);
-
-if (mysqli_num_rows($result) === 0) { 
-    $_SESSION['error'] = 'Flight not found.'; 
-    mysqli_stmt_close($stmt);
-    redirect('search-flights.php'); 
+if ($id <= 0) {
+    setFlash('error', 'Invalid flight.');
+    redirect('search-flights.php');
 }
-$f = mysqli_fetch_assoc($result);
-mysqli_stmt_close($stmt);
 
-$selected_date = $_GET['date'] ?? '';
-if (!empty($selected_date)) {
-    $d = DateTime::createFromFormat('Y-m-d', $selected_date);
-    if (!$d || $d->format('Y-m-d') !== $selected_date) {
-        $selected_date = date('Y-m-d', strtotime($f['departure_time']));
-    }
-} else {
-    $selected_date = date('Y-m-d', strtotime($f['departure_time']));
+$f = getFlightById($id);
+if (!$f) {
+    setFlash('error', 'Flight not found.');
+    redirect('search-flights.php');
 }
+
+$selected_date = validateTravelDate($_GET['date'] ?? '', $f['departure_time']);
 ?>
 <div class="page-header">
     <div class="container">
@@ -37,7 +29,7 @@ if (!empty($selected_date)) {
         <div class="col-lg-8">
             <div class="flight-card">
                 <div class="flight-airline">
-                    <div class="airline-logo" style="width:56px;height:56px;font-size:1.1rem;"><?php echo strtoupper(substr($f['airline_name'],0,2)); ?></div>
+                    <div class="airline-logo" style="width:56px;height:56px;font-size:1.1rem;"><?php echo airlineInitials($f['airline_name']); ?></div>
                     <div><div class="airline-name" style="font-size:1.2rem;"><?php echo htmlspecialchars($f['airline_name']); ?></div><div class="flight-number"><?php echo htmlspecialchars($f['flight_number']); ?> · <?php echo statusBadge($f['status']); ?></div></div>
                 </div>
                 <hr>
@@ -83,4 +75,3 @@ if (!empty($selected_date)) {
     </div>
 </div>
 <?php require_once 'includes/footer.php'; ?>
-

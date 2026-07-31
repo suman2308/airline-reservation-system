@@ -1,0 +1,35 @@
+# Environment
+.env
+.env.local
+.env.production
+
+# Logs
+logs/*.log
+logs/*.log.*
+logs/.htaccess
+
+# Uploads (user-generated content)
+uploads/avatars/*
+uploads/documents/*
+!uploads/avatars/.gitkeep
+!uploads/documents/.gitkeep
+
+# OS files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Editor
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Dependencies (manual install)
+lib/phpmailer/
+lib/tfpdf/
+
+# System
+.freebuff/

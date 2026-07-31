@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: aerobook-app
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+      - ./uploads:/var/www/html/uploads
+      - ./logs:/var/www/html/logs
+    environment:
+      - DB_HOST=db
+      - DB_USER=aerobook
+      - DB_PASS=aerobook_secret
+      - DB_NAME=aerobook_db
+      - IS_DOCKER=true
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - aerobook-net
+    restart: unless-stopped
+
+  db:
+    image: mysql:8.0
+    container_name: aerobook-db
+    ports:
+      - "3307:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_secret
+      - MYSQL_DATABASE=aerobook_db
+      - MYSQL_USER=aerobook
+      - MYSQL_PASSWORD=aerobook_secret
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./database/aerobook.sql:/docker-entrypoint-initdb.d/01-schema.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - aerobook-net
+    restart: unless-stopped
+
+volumes:
+  db-data:
+
+networks:
+  aerobook-net:
+    driver: bridge

@@ -1,36 +1,109 @@
-# AeroBook – Security & Optimization
+# =============================================
+# AeroBook – Apache Configuration
+# Production hardening & performance optimization
+# =============================================
 
-# Prevent directory browsing
-Options -Indexes
+# ─── Security Headers ───
+<IfModule mod_headers.c>
+    # XSS Protection
+    Header always set X-XSS-Protection "1; mode=block"
+    # Prevent MIME-type sniffing
+    Header always set X-Content-Type-Options "nosniff"
+    # Clickjacking protection
+    Header always set X-Frame-Options "SAMEORIGIN"
+    # Referrer policy
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    # Permissions Policy (disallow sensitive features)
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=()"
 
-# Protect configuration and SQL files
-<FilesMatch "\.(php|sql|md)$">
-    Order allow,deny
-    Allow from all
-</FilesMatch>
+    # Content Security Policy (relaxed for CDN resources)
+    <If "%{REQUEST_URI} !~ /admin/">
+        Header always set Content-Security-Policy "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://fonts.googleapis.com 'unsafe-inline'; style-src 'self' https://cdn.jsdelivr.net https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://cdn.jsdelivr.net https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; frame-ancestors 'self'"
+    </If>
 
-<Files "config.php">
-    Order allow,deny
-    Deny from all
-</Files>
-
-<Files "functions.php">
-    Order allow,deny
-    Deny from all
-</Files>
-
-# Note: Above denies direct access but PHP can still include them.
-# For some hosting, Deny from all might be too strict if used for includes.
-# But usually, it works for public HTTP access.
-
-# Set character encoding
-AddDefaultCharset UTF-8
-
-# Error handling
-ErrorDocument 404 /airline-reservation-system/index.php
-ErrorDocument 403 /airline-reservation-system/index.php
-
-# Gzip compression (if available)
-<IfModule mod_deflate.c>
-    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript
+    # HSTS (uncomment when HTTPS is fully configured)
+    # Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
 </IfModule>
+
+# ─── Browser Caching ───
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType text/javascript "access plus 1 year"
+    ExpiresByType application/javascript "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+    ExpiresByType font/woff "access plus 1 year"
+    ExpiresDefault "access plus 1 month"
+</IfModule>
+
+# ─── Compress assets ───
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript text/plain text/xml image/svg+xml application/json
+</IfModule>
+
+# ─── Directory Protection ───
+# Protect sensitive directories
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Block access to includes directory
+    RewriteRule ^includes/ - [F,L]
+
+    # Block access to logs directory
+    RewriteRule ^logs/ - [F,L]
+
+    # Block access to lib/ (PHPMailer, tFPDF)
+    RewriteRule ^lib/ - [F,L]
+
+    # Block access to .sql files
+    RewriteRule \.(sql)$ - [F,L]
+
+    # Block access to .env files
+    RewriteRule \.env - [F,L]
+
+    # Prevent directory listing
+    Options -Indexes
+</IfModule>
+
+# ─── PHP Settings ───
+<IfModule mod_php.c>
+    php_value upload_max_filesize 10M
+    php_value post_max_size 12M
+    php_value max_execution_time 60
+    php_value max_input_time 60
+    php_value session.gc_maxlifetime 1800
+    php_value session.cookie_httponly 1
+    php_value session.use_strict_mode 1
+    php_flag session.use_only_cookies 1
+    php_flag display_errors Off
+    php_flag log_errors On
+</IfModule>
+
+# ─── Error Pages ───
+ErrorDocument 404 /404.php
+ErrorDocument 403 /403.php
+ErrorDocument 500 /500.php
+
+# ─── SEO: Force www/non-www (choose one) ───
+# <IfModule mod_rewrite.c>
+#     RewriteCond %{HTTP_HOST} !^www\. [NC]
+#     RewriteRule ^(.*)$ https://www.%{HTTP_HOST}/$1 [R=301,L]
+# </IfModule>
+
+# ─── SEO: Force HTTPS ───
+# <IfModule mod_rewrite.c>
+#     RewriteCond %{HTTPS} off
+#     RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+# </IfModule>
+
+# ─── Custom 404 handler (create 404.php if needed) ───
+# <IfModule mod_rewrite.c>
+#     RewriteCond %{REQUEST_FILENAME} !-f
+#     RewriteCond %{REQUEST_FILENAME} !-d
+#     RewriteRule ^(.*)$ 404.php [L]
+# </IfModule>

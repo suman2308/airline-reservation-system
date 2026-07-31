@@ -6,7 +6,7 @@
             <div class="row g-4">
                 <div class="col-lg-4 col-md-6">
                     <div class="footer-brand mb-3">
-                        <a href="<?php echo isset($isSubDir) ? '../index.php' : 'index.php'; ?>" class="text-decoration-none d-flex align-items-center">
+                        <a href="<?php echo BASE_URL; ?>" class="text-decoration-none d-flex align-items-center">
                             <i class="bi bi-airplane-engines fs-3 me-2" style="color: #00d4ff;"></i>
                             <span class="brand-text fs-3 text-white fw-bold" style="font-family: var(--font-heading);">Aero<span style="color: #00d4ff;">Book</span></span>
                         </a>
@@ -22,12 +22,12 @@
                 <div class="col-lg-2 col-md-6">
                     <h5 class="footer-heading">Quick Links</h5>
                     <ul class="footer-links">
-                        <li><a href="<?php echo isset($isSubDir) ? '../index.php' : 'index.php'; ?>">Home</a></li>
-                        <li><a href="<?php echo isset($isSubDir) ? '../search-flights.php' : 'search-flights.php'; ?>">Search Flights</a></li>
-                        <li><a href="<?php echo isset($isSubDir) ? '../flight-status.php' : 'flight-status.php'; ?>">Flight Status</a></li>
-                        <li><a href="<?php echo isset($isSubDir) ? '../about.php' : 'about.php'; ?>">About Us</a></li>
-                        <li><a href="<?php echo isset($isSubDir) ? '../contact.php' : 'contact.php'; ?>">Contact</a></li>
-                        <li><a href="<?php echo isset($isSubDir) ? '../admin/login.php' : 'admin/login.php'; ?>">Admin Login</a></li>
+                        <li><a href="<?php echo BASE_URL; ?>index.php">Home</a></li>
+                        <li><a href="<?php echo BASE_URL; ?>search-flights.php">Search Flights</a></li>
+                        <li><a href="<?php echo BASE_URL; ?>flight-status.php">Flight Status</a></li>
+                        <li><a href="<?php echo BASE_URL; ?>about.php">About Us</a></li>
+                        <li><a href="<?php echo BASE_URL; ?>contact.php">Contact</a></li>
+                        <li><a href="<?php echo BASE_URL; ?>admin/login.php">Admin Login</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-6">
@@ -56,9 +56,7 @@
         </div>
     </footer>
 
-    <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Custom JS -->
-    <script src="<?php echo isset($isSubDir) ? '../js/script.js' : 'js/script.js'; ?>"></script>
+    <script src="<?php echo BASE_URL; ?>js/script.js"></script>
 </body>
 </html>

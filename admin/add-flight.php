@@ -1,11 +1,11 @@
-<?php 
-$pageTitle = 'Add Flight'; 
+<?php
+$pageTitle = 'Add Flight';
 require_once __DIR__ . '/includes/admin-header.php';
+require_once __DIR__ . '/../../includes/helpers.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // CSRF Validation
     if (!validateCSRFToken($_POST['csrf_token'] ?? '')) {
-        $_SESSION['error'] = 'Invalid request.';
+        setFlash('error', 'Invalid request.');
         redirect(BASE_URL . 'admin/add-flight.php');
     }
 
@@ -19,18 +19,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $price = floatval($_POST['price']);
 
     if (empty($flight_number) || empty($airline_name) || $source === $destination) {
-        $_SESSION['error'] = 'Please fill all fields correctly. Source and destination cannot be the same.';
+        setFlash('error', 'Please fill all fields correctly. Source and destination cannot be the same.');
+    } elseif (flightNumberExists($flight_number)) {
+        setFlash('error', 'Flight number already exists.');
     } else {
-        $stmt = mysqli_prepare($conn, "INSERT INTO flights (flight_number, airline_name, source, destination, departure_time, arrival_time, total_seats, seats_available, price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        mysqli_stmt_bind_param($stmt, "ssssssiid", $flight_number, $airline_name, $source, $destination, $departure_time, $arrival_time, $total_seats, $total_seats, $price);
-        
-        if (mysqli_stmt_execute($stmt)) {
-            $_SESSION['success'] = 'Flight ' . $flight_number . ' added successfully!';
-            redirect(BASE_URL . 'admin/manage-flights.php');
-        } else {
-            $_SESSION['error'] = 'Failed to add flight. Might be a duplicate flight number.';
-        }
-        mysqli_stmt_close($stmt);
+        dbInsert(
+            "INSERT INTO flights (flight_number, airline_name, source, destination, departure_time, arrival_time, total_seats, seats_available, price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "ssssssiid",
+            $flight_number, $airline_name, $source, $destination, $departure_time, $arrival_time, $total_seats, $total_seats, $price
+        );
+        logAdminAction($_SESSION['admin_id'], 'create_flight', "Added flight $flight_number ($source→$destination)");
+        setFlash('success', 'Flight ' . $flight_number . ' added successfully!');
+        redirect(BASE_URL . 'admin/manage-flights.php');
     }
 }
 ?>
@@ -60,16 +60,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <label class="form-label">Source City</label>
                             <select name="source" class="form-select" required>
                                 <option value="">Select Origin</option>
-                                <option>Delhi</option><option>Mumbai</option><option>Bangalore</option>
-                                <option>Kolkata</option><option>Chennai</option><option>Hyderabad</option><option>Pune</option>
+                                <?php cityOptions(); ?>
                             </select>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Destination City</label>
                             <select name="destination" class="form-select" required>
                                 <option value="">Select Destination</option>
-                                <option>Delhi</option><option>Mumbai</option><option>Bangalore</option>
-                                <option>Kolkata</option><option>Chennai</option><option>Hyderabad</option><option>Pune</option>
+                                <?php cityOptions(); ?>
                             </select>
                         </div>
                     </div>

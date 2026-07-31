@@ -30,24 +30,24 @@
             </div>
         </div>
     </div>
-    
+
     <div class="row mt-5 pt-5 text-center">
         <div class="col-md-4">
-            <div class="p-4 border rounded-4 bg-white h-100 shadow-sm">
+            <div class="p-4 border rounded-4 bg-white h-100 shadow-sm card-hover">
                 <i class="bi bi-eye fs-1 text-accent mb-3"></i>
                 <h3 class="h4">Our Vision</h3>
                 <p class="text-muted mb-0">To be India's most loved and reliable travel companion, connecting people and places effortlessly.</p>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="p-4 border rounded-4 bg-white h-100 shadow-sm">
+            <div class="p-4 border rounded-4 bg-white h-100 shadow-sm card-hover">
                 <i class="bi bi-bullseye fs-1 text-accent mb-3"></i>
                 <h3 class="h4">Our Mission</h3>
                 <p class="text-muted mb-0">Providing a transparent, fast, and secure booking platform that empowers travelers with choice and convenience.</p>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="p-4 border rounded-4 bg-white h-100 shadow-sm">
+            <div class="p-4 border rounded-4 bg-white h-100 shadow-sm card-hover">
                 <i class="bi bi-heart fs-1 text-accent mb-3"></i>
                 <h3 class="h4">Our Values</h3>
                 <p class="text-muted mb-0">Transparency, innovation, and customer-first approach are the core principles that drive us forward.</p>

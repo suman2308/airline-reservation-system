@@ -1,6 +1,7 @@
-<?php 
-$pageTitle = 'Live Flight Status'; 
+<?php
+$pageTitle = 'Live Flight Status';
 require_once 'includes/header.php';
+require_once 'includes/helpers.php';
 
 $flight_query = trim($_GET['flight_no'] ?? '');
 $route_source = trim($_GET['source'] ?? '');
@@ -11,21 +12,24 @@ $searched = false;
 
 if (!empty($flight_query) || (!empty($route_source) && !empty($route_dest))) {
     $searched = true;
-    
+
     if (!empty($flight_query)) {
-        $stmt = mysqli_prepare($conn, "SELECT * FROM flights WHERE flight_number LIKE ? OR airline_name LIKE ? ORDER BY departure_time ASC LIMIT 5");
         $param = '%' . $flight_query . '%';
+        $stmt = mysqli_prepare($conn, "SELECT * FROM flights WHERE flight_number LIKE ? OR airline_name LIKE ? ORDER BY departure_time ASC LIMIT 5");
         mysqli_stmt_bind_param($stmt, "ss", $param, $param);
     } else {
         $stmt = mysqli_prepare($conn, "SELECT * FROM flights WHERE source=? AND destination=? ORDER BY departure_time ASC LIMIT 5");
         mysqli_stmt_bind_param($stmt, "ss", $route_source, $route_dest);
     }
-    
+
     mysqli_stmt_execute($stmt);
     $res = mysqli_stmt_get_result($stmt);
     $flight_status_data = mysqli_fetch_all($res, MYSQLI_ASSOC);
     mysqli_stmt_close($stmt);
 }
+
+$terminals = ['T1 (Gate A12)', 'T2 (Gate B08)', 'T3 (Gate C22)'];
+$belts = ['Baggage Belt 04', 'Baggage Belt 07', 'Baggage Belt 02'];
 ?>
 
 <div class="page-header text-center">
@@ -51,11 +55,10 @@ if (!empty($flight_query) || (!empty($route_source) && !empty($route_dest))) {
                 <button class="nav-link fw-bold" id="by-route-tab" data-bs-toggle="pill" data-bs-target="#by-route" type="button"><i class="bi bi-geo-alt me-2"></i>Search by Route</button>
             </li>
         </ul>
-        
+
         <div class="tab-content" id="statusTabContent">
-            <!-- Search by Flight Number -->
             <div class="tab-pane fade show active" id="by-flight" role="tabpanel">
-                <form action="flight-status.php" method="GET" class="row g-3 align-items-center">
+                <form action="flight-status.php" method="GET" class="row g-3 align-items-center needs-loading">
                     <div class="col-md-9">
                         <div class="input-group input-group-lg">
                             <span class="input-group-text bg-light text-muted border-end-0"><i class="bi bi-search"></i></span>
@@ -68,29 +71,18 @@ if (!empty($flight_query) || (!empty($route_source) && !empty($route_dest))) {
                 </form>
             </div>
 
-            <!-- Search by Route -->
             <div class="tab-pane fade" id="by-route" role="tabpanel">
-                <form action="flight-status.php" method="GET" class="row g-3 align-items-center">
+                <form action="flight-status.php" method="GET" class="row g-3 align-items-center needs-loading">
                     <div class="col-md-4">
                         <select name="source" class="form-select form-select-lg" required>
                             <option value="">Origin Airport</option>
-                            <option <?php echo $route_source === 'Delhi' ? 'selected' : ''; ?>>Delhi</option>
-                            <option <?php echo $route_source === 'Mumbai' ? 'selected' : ''; ?>>Mumbai</option>
-                            <option <?php echo $route_source === 'Bangalore' ? 'selected' : ''; ?>>Bangalore</option>
-                            <option <?php echo $route_source === 'Kolkata' ? 'selected' : ''; ?>>Kolkata</option>
-                            <option <?php echo $route_source === 'Chennai' ? 'selected' : ''; ?>>Chennai</option>
-                            <option <?php echo $route_source === 'Hyderabad' ? 'selected' : ''; ?>>Hyderabad</option>
+                            <?php cityOptions($route_source); ?>
                         </select>
                     </div>
                     <div class="col-md-4">
                         <select name="destination" class="form-select form-select-lg" required>
                             <option value="">Destination Airport</option>
-                            <option <?php echo $route_dest === 'Delhi' ? 'selected' : ''; ?>>Delhi</option>
-                            <option <?php echo $route_dest === 'Mumbai' ? 'selected' : ''; ?>>Mumbai</option>
-                            <option <?php echo $route_dest === 'Bangalore' ? 'selected' : ''; ?>>Bangalore</option>
-                            <option <?php echo $route_dest === 'Kolkata' ? 'selected' : ''; ?>>Kolkata</option>
-                            <option <?php echo $route_dest === 'Chennai' ? 'selected' : ''; ?>>Chennai</option>
-                            <option <?php echo $route_dest === 'Hyderabad' ? 'selected' : ''; ?>>Hyderabad</option>
+                            <?php cityOptions($route_dest); ?>
                         </select>
                     </div>
                     <div class="col-md-4">
@@ -101,44 +93,35 @@ if (!empty($flight_query) || (!empty($route_source) && !empty($route_dest))) {
         </div>
     </div>
 
-    <!-- Search Results -->
     <?php if ($searched): ?>
         <?php if (!empty($flight_status_data)): ?>
             <h4 class="fw-bold mb-4 d-flex align-items-center gap-2">
                 <i class="bi bi-clock-history text-accent"></i> Real-time Flight Status Results (<?php echo count($flight_status_data); ?>)
             </h4>
-            
-            <?php foreach ($flight_status_data as $flight): 
-                $terminals = ['T1 (Gate A12)', 'T2 (Gate B08)', 'T3 (Gate C22)'];
-                $belts = ['Baggage Belt 04', 'Baggage Belt 07', 'Baggage Belt 02'];
+
+            <?php foreach ($flight_status_data as $flight):
                 $random_t = $terminals[$flight['flight_id'] % 3];
                 $random_b = $belts[$flight['flight_id'] % 3];
                 $st = $flight['status'];
-                
-                $status_class = 'bg-success';
-                if ($st === 'Delayed') $status_class = 'bg-warning text-dark';
-                elseif ($st === 'Cancelled') $status_class = 'bg-danger';
+                $status_class = ($st === 'Delayed') ? 'bg-warning text-dark' : (($st === 'Cancelled') ? 'bg-danger' : 'bg-success');
             ?>
             <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
                 <div class="card-header bg-primary text-white p-3 d-flex justify-content-between align-items-center">
                     <div class="d-flex align-items-center gap-3">
                         <div class="airline-logo bg-white text-primary rounded-circle fw-bold d-flex align-items-center justify-content-center" style="width: 44px; height: 44px; font-size: 1.1rem;">
-                            <?php echo strtoupper(substr($flight['airline_name'], 0, 2)); ?>
+                            <?php echo airlineInitials($flight['airline_name']); ?>
                         </div>
                         <div>
                             <h5 class="mb-0 fw-bold"><?php echo htmlspecialchars($flight['airline_name']); ?> (<?php echo htmlspecialchars($flight['flight_number']); ?>)</h5>
                             <small class="text-white-50">Airbus A320neo · Live Tracking Active</small>
                         </div>
                     </div>
-                    <div>
-                        <span class="badge <?php echo $status_class; ?> px-3 py-2 fs-6 rounded-pill fw-bold">
-                            <i class="bi bi-check-circle me-1"></i><?php echo strtoupper($st); ?>
-                        </span>
-                    </div>
+                    <span class="badge <?php echo $status_class; ?> px-3 py-2 fs-6 rounded-pill fw-bold">
+                        <i class="bi bi-check-circle me-1"></i><?php echo strtoupper($st); ?>
+                    </span>
                 </div>
-                
+
                 <div class="card-body p-4">
-                    <!-- Timeline Visual -->
                     <div class="row align-items-center mb-4">
                         <div class="col-md-4 text-center text-md-start mb-3 mb-md-0">
                             <span class="badge bg-light text-muted border px-2 py-1 mb-1">Departure</span>
@@ -164,7 +147,6 @@ if (!empty($flight_query) || (!empty($route_source) && !empty($route_dest))) {
                         </div>
                     </div>
 
-                    <!-- Operational Specs Grid -->
                     <div class="row g-3 pt-3 border-top bg-light rounded-3 p-3 text-center">
                         <div class="col-6 col-md-3 border-end">
                             <small class="text-muted d-block uppercase-label">Available Seats</small>
@@ -194,53 +176,30 @@ if (!empty($flight_query) || (!empty($route_source) && !empty($route_dest))) {
             </div>
         <?php endif; ?>
     <?php else: ?>
-        <!-- Default Popular Status Quick Cards -->
         <h4 class="fw-bold mb-4"><i class="bi bi-lightning-charge me-2 text-accent"></i>Live Operations Overview Today</h4>
         <div class="row g-4">
+            <?php
+            $sample_flights = [
+                ['IndiGo', '6E-502', 'Delhi (DEL)', 'Mumbai (BOM)', '08:30 AM', '10:45 AM', 'ON TIME', 'bg-success-subtle text-success border-success', 'Terminal 3 (Gate A4)', 'Belt B-02'],
+                ['Air India', 'AI-204', 'Mumbai (BOM)', 'Bangalore (BLR)', '11:15 AM', '01:00 PM', 'BOARDING', 'bg-success-subtle text-success border-success', 'Terminal 2 (Gate B12)', 'Belt B-05'],
+                ['Vistara', 'UK-810', 'Kolkata (CCU)', 'Delhi (DEL)', '02:00 PM', '04:25 PM', 'IN AIR', 'bg-info-subtle text-info border-info', 'Terminal 1 (Gate C01)', 'Belt B-01'],
+            ];
+            foreach ($sample_flights as $sf): ?>
             <div class="col-md-4">
                 <div class="card border-0 shadow-sm rounded-4 p-4 h-100 hover-lift">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span class="badge bg-primary text-white">IndiGo · 6E-502</span>
-                        <span class="badge bg-success-subtle text-success border border-success fw-bold">ON TIME</span>
+                        <span class="badge bg-primary text-white"><?php echo $sf[0]; ?> · <?php echo $sf[1]; ?></span>
+                        <span class="badge <?php echo $sf[5]; ?> fw-bold"><?php echo $sf[4]; ?></span>
                     </div>
-                    <h5 class="fw-bold mb-1">Delhi (DEL) → Mumbai (BOM)</h5>
-                    <p class="text-muted small mb-3"><i class="bi bi-clock me-1"></i>Dep: 08:30 AM | Arr: 10:45 AM</p>
+                    <h5 class="fw-bold mb-1"><?php echo $sf[2]; ?> → <?php echo $sf[3]; ?></h5>
+                    <p class="text-muted small mb-3"><i class="bi bi-clock me-1"></i>Dep: <?php echo $sf[6]; ?> | Arr: <?php echo $sf[7]; ?></p>
                     <div class="d-flex justify-content-between align-items-center small border-top pt-2 text-muted">
-                        <span>Terminal 3 (Gate A4)</span>
-                        <span>Belt B-02</span>
+                        <span><?php echo $sf[8]; ?></span>
+                        <span><?php echo $sf[9]; ?></span>
                     </div>
                 </div>
             </div>
-
-            <div class="col-md-4">
-                <div class="card border-0 shadow-sm rounded-4 p-4 h-100 hover-lift">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span class="badge bg-primary text-white">Air India · AI-204</span>
-                        <span class="badge bg-success-subtle text-success border border-success fw-bold">BOARDING</span>
-                    </div>
-                    <h5 class="fw-bold mb-1">Mumbai (BOM) → Bangalore (BLR)</h5>
-                    <p class="text-muted small mb-3"><i class="bi bi-clock me-1"></i>Dep: 11:15 AM | Arr: 01:00 PM</p>
-                    <div class="d-flex justify-content-between align-items-center small border-top pt-2 text-muted">
-                        <span>Terminal 2 (Gate B12)</span>
-                        <span>Belt B-05</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="card border-0 shadow-sm rounded-4 p-4 h-100 hover-lift">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span class="badge bg-primary text-white">Vistara · UK-810</span>
-                        <span class="badge bg-info-subtle text-info border border-info fw-bold">IN AIR</span>
-                    </div>
-                    <h5 class="fw-bold mb-1">Kolkata (CCU) → Delhi (DEL)</h5>
-                    <p class="text-muted small mb-3"><i class="bi bi-clock me-1"></i>Dep: 02:00 PM | Arr: 04:25 PM</p>
-                    <div class="d-flex justify-content-between align-items-center small border-top pt-2 text-muted">
-                        <span>Terminal 1 (Gate C01)</span>
-                        <span>Belt B-01</span>
-                    </div>
-                </div>
-            </div>
+            <?php endforeach; ?>
         </div>
     <?php endif; ?>
 </div>
