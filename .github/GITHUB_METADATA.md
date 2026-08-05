@@ -65,7 +65,7 @@ AeroBook v{major}.{minor}.{patch} — {Feature Name}
 
 | Environment | URL |
 |-------------|-----|
-| Production | https://aerobook.onrender.com/ (after Render deploy) |
+| Production | https://aerobook-2snu.onrender.com/ |
 | Docker Dev | http://localhost:8080 |
 | Local Dev | http://localhost/airline-reservation-system |
 

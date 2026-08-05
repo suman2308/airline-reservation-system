@@ -45,7 +45,7 @@ Deploy AeroBook to [Render](https://render.com) as a Docker web service. The rep
 3. Connect your GitHub account → select `suman2308/airline-reservation-system`.
 4. Render detects `render.yaml` and shows the `aerobook` web service. Click **Apply** — all DB values are pre-filled for all-in-one mode.
 5. *(Optional)* To use external persistent MySQL instead, override in the dashboard: `DB_HOST` (`host:port`), `DB_USER`, `DB_PASS`, `DB_NAME`, and set `AVIATIONSTACK_API_KEY` if you have one.
-6. Wait for the build + deploy. Verify `https://aerobook.onrender.com/health.php` → `{"status":"ok",...}`.
+6. Wait for the build + deploy. Verify `https://aerobook-2snu.onrender.com/health.php` → `{"status":"ok",...}`.
 
 ---
 
@@ -90,9 +90,9 @@ Render terminates TLS at its proxy, so PHP never sees `HTTPS=on` — the app's `
 
 | Check | URL |
 |---|---|
-| App + DB healthy | `https://aerobook.onrender.com/health.php` |
-| Site styled correctly | `https://aerobook.onrender.com/` |
-| Admin panel | `https://aerobook.onrender.com/admin/login.php` → `admin` / `admin123` (change immediately) |
+| App + DB healthy | `https://aerobook-2snu.onrender.com/health.php` |
+| Site styled correctly | `https://aerobook-2snu.onrender.com/` |
+| Admin panel | `https://aerobook-2snu.onrender.com/admin/login.php` → `admin` / `admin123` (change immediately) |
 | Flight search | Homepage → search a route (weekday schedule Aug 2–8) |
 | Secure cookies | DevTools → Application → Cookies → `Secure` flag set on session cookie |
 

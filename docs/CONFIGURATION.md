@@ -26,7 +26,7 @@ DB_NAME=aerobook_db         # MySQL database name
 
 ```env
 BASE_URL=http://localhost/airline-reservation-system/   # local development
-# Render: BASE_URL=https://aerobook.onrender.com/ (or leave empty — auto-detected)
+# Render: BASE_URL=https://aerobook-2snu.onrender.com/ (or leave empty — auto-detected)
 SITE_NAME=AeroBook
 SITE_TAGLINE="Smart, Fast and Easy Flight Booking Platform"
 ```

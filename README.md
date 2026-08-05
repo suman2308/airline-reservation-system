@@ -438,7 +438,7 @@ AeroBook ships a `render.yaml` Blueprint + **all-in-one `Dockerfile`** for one-c
 1. Push this repo to GitHub → **dashboard.render.com/blueprints → New Blueprint Instance**.
 2. Select this repository — Render reads `render.yaml` automatically.
 3. Click **Apply**. The container boots a bundled MariaDB, creates the `aerobook_db` database, and seeds `database/aerobook.sql` automatically on first boot (see `docker/entrypoint.sh`).
-4. Verify `https://your-app.onrender.com/health.php` returns `{"status":"ok",...}`.
+4. Verify `https://aerobook-2snu.onrender.com/health.php` returns `{"status":"ok",...}`.
 
 > ⚠️ **Free-tier note:** Render free instances have an **ephemeral filesystem** — runtime data (users, bookings) resets on every restart/redeploy and the DB is re-seeded fresh. This is ideal for demos and submissions. For persistent data, override `DB_HOST`/`DB_USER`/`DB_PASS`/`DB_NAME` to an external MySQL (see [docs/DEPLOY_RENDER.md](docs/DEPLOY_RENDER.md)).
 
