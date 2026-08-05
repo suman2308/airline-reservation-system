@@ -27,7 +27,6 @@ services:
     plan: free          # or starter (always-on)
     region: singapore   # pick closest to your users
     dockerfilePath: ./Dockerfile
-    port: 80            # matches EXPOSE 80 in the Dockerfile
     healthCheckPath: /health.php
     envVars:
       # ─── Bundled MariaDB (all-in-one). Override to point at external MySQL. ───
