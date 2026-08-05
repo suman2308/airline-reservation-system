@@ -12,8 +12,8 @@
 
 class AeroPDF {
     private $outputDir;
-    private $brandColor = '#024dec';
-    private $darkBg = '#051336';
+    private $brandColor = '#202A36';
+    private $darkBg = '#202A36';
 
     public function __construct() {
         $this->outputDir = __DIR__ . '/../uploads/documents';
@@ -72,24 +72,24 @@ class AeroPDF {
         return <<<HTML
 <!DOCTYPE html><html><head><meta charset="UTF-8">
 <style>
-body{font-family:'Inter','Helvetica',sans-serif;margin:0;padding:20px;background:#f4f7fb}
+body{font-family:'Inter','Helvetica',sans-serif;margin:0;padding:20px;background:#F4F6F9}
 .boarding-pass{max-width:800px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.1)}
 .header{background:{$this->darkBg};color:#fff;padding:20px 30px;display:flex;justify-content:space-between;align-items:center}
-.header h1{margin:0;font-size:20px}.header span{color:#00d4ff;font-size:12px}
+.header h1{margin:0;font-size:20px}.header span{color:#A7B4C2;font-size:12px}
 .body{padding:30px}.route{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
 .city{font-size:28px;font-weight:800;color:{$this->darkBg}}
 .arrow{color:{$this->brandColor};font-size:24px}.details{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px}
-.detail label{font-size:10px;color:#94a3b8;text-transform:uppercase;font-weight:600;display:block}
+.detail label{font-size:10px;color:#6B7280;text-transform:uppercase;font-weight:600;display:block}
 .detail .value{font-size:16px;font-weight:700;color:{$this->darkBg};margin-top:2px}
-.footer{background:#f8fafc;padding:16px 30px;font-size:11px;color:#94a3b8;text-align:center;border-top:2px dashed #e2e8f0}
+.footer{background:#F3F4F6;padding:16px 30px;font-size:11px;color:#6B7280;text-align:center;border-top:2px dashed #E5E7EB}
 </style></head><body>
 <div class="boarding-pass">
 <div class="header"><div><h1>✈️ Boarding Pass</h1><span>{$al} · {$fn}</span></div><div><span style="font-size:18px;font-weight:700">{$src}</span></div></div>
 <div class="body">
 <div class="route">
-<div><div class="city">{$src}</div><div style="font-size:12px;color:#586985">Boarding</div></div>
+<div><div class="city">{$src}</div><div style="font-size:12px;color:#4B5563">Boarding</div></div>
 <div class="arrow">——— ✈ ———</div>
-<div><div class="city" style="text-align:right">{$dst}</div><div style="font-size:12px;color:#586985;text-align:right">Arrival</div></div>
+<div><div class="city" style="text-align:right">{$dst}</div><div style="font-size:12px;color:#4B5563;text-align:right">Arrival</div></div>
 </div>
 <div class="details">
 <div><label>Passenger</label><div class="value">{$passenger}</div></div>
@@ -129,17 +129,17 @@ HTML;
         return <<<HTML
 <!DOCTYPE html><html><head><meta charset="UTF-8">
 <style>
-body{font-family:'Inter','Helvetica',sans-serif;margin:0;padding:20px;background:#f4f7fb}
+body{font-family:'Inter','Helvetica',sans-serif;margin:0;padding:20px;background:#F4F6F9}
 .invoice{max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.1)}
 .head{background:{$this->darkBg};color:#fff;padding:20px 30px}
-.head h1{margin:0;font-size:20px}.head small{color:#00d4ff}
+.head h1{margin:0;font-size:20px}.head small{color:#A7B4C2}
 .body{padding:30px}
 table{width:100%;border-collapse:collapse;margin:16px 0}
-th{background:#f8fafc;padding:8px;font-size:11px;text-transform:uppercase;color:#586985;text-align:left}
-td{padding:8px;border-bottom:1px solid #e2e8f0;font-size:14px}
+th{background:#F3F4F6;padding:8px;font-size:11px;text-transform:uppercase;color:#4B5563;text-align:left}
+td{padding:8px;border-bottom:1px solid #E5E7EB;font-size:14px}
 .total td{border-bottom:none;font-weight:700;font-size:16px}
-.meta{font-size:13px;color:#586985;margin-bottom:16px}
-.footer{text-align:center;padding:16px;font-size:11px;color:#94a3b8}
+.meta{font-size:13px;color:#4B5563;margin-bottom:16px}
+.footer{text-align:center;padding:16px;font-size:11px;color:#6B7280}
 </style></head><body>
 <div class="invoice">
 <div class="head"><h1>🧾 Invoice</h1><small>Booking Ref: AB-{$ref}</small></div>
@@ -148,7 +148,7 @@ td{padding:8px;border-bottom:1px solid #e2e8f0;font-size:14px}
 <table><tr><th>Description</th><th>Route</th><th>Qty</th><th>Amount</th></tr>{$itemRows}
 <tr class="total"><td colspan="3" style="text-align:right">Total</td><td style="text-align:right">{$totalFormatted}</td></tr>
 </table>
-<p style="font-size:12px;color:#94a3b8;margin-top:16px">Payment Status: Paid · Taxes included in fare.</p>
+<p style="font-size:12px;color:#6B7280;margin-top:16px">Payment Status: Paid · Taxes included in fare.</p>
 </div>
 <div class="footer">AeroBook · Thank you for flying with us!</div>
 </div></body></html>
@@ -178,16 +178,16 @@ HTML;
         return <<<HTML
 <!DOCTYPE html><html><head><meta charset="UTF-8">
 <style>
-body{font-family:'Inter','Helvetica',sans-serif;margin:0;padding:20px;background:#f4f7fb}
+body{font-family:'Inter','Helvetica',sans-serif;margin:0;padding:20px;background:#F4F6F9}
 .summary{max-width:700px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.1)}
 .head{background:{$this->darkBg};color:#fff;padding:20px 30px}
 .head h1{margin:0;font-size:20px}
 .body{padding:30px}
 table{width:100%;border-collapse:collapse;margin:16px 0}
-th{background:#f8fafc;padding:8px;font-size:11px;text-transform:uppercase;color:#586985;text-align:left}
-td{padding:8px;border-bottom:1px solid #e2e8f0;font-size:13px}
+th{background:#F3F4F6;padding:8px;font-size:11px;text-transform:uppercase;color:#4B5563;text-align:left}
+td{padding:8px;border-bottom:1px solid #E5E7EB;font-size:13px}
 .total td{border-bottom:none;font-weight:700;font-size:16px}
-.footer{text-align:center;padding:16px;font-size:11px;color:#94a3b8}
+.footer{text-align:center;padding:16px;font-size:11px;color:#6B7280}
 </style></head><body>
 <div class="summary">
 <div class="head"><h1>📋 Trip Summary</h1><small>Ref: AB-{$ref}</small></div>

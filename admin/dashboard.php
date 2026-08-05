@@ -1,7 +1,7 @@
 <?php
 $pageTitle = 'Operations Center';
 require_once __DIR__ . '/includes/admin-header.php';
-require_once __DIR__ . '/../../includes/helpers.php';
+require_once __DIR__ . '/../includes/helpers.php';
 
 $adminId = $_SESSION['admin_id'];
 $metrics = getTodayOpsMetrics();
@@ -18,8 +18,12 @@ $alertFlights = mysqli_query($conn, "SELECT flight_number, source, destination, 
 <div class="row mb-3">
     <div class="col-12">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-            <div><h4 class="fw-bold mb-0"><i class="bi bi-speedometer2 me-2 text-accent"></i>Operations Center</h4><small class="text-muted"><?php echo date('l, d M Y h:i A'); ?> · Server: <?php echo phpversion(); ?></small></div>
-            <div><a href="diagnostics.php" class="btn btn-sm btn-outline-secondary"><i class="bi bi-activity me-1"></i>System Status</a></div>
+            <div>
+                <span class="kicker"><i class="bi bi-speedometer2 me-1"></i> Operations Center</span>
+                <h4 class="fw-bold mb-0 mt-1">Today's <span class="text-muted">Operations</span></h4>
+                <small class="text-muted"><?php echo date('l, d M Y h:i A'); ?> · Server: <?php echo phpversion(); ?></small>
+            </div>
+            <div><a href="diagnostics.php" class="btn btn-sm btn-outline-accent rounded-pill px-3"><i class="bi bi-activity me-1"></i>System Status</a></div>
         </div>
     </div>
 </div>

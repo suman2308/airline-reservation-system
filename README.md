@@ -32,9 +32,9 @@
 | **Travel Hub Dashboard** | ✅ Stats + milestones | ❌ | ✅ |
 | **Email Integration** | ✅ PHPMailer | ❌ | ✅ |
 | **Payment** | ✅ Demo (Simulated) | ❌ | ✅ |
-| **Admin Operations Center** | ✅ 16-page panel | ❌ Basic CRUD | ✅ |
+| **Admin Operations Center** | ✅ 14-page panel | ❌ Basic CRUD | ✅ |
 | **Airline Analytics** | ✅ Revenue + trends | ❌ | ✅ |
-| **CSV Reports** | ✅ 5 report types | ❌ | ✅ |
+| **CSV Reports** | ✅ 6 report types | ❌ | ✅ |
 | **Activity Log / Audit Trail** | ✅ Search + filter | ❌ | ✅ |
 | **Docker Support** | ✅ docker-compose | ❌ | ✅ |
 | **Shared Hosting Compatible** | ✅ Zero dependencies | ✅ | ❌ |
@@ -159,7 +159,7 @@ graph LR
         DOCS["docs/ ⬜"]
         UPLOADS["uploads/ ⬜"]
         LOGS["logs/ ⬜"]
-        DOCKER["Dockerfile, docker-compose.yml ⬜"]
+        DOCKER["Dockerfile, docker-compose.yml, render.yaml ⬜"]
         CFG[".htaccess, .env.example ⬜"]
     end
 
@@ -390,6 +390,9 @@ MAIL_ENCRYPTION=tls
 | **Flight Management** | CRUD + search + status/airline/route filters + occupancy progress bars |
 | **Seat Management** | Per-flight seat count and status updates |
 | **Booking Management** | Search, status filter, confirmed/cancelled stat badges, admin cancellation |
+| **User Management** | Search, view, and delete user accounts |
+| **Support Queries** | Review and manage contact-form submissions from the site |
+| **Data Synchronization** | One-click live data sync from AviationStack (airports, airlines, flights) with status + logs |
 
 ### 🔌 Integrations
 
@@ -402,6 +405,7 @@ MAIL_ENCRYPTION=tls
 | **ICS Calendar** | ✅ Complete | RFC 5545 ICS + Google Calendar links |
 | **In-App Notifications** | ✅ Complete | Create, fetch, mark read, header dropdown, center page |
 | **Avatar Upload** | ✅ Complete | MIME via finfo, WebP, dimension/size validation |
+| **AviationStack (Live Data)** | ✅ Complete | Optional API key; syncs airports/airlines/flights into `aviation_*` tables |
 
 ---
 
@@ -411,7 +415,7 @@ MAIL_ENCRYPTION=tls
 |-------|-----------|
 | **Frontend** | HTML5, CSS3 (Variables, Flexbox/Grid, Animations), Bootstrap 5.3, Bootstrap Icons, Vanilla JS (ES6+) |
 | **Backend** | PHP 8.0+ (Prepared Statements, Sessions, CSRF, Transactions) |
-| **Database** | MySQL 8.0 / MariaDB (InnoDB, Foreign Keys, 13 Indexes) |
+| **Database** | MySQL 8.0 / MariaDB (InnoDB, Foreign Keys, 10 Indexes) |
 | **Server** | Apache 2.4+ (mod_rewrite, mod_headers, mod_expires) |
 | **Payments** | Demo Payment (Test Mode, cURL) |
 | **Email** | PHPMailer (SMTP, optional) |
@@ -429,12 +433,14 @@ MAIL_ENCRYPTION=tls
 
 ### Deploy on Render (recommended)
 
-AeroBook ships a `render.yaml` Blueprint + `Dockerfile` for one-click deployment on [Render](https://render.com):
+AeroBook ships a `render.yaml` Blueprint + **all-in-one `Dockerfile`** for one-click deployment on [Render](https://render.com) — **no external database required**:
 
 1. Push this repo to GitHub → **dashboard.render.com/blueprints → New Blueprint Instance**.
 2. Select this repository — Render reads `render.yaml` automatically.
-3. Provide your external MySQL credentials (`DB_HOST`, `DB_USER`, `DB_PASS`, `DB_NAME`). Render doesn't offer managed MySQL — see [docs/DEPLOY_RENDER.md](docs/DEPLOY_RENDER.md) for free MySQL options.
-4. Click **Apply** → verify `https://aerobook.onrender.com/health.php` returns `{"status":"ok",...}`.
+3. Click **Apply**. The container boots a bundled MariaDB, creates the `aerobook_db` database, and seeds `database/aerobook.sql` automatically on first boot (see `docker/entrypoint.sh`).
+4. Verify `https://your-app.onrender.com/health.php` returns `{"status":"ok",...}`.
+
+> ⚠️ **Free-tier note:** Render free instances have an **ephemeral filesystem** — runtime data (users, bookings) resets on every restart/redeploy and the DB is re-seeded fresh. This is ideal for demos and submissions. For persistent data, override `DB_HOST`/`DB_USER`/`DB_PASS`/`DB_NAME` to an external MySQL (see [docs/DEPLOY_RENDER.md](docs/DEPLOY_RENDER.md)).
 
 ### Standard Installation
 
@@ -472,10 +478,30 @@ docker-compose up -d --build
 
 ---
 
+## 🧪 Automated Tests
+
+AeroBook ships a dependency-free smoke test suite (`tests/smoke.php`) — no PHPUnit or Composer required. It verifies page availability, auth guards, admin + user login, registration, flight search, booking validation, and database integrity.
+
+```bash
+# Start the dev server first
+php -S 127.0.0.1:8080
+
+# Run the suite (pass your server URL)
+php tests/smoke.php http://127.0.0.1:8080
+```
+
+Exit code `0` = all green, `1` = failures. The suite creates and cleans up its own test user, so it never pollutes your data.
+
 ## 📸 Screenshots
 
-<!-- Screenshots will be placed here in a future update. See screenshots/ directory. -->
-> 🖼️ Screenshots coming soon. Install locally or via Docker to explore the full interface.
+<p align="center">
+  <img src="screenshots/landing.png" alt="AeroBook landing page" width="48%"/>
+  <img src="screenshots/fare-results.png" alt="Smart Fare Engine results" width="48%"/>
+</p>
+<p align="center">
+  <img src="screenshots/login.png" alt="User login" width="48%"/>
+  <img src="screenshots/admin-login.png" alt="Admin login" width="48%"/>
+</p>
 
 ---
 
@@ -499,7 +525,7 @@ docker-compose up -d --build
 
 ## 🗺️ Roadmap
 
-- [ ] Automated test suite (PHPUnit)
+- [x] Automated smoke test suite (`tests/smoke.php` — dependency-free)
 - [ ] REST API for flight search and booking
 - [ ] Multi-language support (i18n)
 - [ ] Email price watch alerts
@@ -531,7 +557,7 @@ Distributed under the MIT License. See [LICENSE](LICENSE).
 
 ## 🙏 Credits
 
-- **Bootstrap 5** • **Bootstrap Icons** • **Google Fonts (Inter, Outfit)**
+- **Bootstrap 5** • **Bootstrap Icons** • **Google Fonts (Inter) + Helvetica Now Display**
 - **Demo Payment System** • **PHPMailer** • **tFPDF**
 
 ---

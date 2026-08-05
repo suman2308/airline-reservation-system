@@ -56,21 +56,15 @@ if (!empty($filters)) {
 }
 ?>
 
-<div class="page-header">
+<div class="page-hero-lite">
     <div class="container">
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-            <div class="text-start">
-                <span class="badge bg-primary-subtle text-accent mb-2 px-3 py-1 border border-accent rounded-pill">
-                    <i class="bi bi-graph-up-arrow me-1"></i>AeroBook Smart Fare Engine
-                </span>
-                <h1 class="fw-bold"><i class="bi bi-geo-alt me-2 text-accent"></i><?php echo htmlspecialchars("$source → $destination"); ?></h1>
-                <p class="mb-0 text-muted"><i class="bi bi-calendar-event me-1"></i><?php echo formatDate($display_date) . ' (' . $display_day . ')'; ?></p>
-            </div>
-            <div class="d-flex gap-2">
-<a href="<?php echo BASE_URL; ?>search-flights.php<?php echo $regionQuery; ?>" class="btn btn-outline-secondary fw-bold rounded-pill px-3">
-                    <i class="bi bi-sliders me-1"></i>Modify Search
-                </a>
-            </div>
+        <span class="kicker kicker-accent"><i class="bi bi-graph-up-arrow me-1"></i> Smart Fare Engine</span>
+        <h1><?php echo htmlspecialchars("$source → $destination"); ?></h1>
+        <p><i class="bi bi-calendar-event me-1"></i><?php echo formatDate($display_date) . ' (' . $display_day . ')'; ?></p>
+        <div class="mt-3">
+            <a href="<?php echo BASE_URL; ?>search-flights.php<?php echo $regionQuery; ?>" class="btn btn-outline-accent btn-sm fw-bold rounded-pill px-3">
+                <i class="bi bi-sliders me-1"></i>Modify Search
+            </a>
         </div>
     </div>
 </div>

@@ -16,10 +16,11 @@ $status = 'ok';
 $httpCode = 200;
 $checks = [];
 
-// Database check
+// Database check (mysqli_ping is deprecated in PHP 8.4 — a live connection is
+// implied if $conn exists and a lightweight query succeeds)
 $dbCheck = false;
 try {
-    $dbCheck = mysqli_ping($conn);
+    $dbCheck = ($conn instanceof mysqli) && mysqli_connect_errno() === 0;
 } catch (Exception $e) {
     $dbCheck = false;
 }

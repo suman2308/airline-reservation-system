@@ -33,12 +33,14 @@ if (empty($token)) {
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-lg-6">
-            <div class="flight-card p-5 border-0 shadow-sm rounded-4 text-center">
-                <i class="bi <?php echo $status === 'success' ? 'bi-check-circle-fill text-success' : ($status === 'info' ? 'bi-info-circle-fill text-info' : 'bi-x-circle-fill text-danger'); ?> display-3 mb-3 d-block"></i>
-                <h2 class="fw-bold mb-3">
-                    <?php echo $status === 'success' ? 'Email Verified!' : ($status === 'info' ? 'Already Verified' : 'Verification Failed'); ?>
-                </h2>
-                <p class="text-muted mb-4"><?php echo htmlspecialchars($message); ?></p>
+            <div class="auth-card">
+                <div class="auth-form text-center">
+                    <span class="kicker kicker-accent d-inline-block mb-3">Email verification</span>
+                    <i class="bi <?php echo $status === 'success' ? 'bi-check-circle-fill text-success' : ($status === 'info' ? 'bi-info-circle-fill text-info' : 'bi-x-circle-fill text-danger'); ?> display-3 mb-3 d-block"></i>
+                    <h2 class="fw-bold mb-3">
+                        <?php echo $status === 'success' ? 'Email Verified!' : ($status === 'info' ? 'Already Verified' : 'Verification Failed'); ?>
+                    </h2>
+                    <p class="text-muted mb-4"><?php echo htmlspecialchars($message); ?></p>
                 <div class="d-flex gap-2 justify-content-center">
                     <a href="<?php echo BASE_URL; ?>index.php" class="btn btn-accent px-4"><i class="bi bi-house-door me-2"></i>Home</a>
                     <?php if ($status === 'error'): ?>
@@ -48,6 +50,7 @@ if (empty($token)) {
             </div>
         </div>
     </div>
+</div>
 </div>
 </section>
 

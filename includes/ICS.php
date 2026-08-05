@@ -83,7 +83,8 @@ class AeroICS {
         $dtStart = date('Ymd\THis', strtotime($flight['departure_time']));
         $dtEnd = date('Ymd\THis', strtotime($flight['arrival_time']));
         $text = 'Flight ' . $flight['airline_name'] . ' ' . $flight['flight_number'] . ': ' . $flight['source'] . ' → ' . $flight['destination'];
-        $details = "Booking Ref: AB-" . $booking['booking_ref'] . "%0A"
+        // booking_ref already includes the 'AB-' prefix; don't duplicate it
+        $details = "Booking Ref: " . $booking['booking_ref'] . "%0A"
                  . "Seat: " . $booking['seat_number'] . "%0A"
                  . "Passenger: " . $booking['passenger_name'];
         $location = $flight['source'] . ' Airport';

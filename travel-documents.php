@@ -15,9 +15,10 @@ mysqli_stmt_execute($stmt);
 $bookings = mysqli_stmt_get_result($stmt);
 mysqli_stmt_close($stmt);
 ?>
-<div class="page-header">
+<div class="page-hero-lite">
     <div class="container">
-        <h1><i class="bi bi-folder me-2"></i>Travel Documents</h1>
+        <span class="kicker">Documents</span>
+        <h1>Travel <span class="dim">Documents</span></h1>
         <p>Access your boarding passes, e-tickets, and trip summaries</p>
     </div>
 </div>

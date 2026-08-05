@@ -29,8 +29,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         redirect('user-dashboard.php');
     }
 }
-if (isset($_GET['delete_route'])) { deleteSavedRoute(intval($_GET['delete_route']), $user_id); setFlash('success', 'Route removed.'); redirect('user-dashboard.php'); }
-if (isset($_GET['delete_watch'])) { deletePriceWatch(intval($_GET['delete_watch']), $user_id); setFlash('success', 'Price watch removed.'); redirect('user-dashboard.php'); }
+if (isset($_GET['delete_route'])) {
+    if (!validateDeleteToken($_GET['token'] ?? '')) {
+        setFlash('error', 'Invalid request token.');
+    } else {
+        deleteSavedRoute(intval($_GET['delete_route']), $user_id);
+        setFlash('success', 'Route removed.');
+    }
+    redirect('user-dashboard.php');
+}
+if (isset($_GET['delete_watch'])) {
+    if (!validateDeleteToken($_GET['token'] ?? '')) {
+        setFlash('error', 'Invalid request token.');
+    } else {
+        deletePriceWatch(intval($_GET['delete_watch']), $user_id);
+        setFlash('success', 'Price watch removed.');
+    }
+    redirect('user-dashboard.php');
+}
 
 $stmt = mysqli_prepare($conn, "SELECT name, email, phone, avatar, email_verified_at, last_login_at, last_login_ip FROM users WHERE id = ?");
 mysqli_stmt_bind_param($stmt, "i", $user_id);
@@ -57,21 +73,19 @@ if (!empty($user['avatar'])) $completion += 20;
 if ($total_bookings > 0) $completion += 20;
 ?>
 
-<div class="page-header">
+<div class="page-hero-lite">
     <div class="container">
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-            <div class="text-start">
-                <h1 class="mb-1"><i class="bi bi-compass me-2 text-accent"></i>Your Travel Hub</h1>
-                <p class="mb-0">Welcome back, <?php echo htmlspecialchars($_SESSION['user_name']); ?> · <?php echo formatDate(date('Y-m-d')); ?></p>
-                <?php if ($user['last_login_at']): ?>
-                <small class="text-muted">Last login: <?php echo formatDateTime($user['last_login_at']); ?></small>
-                <?php endif; ?>
-            </div>
-            <div class="d-flex gap-2">
-                <a href="profile.php" class="btn btn-outline-secondary btn-sm fw-semibold rounded-pill"><i class="bi bi-person-gear me-1"></i>Profile</a>
-                <a href="travel-documents.php" class="btn btn-outline-secondary btn-sm fw-semibold rounded-pill"><i class="bi bi-folder me-1"></i>Documents</a>
-                <a href="travel-calendar.php" class="btn btn-outline-secondary btn-sm fw-semibold rounded-pill"><i class="bi bi-calendar3 me-1"></i>Calendar</a>
-            </div>
+        <span class="kicker">Travel Hub</span>
+        <h1 class="mb-1">Welcome back, <span class="dim"><?php echo htmlspecialchars($_SESSION['user_name']); ?></span></h1>
+        <p class="mb-0"><?php echo formatDate(date('Y-m-d')); ?>
+        <?php if ($user['last_login_at']): ?>
+        · Last login: <?php echo formatDateTime($user['last_login_at']); ?>
+        <?php endif; ?>
+        </p>
+        <div class="d-flex gap-2 justify-content-center mt-3">
+            <a href="profile.php" class="btn btn-outline-accent btn-sm fw-semibold rounded-pill px-3"><i class="bi bi-person-gear me-1"></i>Profile</a>
+            <a href="travel-documents.php" class="btn btn-outline-accent btn-sm fw-semibold rounded-pill px-3"><i class="bi bi-folder me-1"></i>Documents</a>
+            <a href="travel-calendar.php" class="btn btn-outline-accent btn-sm fw-semibold rounded-pill px-3"><i class="bi bi-calendar3 me-1"></i>Calendar</a>
         </div>
     </div>
 </div>
@@ -160,7 +174,7 @@ if ($total_bookings > 0) $completion += 20;
                 <h5 class="fw-bold mb-0"><i class="bi bi-clock-history me-2 text-accent"></i>Recent Trips</h5>
                 <a href="my-bookings.php" class="btn btn-sm btn-outline-accent">View All</a>
             </div>
-            <?php if ($recent && mysqli_num_rows($recent) > 0): while($b = mysqli_fetch_assoc($recent)): ?>
+            <?php if (!empty($recent)): foreach ($recent as $b): ?>
             <div class="card border-0 shadow-sm rounded-4 mb-2">
                 <div class="card-body py-2 px-3">
                     <div class="row align-items-center">
@@ -179,7 +193,7 @@ if ($total_bookings > 0) $completion += 20;
                     </div>
                 </div>
             </div>
-            <?php endwhile; else: ?>
+            <?php endforeach; else: ?>
             <div class="bg-white p-4 text-center rounded-4 shadow-sm border mb-3">
                 <i class="bi bi-ticket-perforated text-muted display-6 mb-2 d-block"></i>
                 <p class="text-muted mb-0 small">No trips yet. <a href="search-flights.php" class="text-accent fw-bold">Book your first flight</a></p>
@@ -196,7 +210,7 @@ if ($total_bookings > 0) $completion += 20;
                 <?php foreach ($savedRoutes as $sr): ?>
                 <div class="d-flex align-items-center gap-1 bg-white border rounded-3 px-2 py-1 shadow-sm">
                     <a href="<?php echo BASE_URL; ?>fare-results.php?source=<?php echo urlencode($sr['source']); ?>&destination=<?php echo urlencode($sr['destination']); ?>" class="fw-semibold small text-dark text-decoration-none"><?php echo htmlspecialchars($sr['source']); ?> → <?php echo htmlspecialchars($sr['destination']); ?></a>
-                    <a href="?delete_route=<?php echo $sr['id']; ?>" class="text-danger small ms-1" onclick="return confirm('Remove?')"><i class="bi bi-x"></i></a>
+                    <a href="<?php echo deleteLink('user-dashboard.php', 'delete_route', $sr['id']); ?>" class="text-danger small ms-1" onclick="return confirm('Remove?')"><i class="bi bi-x"></i></a>
                 </div>
                 <?php endforeach; ?>
             </div>
@@ -227,7 +241,7 @@ if ($total_bookings > 0) $completion += 20;
                         <div class="d-flex align-items-center gap-1">
                             <?php if ($cheapest): ?><span class="fw-bold text-accent"><?php echo formatPrice($cheapest); ?></span><?php endif; ?>
                             <?php if ($underBudget): ?><span class="badge bg-success text-white" style="font-size:0.55rem;">✓</span><?php endif; ?>
-                            <a href="?delete_watch=<?php echo $pw['id']; ?>" class="text-danger" onclick="return confirm('Remove?')"><i class="bi bi-x" style="font-size:0.7rem;"></i></a>
+                            <a href="<?php echo deleteLink('user-dashboard.php', 'delete_watch', $pw['id']); ?>" class="text-danger" onclick="return confirm('Remove?')"><i class="bi bi-x" style="font-size:0.7rem;"></i></a>
                         </div>
                     </div>
                     <?php endforeach; else: ?>
@@ -336,13 +350,5 @@ if ($total_bookings > 0) $completion += 20;
         </div>
     </div>
 </div>
-
-<style>
-.btn-outline-accent { color: var(--accent); border-color: var(--accent); }
-.btn-outline-accent:hover { background: var(--accent); color: #fff; }
-.stat-card-sm { background: var(--surface-card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.5rem; text-align: center; }
-.stat-value { display: block; font-size: 1.1rem; font-weight: 800; font-family: var(--font-heading); }
-.stat-label { font-size: 0.65rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.3px; }
-</style>
 
 <?php require_once 'includes/footer.php'; ?>

@@ -1,8 +1,8 @@
 <?php
 $pageTitle = 'Manage Bookings';
 require_once __DIR__ . '/includes/admin-header.php';
-require_once __DIR__ . '/../../includes/helpers.php';
-require_once __DIR__ . '/../../includes/Paginator.php';
+require_once __DIR__ . '/../includes/helpers.php';
+require_once __DIR__ . '/../includes/Paginator.php';
 
 if (isset($_GET['cancel'])) {
     if (!isset($_GET['token']) || !validateDeleteToken($_GET['token'])) {

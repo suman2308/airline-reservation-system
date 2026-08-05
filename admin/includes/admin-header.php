@@ -1,6 +1,6 @@
 <?php
 $isSubDir = true;
-define('IS_ADMIN_PANEL', true);
+if (!defined('IS_ADMIN_PANEL')) define('IS_ADMIN_PANEL', true);
 require_once __DIR__ . '/../../includes/config.php';
 require_once __DIR__ . '/../../includes/functions.php';
 require_once __DIR__ . '/../../includes/Security.php';
@@ -15,32 +15,39 @@ requireAdmin();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo isset($pageTitle) ? htmlspecialchars($pageTitle) . ' | Admin Panel' : 'Admin Panel'; ?> – AeroBook</title>
     <script>
-        // Apply saved/system theme before CSS paints to avoid a flash of the wrong theme.
-        (function () {
-            try { var t = localStorage.getItem('aerobook-theme');
-                if (!t) t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-                document.documentElement.setAttribute('data-theme', t);
-            } catch (e) { document.documentElement.setAttribute('data-theme', 'light'); }
-        })();
+        // Dark mode is the only theme — pin it before CSS paints (no flash).
+        document.documentElement.classList.add('js');
+        document.documentElement.setAttribute('data-theme', 'dark');
     </script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="<?php echo asset('css/style.css'); ?>" rel="stylesheet">
+    <link href="https://db.onlinewebfonts.com/c/04e6981992c0e2e7642af2074ebe3901?family=Helvetica+Now+Display+Bold" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <?php $cssVer = filemtime(__DIR__ . '/../../css/aerobook.css'); ?>
+    <link href="<?php echo asset('css/style.css') . '?v=' . filemtime(__DIR__ . '/../../css/style.css'); ?>" rel="stylesheet">
+    <link href="<?php echo asset('css/aerobook.css') . '?v=' . $cssVer; ?>" rel="stylesheet">
 </head>
 <body>
 <div class="admin-wrapper">
     <button class="btn btn-primary d-lg-none position-fixed bottom-0 end-0 m-3 z-3 shadow" type="button" data-bs-toggle="collapse" data-bs-target="#adminSidebar">
         <i class="bi bi-list"></i>
     </button>
+    <div class="admin-sidebar-backdrop" id="adminSidebarBackdrop" aria-hidden="true"></div>
     <aside class="admin-sidebar collapse d-lg-block" id="adminSidebar">
-        <div class="sidebar-brand">
-            <h4><i class="bi bi-airplane-engines me-2" style="color: #00d4ff;"></i><span class="text-white">Aero</span><span style="color: #00d4ff;">Book</span></h4>
-            <small>Operations Center</small>
+        <div class="sidebar-pinned">
+            <div class="sidebar-brand d-flex justify-content-between align-items-start">
+                <div>
+                    <h4><i class="bi bi-airplane-engines me-2" style="color: #F4CEFF;"></i><span class="text-white">Aero</span><span style="color: #F4CEFF;">Book</span></h4>
+                    <small>Operations Center</small>
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-light d-lg-none sidebar-close" data-bs-toggle="collapse" data-bs-target="#adminSidebar" aria-label="Close sidebar">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <a href="<?php echo BASE_URL; ?>admin/dashboard.php" class="pinned-dashboard-link <?php echo basename($_SERVER['PHP_SELF'])=='dashboard.php'?'active':''; ?>"><i class="bi bi-speedometer2"></i>Operations Dashboard</a>
+            <hr class="text-muted opacity-25">
         </div>
         <ul class="sidebar-nav">
-            <li><a href="<?php echo BASE_URL; ?>admin/dashboard.php" class="<?php echo basename($_SERVER['PHP_SELF'])=='dashboard.php'?'active':''; ?>"><i class="bi bi-speedometer2"></i>Operations Dashboard</a></li>
-            <li><hr class="text-muted opacity-25"></li>
             <li class="sidebar-label">Flight Operations</li>
             <li><a href="<?php echo BASE_URL; ?>admin/add-flight.php" class="<?php echo basename($_SERVER['PHP_SELF'])=='add-flight.php'?'active':''; ?>"><i class="bi bi-plus-circle"></i>Add Flight</a></li>
             <li><a href="<?php echo BASE_URL; ?>admin/manage-flights.php" class="<?php echo basename($_SERVER['PHP_SELF'])=='manage-flights.php'?'active':''; ?>"><i class="bi bi-airplane"></i>Manage Flights</a></li>
@@ -64,9 +71,6 @@ requireAdmin();
             <li><a href="<?php echo BASE_URL; ?>admin/aviation-sync.php" class="<?php echo basename($_SERVER['PHP_SELF'])=='aviation-sync.php'?'active':''; ?>"><i class="bi bi-cloud-arrow-down"></i>Data Synchronization</a></li>
             <li><hr class="text-muted opacity-25"></li>
             <li><a href="<?php echo BASE_URL; ?>index.php" target="_blank"><i class="bi bi-box-arrow-up-right"></i>View Website</a></li>
-            <li><button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode" aria-pressed="false">
-                <i class="bi bi-moon-stars-fill"></i>
-            </button></li>
             <li><a href="<?php echo BASE_URL; ?>admin/logout.php" class="text-danger"><i class="bi bi-box-arrow-left"></i>Logout</a></li>
         </ul>
     </aside>

@@ -1,7 +1,7 @@
 <?php
 $pageTitle = 'Edit Flight';
 require_once __DIR__ . '/includes/admin-header.php';
-require_once __DIR__ . '/../../includes/helpers.php';
+require_once __DIR__ . '/../includes/helpers.php';
 
 $id = intval($_GET['id'] ?? 0);
 if ($id <= 0) redirect(BASE_URL . 'admin/manage-flights.php');

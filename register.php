@@ -115,6 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     <div class="col-lg-7">
                         <div class="auth-form">
+                            <span class="kicker">New here?</span>
                             <h2>Create Account</h2>
                             <p class="subtitle">Fill in your details to get started</p>
                             <form method="POST" id="registerForm" novalidate class="needs-loading">
@@ -146,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <div class="invalid-feedback">Passwords do not match.</div>
                                     </div>
                                 </div>
-                                <button type="submit" class="btn btn-accent w-100 py-2 mb-3"><i class="bi bi-person-plus me-2"></i>Register</button>
+                                <button type="submit" class="btn btn-accent w-100 py-2 mb-3 rounded-pill"><i class="bi bi-person-plus me-2"></i>Register</button>
                                 <p class="text-center mb-0">Already have an account? <a href="login.php" class="text-accent fw-bold">Login here</a></p>
                             </form>
                         </div>

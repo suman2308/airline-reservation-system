@@ -116,17 +116,17 @@ class AeroMailer {
 <!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <style>
-body{margin:0;padding:0;background:#f4f7fb;font-family:'Inter','Helvetica',sans-serif;color:#051336}
+body{margin:0;padding:0;background:#F4F6F9;font-family:'Inter','Helvetica',sans-serif;color:#202A36}
 .email-wrapper{max-width:600px;margin:0 auto;padding:20px}
-.email-header{background:#051336;padding:30px;text-align:center;border-radius:12px 12px 0 0}
+.email-header{background:#202A36;padding:30px;text-align:center;border-radius:12px 12px 0 0}
 .email-header h1{color:#fff;margin:0;font-size:22px}
-.email-header .tagline{color:#00d4ff;font-size:13px;margin-top:4px}
+.email-header .tagline{color:#A7B4C2;font-size:13px;margin-top:4px}
 .email-body{background:#fff;padding:30px;border-radius:0 0 12px 12px;line-height:1.7}
-.email-body h2{font-size:20px;margin:0 0 16px;color:#051336}
-.email-body p{margin:0 0 12px;color:#586985}
-.email-body .btn{display:inline-block;padding:12px 28px;background:#024dec;color:#fff;text-decoration:none;border-radius:8px;font-weight:600;margin:12px 0}
-.email-footer{text-align:center;padding:20px;color:#94a3b8;font-size:12px}
-.email-footer a{color:#024dec;text-decoration:none}
+.email-body h2{font-size:20px;margin:0 0 16px;color:#202A36}
+.email-body p{margin:0 0 12px;color:#4B5563}
+.email-body .btn{display:inline-block;padding:12px 28px;background:#202A36;color:#fff;text-decoration:none;border-radius:8px;font-weight:600;margin:12px 0}
+.email-footer{text-align:center;padding:20px;color:#6B7280;font-size:12px}
+.email-footer a{color:#202A36;text-decoration:none}
 </style></head><body>
 <div class="email-wrapper">
 <div class="email-header"><h1>AeroBook</h1><div class="tagline">Smart · Fast · Easy</div></div>
@@ -144,7 +144,7 @@ HTML;
     public function sendVerification($to, $name, $verifyUrl) {
         $content = "<p>Hi {$name},</p><p>Welcome to AeroBook! Please verify your email address to activate your account.</p>";
         $content .= "<p style='text-align:center'><a href='{$verifyUrl}' class='btn'>Verify Email Address</a></p>";
-        $content .= "<p style='font-size:13px;color:#94a3b8;text-align:center'>Or copy this link:<br>{$verifyUrl}</p>";
+        $content .= "<p style='font-size:13px;color:#6B7280;text-align:center'>Or copy this link:<br>{$verifyUrl}</p>";
         $content .= "<p>This link expires in 24 hours.</p>";
         return $this->send($to, $name, 'Verify your AeroBook account', $this->wrapTemplate('Verify Your Email', $content));
     }
@@ -155,7 +155,7 @@ HTML;
     public function sendPasswordReset($to, $name, $resetUrl) {
         $content = "<p>Hi {$name},</p><p>We received a request to reset your password. Click the button below to set a new one.</p>";
         $content .= "<p style='text-align:center'><a href='{$resetUrl}' class='btn'>Reset Password</a></p>";
-        $content .= "<p style='font-size:13px;color:#94a3b8;text-align:center'>Or copy this link:<br>{$resetUrl}</p>";
+        $content .= "<p style='font-size:13px;color:#6B7280;text-align:center'>Or copy this link:<br>{$resetUrl}</p>";
         $content .= "<p>This link expires in 1 hour. If you didn't request this, please ignore this email.</p>";
         return $this->send($to, $name, 'Reset your AeroBook password', $this->wrapTemplate('Password Reset', $content));
     }

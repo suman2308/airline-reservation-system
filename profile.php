@@ -16,7 +16,17 @@ mysqli_stmt_execute($stmt);
 $user = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
 mysqli_stmt_close($stmt);
 
+// Session references a user that no longer exists (e.g. account deleted) — log out gracefully.
+if (!$user) {
+    secureLogout();
+    session_start();
+    setFlash('error', 'Your session is no longer valid. Please sign in again.');
+    redirect('login.php');
+}
+
 $tab = $_GET['tab'] ?? 'personal';
+// The Devices & Sessions tab was removed — redirect anyone hitting its old URL.
+if ($tab === 'sessions') redirect('profile.php');
 
 // ──────────────────────────────────────────────
 // Handle POST actions
@@ -47,21 +57,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // ─── Update Profile ───
     if (isset($_POST['update_profile'])) {
         $name = trim($_POST['name']);
+        $email = trim($_POST['email']);
         $phone = trim($_POST['phone']);
 
         if (empty($name) || empty($phone)) {
             setFlash('error', 'Name and Phone are required.');
+        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            setFlash('error', 'Please enter a valid email address.');
         } else {
-            $update_stmt = mysqli_prepare($conn, "UPDATE users SET name=?, phone=? WHERE id=?");
-            mysqli_stmt_bind_param($update_stmt, "ssi", $name, $phone, $user_id);
-            if (mysqli_stmt_execute($update_stmt)) {
-                $_SESSION['user_name'] = $name;
-                AeroNotifications::create($user_id, 'profile_updated', 'Profile Updated', 'Your profile information was updated.');
-                setFlash('success', 'Profile updated successfully!');
+            // Prevent two accounts sharing one email
+            $dup_stmt = mysqli_prepare($conn, "SELECT id FROM users WHERE email=? AND id!=?");
+            mysqli_stmt_bind_param($dup_stmt, "si", $email, $user_id);
+            mysqli_stmt_execute($dup_stmt);
+            mysqli_stmt_store_result($dup_stmt);
+            $duplicate = mysqli_stmt_num_rows($dup_stmt) > 0;
+            mysqli_stmt_close($dup_stmt);
+
+            if ($duplicate) {
+                setFlash('error', 'That email is already in use by another account.');
             } else {
-                setFlash('error', 'Update failed.');
+                $update_stmt = mysqli_prepare($conn, "UPDATE users SET name=?, email=?, phone=? WHERE id=?");
+                mysqli_stmt_bind_param($update_stmt, "sssi", $name, $email, $phone, $user_id);
+                if (mysqli_stmt_execute($update_stmt)) {
+                    $_SESSION['user_name'] = $name;
+                    $_SESSION['user_email'] = $email;
+                    AeroNotifications::create($user_id, 'profile_updated', 'Profile Updated', 'Your profile information was updated.');
+                    setFlash('success', 'Profile updated successfully!');
+                } else {
+                    setFlash('error', 'Update failed.');
+                }
+                mysqli_stmt_close($update_stmt);
             }
-            mysqli_stmt_close($update_stmt);
         }
         redirect('profile.php');
     }
@@ -170,11 +196,26 @@ $sessions = getUserSessions($user_id);
 
 // Get current session identifier
 $currentSessionIdentifier = hash('sha256', session_id() . $_SERVER['REMOTE_ADDR'] . ($_SERVER['HTTP_USER_AGENT'] ?? ''));
+
+/**
+ * Detect device type icon from user agent string.
+ */
+function deviceIcon(string $ua = ''): string {
+    $ua = strtolower($ua);
+    if (str_contains($ua, 'iphone') || str_contains($ua, 'ipad') || str_contains($ua, 'android')) {
+        return 'bi-phone';
+    }
+    if (str_contains($ua, 'macintosh') || str_contains($ua, 'windows') || str_contains($ua, 'linux')) {
+        return 'bi-laptop';
+    }
+    return 'bi-question-circle';
+}
 ?>
 
-<div class="page-header">
+<div class="page-hero-lite">
     <div class="container">
-        <h1><i class="bi bi-person-gear me-2"></i>My Account</h1>
+        <span class="kicker">Account</span>
+        <h1>My <span class="dim">Account</span></h1>
         <p>Manage your profile, security settings, and account activity</p>
     </div>
 </div>
@@ -191,9 +232,6 @@ $currentSessionIdentifier = hash('sha256', session_id() . $_SERVER['REMOTE_ADDR'
                 </a>
                 <a href="?tab=security" class="list-group-item list-group-item-action border-0 py-3 <?php echo $tab === 'security' ? 'active bg-accent text-white' : ''; ?>">
                     <i class="bi bi-shield-lock me-2"></i> Security
-                </a>
-                <a href="?tab=sessions" class="list-group-item list-group-item-action border-0 py-3 <?php echo $tab === 'sessions' ? 'active bg-accent text-white' : ''; ?>">
-                    <i class="bi bi-devices me-2"></i> Devices & Sessions
                 </a>
                 <a href="?tab=history" class="list-group-item list-group-item-action border-0 py-3 <?php echo $tab === 'history' ? 'active bg-accent text-white' : ''; ?>">
                     <i class="bi bi-clock-history me-2"></i> Login History
@@ -215,6 +253,9 @@ $currentSessionIdentifier = hash('sha256', session_id() . $_SERVER['REMOTE_ADDR'
                 <?php endif; ?>
                 <h5 class="mb-0"><?php echo htmlspecialchars($user['name']); ?></h5>
                 <small class="text-muted"><?php echo htmlspecialchars($user['email']); ?></small>
+                <a href="<?php echo BASE_URL; ?>logout.php" class="btn btn-outline-danger btn-sm w-100 mt-3">
+                    <i class="bi bi-box-arrow-right me-1"></i>Logout
+                </a>
                 <div class="mt-2">
                     <?php if ($user['email_verified_at'] !== null): ?>
                         <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Verified</span>
@@ -239,8 +280,8 @@ $currentSessionIdentifier = hash('sha256', session_id() . $_SERVER['REMOTE_ADDR'
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Email Address</label>
-                            <input type="email" class="form-control" value="<?php echo htmlspecialchars($user['email']); ?>" disabled>
-                            <small class="text-muted">Email cannot be changed.</small>
+                            <input type="email" name="email" class="form-control" value="<?php echo htmlspecialchars($user['email']); ?>" required>
+                            <small class="text-muted">Used for login and booking confirmations.</small>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Phone Number</label>
@@ -357,7 +398,7 @@ $currentSessionIdentifier = hash('sha256', session_id() . $_SERVER['REMOTE_ADDR'
                     <?php foreach ($sessions as $s): ?>
                     <div class="d-flex align-items-center justify-content-between py-2 border-bottom">
                         <div class="d-flex align-items-center gap-3">
-                            <i class="bi bi-laptop fs-4 text-muted"></i>
+                            <i class="bi <?php echo deviceIcon($s['user_agent'] ?? ''); ?> fs-4 text-muted"></i>
                             <div>
                                 <div class="fw-semibold"><?php echo htmlspecialchars($s['device_name'] ?? 'Unknown Device'); ?></div>
                                 <small class="text-muted">
@@ -375,53 +416,6 @@ $currentSessionIdentifier = hash('sha256', session_id() . $_SERVER['REMOTE_ADDR'
                             <input type="hidden" name="session_id" value="<?php echo $s['id']; ?>">
                             <button type="submit" name="logout_session" class="btn btn-outline-danger btn-sm">
                                 <i class="bi bi-box-arrow-right"></i>
-                            </button>
-                        </form>
-                        <?php endif; ?>
-                    </div>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </div>
-
-            <?php elseif ($tab === 'sessions'): ?>
-            <!-- Full Sessions Tab (same as above for now) -->
-            <div class="flight-card p-4">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="mb-0"><i class="bi bi-devices me-2 text-accent"></i>Active Sessions</h4>
-                    <form method="POST" class="m-0">
-                        <?php csrfField(); ?>
-                        <button type="submit" name="logout_all_sessions" class="btn btn-outline-danger btn-sm">
-                            <i class="bi bi-x-circle me-1"></i>Log Out All Others
-                        </button>
-                    </form>
-                </div>
-                <?php if (empty($sessions)): ?>
-                    <p class="text-muted text-center py-3">No active sessions found.</p>
-                <?php else: ?>
-                    <?php foreach ($sessions as $s): ?>
-                    <div class="d-flex align-items-center justify-content-between py-3 border-bottom">
-                        <div class="d-flex align-items-center gap-3">
-                            <i class="bi bi-laptop fs-3 text-muted"></i>
-                            <div>
-                                <div class="fw-semibold"><?php echo htmlspecialchars($s['device_name'] ?? 'Unknown Device'); ?></div>
-                                <small class="text-muted">
-                                    IP: <?php echo htmlspecialchars($s['ip_address'] ?? 'N/A'); ?>
-                                </small><br>
-                                <small class="text-muted">
-                                    Last active: <?php echo timeSince($s['last_activity']); ?>
-                                    · Logged in: <?php echo formatDateTime($s['logged_in_at']); ?>
-                                    <?php if ($s['session_identifier'] === $currentSessionIdentifier): ?>
-                                        <span class="badge bg-success ms-2">Current Session</span>
-                                    <?php endif; ?>
-                                </small>
-                            </div>
-                        </div>
-                        <?php if ($s['session_identifier'] !== $currentSessionIdentifier): ?>
-                        <form method="POST" class="m-0">
-                            <?php csrfField(); ?>
-                            <input type="hidden" name="session_id" value="<?php echo $s['id']; ?>">
-                            <button type="submit" name="logout_session" class="btn btn-outline-danger btn-sm">
-                                <i class="bi bi-box-arrow-right me-1"></i>Logout
                             </button>
                         </form>
                         <?php endif; ?>

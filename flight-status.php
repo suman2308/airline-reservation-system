@@ -10,6 +10,10 @@ $route_dest = trim($_GET['destination'] ?? '');
 $flight_status_data = null;
 $searched = false;
 
+// Which search tab is in use? Route search must stay on the Route tab after submit
+// (otherwise the results appear while the "Search by Flight Number" tab shows).
+$active_tab = (!empty($route_source) && !empty($route_dest)) ? 'route' : 'flight';
+
 if (!empty($flight_query) || (!empty($route_source) && !empty($route_dest))) {
     $searched = true;
 
@@ -32,13 +36,11 @@ $terminals = ['T1 (Gate A12)', 'T2 (Gate B08)', 'T3 (Gate C22)'];
 $belts = ['Baggage Belt 04', 'Baggage Belt 07', 'Baggage Belt 02'];
 ?>
 
-<div class="page-header text-center">
+<div class="page-hero-lite">
     <div class="container">
-        <span class="badge bg-primary-subtle text-accent mb-2 px-3 py-2 border border-accent rounded-pill">
-            <i class="bi bi-broadcast me-1 text-danger spinner-grow spinner-grow-sm" style="width: 8px; height: 8px;"></i> Live Flight Operations Radar
-        </span>
-        <h1 class="fw-bold"><i class="bi bi-radar me-2 text-accent"></i>Flight Status Tracker</h1>
-        <p class="text-muted">Track real-time flight schedules, terminal gates, baggage belts, and flight updates</p>
+        <span class="kicker kicker-accent"><i class="bi bi-broadcast me-1 text-danger"></i> Live Flight Operations Radar</span>
+        <h1>Flight Status <span class="dim">Tracker</span></h1>
+        <p>Track real-time flight schedules, terminal gates, baggage belts, and flight updates</p>
     </div>
 </div>
 
@@ -49,15 +51,15 @@ $belts = ['Baggage Belt 04', 'Baggage Belt 07', 'Baggage Belt 02'];
     <div class="card border-0 shadow-lg rounded-4 p-4 mb-5" style="background: var(--surface-card);">
         <ul class="nav nav-pills mb-4" id="statusTabs" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active fw-bold" id="by-flight-tab" data-bs-toggle="pill" data-bs-target="#by-flight" type="button"><i class="bi bi-airplane-engines me-2"></i>Search by Flight Number</button>
+                <button class="nav-link fw-bold <?php echo $active_tab === 'flight' ? 'active' : ''; ?>" id="by-flight-tab" data-bs-toggle="pill" data-bs-target="#by-flight" type="button"><i class="bi bi-airplane-engines me-2"></i>Search by Flight Number</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link fw-bold" id="by-route-tab" data-bs-toggle="pill" data-bs-target="#by-route" type="button"><i class="bi bi-geo-alt me-2"></i>Search by Route</button>
+                <button class="nav-link fw-bold <?php echo $active_tab === 'route' ? 'active' : ''; ?>" id="by-route-tab" data-bs-toggle="pill" data-bs-target="#by-route" type="button"><i class="bi bi-geo-alt me-2"></i>Search by Route</button>
             </li>
         </ul>
 
         <div class="tab-content" id="statusTabContent">
-            <div class="tab-pane fade show active" id="by-flight" role="tabpanel">
+            <div class="tab-pane fade <?php echo $active_tab === 'flight' ? 'show active' : ''; ?>" id="by-flight" role="tabpanel">
                 <form action="flight-status.php" method="GET" class="row g-3 align-items-center needs-loading">
                     <div class="col-md-9">
                         <div class="input-group input-group-lg">
@@ -71,7 +73,7 @@ $belts = ['Baggage Belt 04', 'Baggage Belt 07', 'Baggage Belt 02'];
                 </form>
             </div>
 
-            <div class="tab-pane fade" id="by-route" role="tabpanel">
+            <div class="tab-pane fade <?php echo $active_tab === 'route' ? 'show active' : ''; ?>" id="by-route" role="tabpanel">
                 <form action="flight-status.php" method="GET" class="row g-3 align-items-center needs-loading">
                     <div class="col-md-4">
                         <select name="source" class="form-select form-select-lg" required>
@@ -107,6 +109,7 @@ $belts = ['Baggage Belt 04', 'Baggage Belt 07', 'Baggage Belt 02'];
             ?>
             <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
                 <div class="card-header bg-primary text-white p-3 d-flex justify-content-between align-items-center">
+                    <?php /* dark mode: bg-primary resolves to light lavender, which washes out white text */ ?>
                     <div class="d-flex align-items-center gap-3">
                         <div class="airline-logo bg-white text-primary rounded-circle fw-bold d-flex align-items-center justify-content-center" style="width: 44px; height: 44px; font-size: 1.1rem;">
                             <?php echo airlineInitials($flight['airline_name']); ?>
@@ -133,8 +136,7 @@ $belts = ['Baggage Belt 04', 'Baggage Belt 07', 'Baggage Belt 02'];
                         <div class="col-md-4 text-center mb-3 mb-md-0">
                             <small class="text-muted fw-bold d-block mb-1"><?php echo calcDuration($flight['departure_time'], $flight['arrival_time']); ?> (Non-stop)</small>
                             <div class="position-relative d-flex align-items-center justify-content-center">
-                                <div style="width: 100%; height: 3px; background: linear-gradient(90deg, var(--accent), #10b981);"></div>
-                                <i class="bi bi-airplane-fill position-absolute text-accent fs-4" style="background: white; padding: 0 8px;"></i>
+                                <div style="width: 100%; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent-hover));"></div>
                             </div>
                             <small class="text-success fw-semibold mt-1 d-block"><i class="bi bi-shield-check me-1"></i>Cruising Altitude 35,000 ft</small>
                         </div>
@@ -179,23 +181,24 @@ $belts = ['Baggage Belt 04', 'Baggage Belt 07', 'Baggage Belt 02'];
         <h4 class="fw-bold mb-4"><i class="bi bi-lightning-charge me-2 text-accent"></i>Live Operations Overview Today</h4>
         <div class="row g-4">
             <?php
+            // airline, flight_no, source, dest, dep_time, arr_time, dep_status, arr_status, status_class, terminal, belt
             $sample_flights = [
-                ['IndiGo', '6E-502', 'Delhi (DEL)', 'Mumbai (BOM)', '08:30 AM', '10:45 AM', 'ON TIME', 'bg-success-subtle text-success border-success', 'Terminal 3 (Gate A4)', 'Belt B-02'],
-                ['Air India', 'AI-204', 'Mumbai (BOM)', 'Bangalore (BLR)', '11:15 AM', '01:00 PM', 'BOARDING', 'bg-success-subtle text-success border-success', 'Terminal 2 (Gate B12)', 'Belt B-05'],
-                ['Vistara', 'UK-810', 'Kolkata (CCU)', 'Delhi (DEL)', '02:00 PM', '04:25 PM', 'IN AIR', 'bg-info-subtle text-info border-info', 'Terminal 1 (Gate C01)', 'Belt B-01'],
+                ['IndiGo', '6E-502', 'Delhi (DEL)', 'Mumbai (BOM)', '08:30 AM', '10:45 AM', 'ON TIME', 'ON TIME', 'bg-success-subtle text-success border-success', 'Terminal 3 (Gate A4)', 'Belt B-02'],
+                ['Air India', 'AI-204', 'Mumbai (BOM)', 'Bangalore (BLR)', '11:15 AM', '01:00 PM', 'BOARDING', 'ON TIME', 'bg-success-subtle text-success border-success', 'Terminal 2 (Gate B12)', 'Belt B-05'],
+                ['Vistara', 'UK-810', 'Kolkata (CCU)', 'Delhi (DEL)', '02:00 PM', '04:25 PM', 'IN AIR', 'SCHEDULED', 'bg-info-subtle text-info border-info', 'Terminal 1 (Gate C01)', 'Belt B-01'],
             ];
             foreach ($sample_flights as $sf): ?>
             <div class="col-md-4">
                 <div class="card border-0 shadow-sm rounded-4 p-4 h-100 hover-lift">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <span class="badge bg-primary text-white"><?php echo $sf[0]; ?> · <?php echo $sf[1]; ?></span>
-                        <span class="badge <?php echo $sf[5]; ?> fw-bold"><?php echo $sf[4]; ?></span>
+                        <span class="badge <?php echo $sf[8]; ?> fw-bold"><i class="bi bi-airplane me-1"></i><?php echo $sf[6]; ?></span>
                     </div>
                     <h5 class="fw-bold mb-1"><?php echo $sf[2]; ?> → <?php echo $sf[3]; ?></h5>
                     <p class="text-muted small mb-3"><i class="bi bi-clock me-1"></i>Dep: <?php echo $sf[6]; ?> | Arr: <?php echo $sf[7]; ?></p>
                     <div class="d-flex justify-content-between align-items-center small border-top pt-2 text-muted">
-                        <span><?php echo $sf[8]; ?></span>
                         <span><?php echo $sf[9]; ?></span>
+                        <span><?php echo $sf[10]; ?></span>
                     </div>
                 </div>
             </div>

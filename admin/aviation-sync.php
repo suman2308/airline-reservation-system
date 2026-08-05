@@ -11,7 +11,7 @@
 
 $pageTitle = 'External Data Sync';
 require_once __DIR__ . '/includes/admin-header.php';
-require_once __DIR__ . '/../../includes/AviationSyncService.php';
+require_once __DIR__ . '/../includes/AviationSyncService.php';
 
 $syncService = new AviationSyncService();
 $action = $_GET['action'] ?? '';

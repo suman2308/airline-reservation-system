@@ -13,6 +13,7 @@ CHANGELOG.md
 *.zip
 *.tar.gz
 *.sql
+!database/*.sql
 screenshots
 
 # Runtime state (excluded from image; writable at runtime)

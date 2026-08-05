@@ -73,7 +73,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $mealCost = floatval(str_replace(',', '', $_POST['meal_cost'] ?? 0));
     $mealName = trim($_POST['meal_name'] ?? '');
     $promo_code = trim($_POST['promo_code'] ?? '');
-    $submitted_promo_discount = floatval($_POST['promo_discount'] ?? 0);
 
     // Server-side pricing validation — never trust client
     $addonErrors = validateAddonCosts($baggageCost, $mealCost);
@@ -119,11 +118,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $created_refs = [];
         $created_ids = [];
-        $promo_discount = floatval($_POST['promo_discount'] ?? 0);
-        $promo_code = trim($_POST['promo_code'] ?? '');
-        $baggage_option = trim($_POST['baggage_option'] ?? '');
+        $promo_code_db = $promo_code ? strtoupper($promo_code) : null;
+        $promo_discount_db = $promo_discount > 0 ? $promo_discount : 0;
 
-        $book_stmt = mysqli_prepare($conn, "INSERT INTO bookings (booking_ref, user_id, flight_id, passenger_name, age, gender, travel_date, seat_number, booking_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Confirmed')");
+        $book_stmt = mysqli_prepare($conn, "INSERT INTO bookings (booking_ref, user_id, flight_id, passenger_name, age, gender, travel_date, seat_number, booking_status, promo_code, promo_discount) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Confirmed', ?, ?)");
 
         foreach ($passengers as $p) {
             $p_name = trim($p['name']);
@@ -143,7 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             mysqli_stmt_close($chk_stmt);
 
-            mysqli_stmt_bind_param($book_stmt, "siisisss", $b_ref, $user_id, $flight_id, $p_name, $p_age, $p_gender, $travel_date, $p_seat);
+            mysqli_stmt_bind_param($book_stmt, "siisissssd", $b_ref, $user_id, $flight_id, $p_name, $p_age, $p_gender, $travel_date, $p_seat, $promo_code_db, $promo_discount_db);
             if (!mysqli_stmt_execute($book_stmt)) {
                 throw new Exception("Failed to create booking for " . htmlspecialchars($p_name));
             }
@@ -195,20 +193,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-<div class="page-header py-5" style="padding: 6rem 0 2rem;">
+<div class="page-hero-lite">
     <div class="container">
-        <div class="d-flex justify-content-between align-items-center flex-wrap">
-            <div>
-                <h1 class="mb-1 fs-2"><i class="bi bi-ticket-perforated me-2 text-accent"></i>Complete Your Booking</h1>
-                <p class="mb-0 text-muted">
-                    <?php echo htmlspecialchars($f['airline_name'] . ' ' . $f['flight_number'] . ' · ' . $f['source'] . ' → ' . $f['destination']); ?>
-                    · <i class="bi bi-calendar-event ms-1 me-1"></i><?php echo formatDate($travel_date); ?>
-                </p>
-            </div>
-            <div class="text-end d-none d-md-block">
-                <div class="fw-bold text-accent fs-4"><?php echo formatPrice($f['price']); ?></div>
-                <small class="text-muted">per adult seat</small>
-            </div>
+        <span class="kicker">Booking</span>
+        <h1>Complete Your <span class="dim">Booking</span></h1>
+        <p class="mb-0">
+            <?php echo htmlspecialchars($f['airline_name'] . ' ' . $f['flight_number'] . ' · ' . $f['source'] . ' → ' . $f['destination']); ?>
+            · <i class="bi bi-calendar-event ms-1 me-1"></i><?php echo formatDate($travel_date); ?>
+        </p>
+        <div class="mt-3">
+            <span class="badge-status bg-primary"><?php echo formatPrice($f['price']); ?> per adult seat</span>
         </div>
     </div>
 </div>
@@ -311,9 +305,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                             <!-- Seat Legend -->
                             <div class="d-flex flex-wrap gap-3 mb-3 pb-3 border-bottom">
-                                <div class="d-flex align-items-center gap-1 small">
-                                    <span class="d-inline-block" style="width:18px;height:18px;background:#e8f5e9;border:1px solid #c8e6c9;border-radius:3px;"></span> Vacant
-                                </div>
                                 <div class="d-flex align-items-center gap-1 small">
                                     <span class="d-inline-block" style="width:18px;height:18px;background:var(--accent);border-radius:3px;"></span> Selected
                                 </div>
@@ -697,6 +688,16 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                     input.classList.remove('is-invalid');
                 }
+                const ageInputs = passengerFormsContainer.querySelectorAll('input[name$="[age]"]');
+                for (const input of ageInputs) {
+                    const age = parseInt(input.value, 10);
+                    if (isNaN(age) || age < 1 || age > 120) {
+                        input.classList.add('is-invalid');
+                        input.focus();
+                        return;
+                    }
+                    input.classList.remove('is-invalid');
+                }
             }
             goToStep(next);
         });
@@ -840,11 +841,29 @@ document.addEventListener('DOMContentLoaded', function () {
             btn.classList.toggle('selected', selectedSeats.includes(seat));
         });
 
+        // Preserve typed values before rebuilding — seat toggles must NOT wipe
+        // the name/age/gender the passenger already entered in step 1.
+        // Values are keyed by seat number so each passenger's data follows
+        // its seat even when seats are re-ordered.
+        const prevBySeat = {};
+        passengerFormsContainer.querySelectorAll('.passenger-card').forEach(card => {
+            const seatInput = card.querySelector('input[name$="[seat]"]');
+            const nameInput = card.querySelector('input[name$="[name]"]');
+            const ageInput = card.querySelector('input[name$="[age]"]');
+            const genderSelect = card.querySelector('select[name$="[gender]"]');
+            prevBySeat[seatInput ? seatInput.value : ''] = {
+                name: nameInput ? nameInput.value : '',
+                age: ageInput ? ageInput.value : '',
+                gender: genderSelect ? genderSelect.value : '',
+            };
+        });
+
         // Passenger forms for step 1
         passengerFormsContainer.innerHTML = '';
         selectedSeats.forEach((seatNum, idx) => {
             const isBiz = parseInt(seatNum.substring(0, seatNum.length - 1)) <= 2;
-            const defaultName = (idx === 0) ? initialUserName : '';
+            const prev = prevBySeat[seatNum] || {};
+            const defaultName = (idx === 0 && !prev.name) ? initialUserName : (prev.name || '');
             const pCard = document.createElement('div');
             pCard.className = 'passenger-card mb-3 p-3 border rounded-3 bg-white';
             pCard.innerHTML = `
@@ -856,19 +875,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 <div class="row g-2">
                     <div class="col-md-6">
                         <label class="form-label small">Full Name</label>
-                        <input type="text" name="passengers[${idx}][name]" class="form-control form-control-sm" placeholder="As on ID proof" required value="${defaultName}">
+                        <input type="text" name="passengers[${idx}][name]" class="form-control form-control-sm" placeholder="As on ID proof" required value="${htmlspecialchars(defaultName)}">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small">Age</label>
-                        <input type="number" name="passengers[${idx}][age]" class="form-control form-control-sm" min="1" max="120" required>
+                        <input type="number" name="passengers[${idx}][age]" class="form-control form-control-sm" min="1" max="120" required value="${htmlspecialchars(prev.age)}">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small">Gender</label>
                         <select name="passengers[${idx}][gender]" class="form-select form-select-sm" required>
                             <option value="">Select</option>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                            <option value="Other">Other</option>
+                            <option value="Male" ${prev.gender === 'Male' ? 'selected' : ''}>Male</option>
+                            <option value="Female" ${prev.gender === 'Female' ? 'selected' : ''}>Female</option>
+                            <option value="Other" ${prev.gender === 'Other' ? 'selected' : ''}>Other</option>
                         </select>
                     </div>
                 </div>
@@ -1010,30 +1029,31 @@ document.addEventListener('DOMContentLoaded', function () {
         const totalBase = basePrice * passengerCount;
         const subTotal = totalBase + totalBizUpgrades + totalAddonCost;
 
+        // Percent promos apply to base fare only (matches server-side calc in booking.php)
         let discount = 0;
         if (typeof appliedDiscount === 'number' && appliedDiscount < 1 && appliedDiscount > 0) {
-            discount = subTotal * appliedDiscount;
+            discount = totalBase * appliedDiscount;
         } else if (typeof appliedDiscount === 'number' && appliedDiscount >= 1) {
             discount = appliedDiscount;
         }
         const grandTotal = Math.max(0, subTotal - discount);
 
         summarySeatCount.textContent = passengerCount;
-        summaryBasePrice.textContent = '₹' + totalBase.toLocaleString('en-IN', {minimumFractionDigits: 2});
+        summaryBasePrice.textContent = '₹' + Math.round(totalBase).toLocaleString('en-IN');
 
         businessSurchargeRow.style.display = totalBizUpgrades > 0 ? 'flex' : 'none';
-        if (totalBizUpgrades > 0) summarySurcharge.textContent = '+ ₹' + totalBizUpgrades.toLocaleString('en-IN', {minimumFractionDigits: 2});
+        if (totalBizUpgrades > 0) summarySurcharge.textContent = '+ ₹' + Math.round(totalBizUpgrades).toLocaleString('en-IN');
 
         addonSurchargeRow.style.display = totalAddonCost > 0 ? 'flex' : 'none';
         addonCountLabel.textContent = passengerCount;
-        if (totalAddonCost > 0) summaryAddonSurcharge.textContent = '+ ₹' + totalAddonCost.toLocaleString('en-IN', {minimumFractionDigits: 2});
+        if (totalAddonCost > 0) summaryAddonSurcharge.textContent = '+ ₹' + Math.round(totalAddonCost).toLocaleString('en-IN');
 
         promoDiscountRow.style.display = discount > 0 ? 'flex' : 'none';
         promoLabelText.textContent = appliedPromoCode ? appliedPromoCode + ' Discount' : 'Promo Discount';
-        if (discount > 0) summaryDiscount.textContent = '- ₹' + discount.toLocaleString('en-IN', {minimumFractionDigits: 2});
+        if (discount > 0) summaryDiscount.textContent = '- ₹' + Math.round(discount).toLocaleString('en-IN');
 
-        summaryTotalPrice.textContent = '₹' + grandTotal.toLocaleString('en-IN', {minimumFractionDigits: 2});
-        payBtnAmount.textContent = '₹' + grandTotal.toLocaleString('en-IN', {minimumFractionDigits: 2});
+        summaryTotalPrice.textContent = '₹' + Math.round(grandTotal).toLocaleString('en-IN');
+        payBtnAmount.textContent = '₹' + Math.round(grandTotal).toLocaleString('en-IN');
     }
 
     // ───────── Review Page ─────────

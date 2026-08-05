@@ -48,8 +48,18 @@ aerobook/
    ```bash
    mysql -u YOUR_USER -p YOUR_DATABASE < database/aerobook.sql
    ```
-4. Configure `includes/config.php` with your database credentials
-5. Set `BASE_URL` to your domain URL
+4. Configure your environment — copy `.env.example` to `.env` and set your credentials:
+   ```bash
+   cp .env.example .env
+   ```
+   ```
+   DB_HOST=localhost
+   DB_USER=your_db_user
+   DB_PASS=your_db_password
+   DB_NAME=your_db_name
+   BASE_URL=https://yourdomain.com/
+   ```
+5. `BASE_URL` is auto-detected if left empty (works behind proxies too)
 
 ### 2. Docker Deployment
 
@@ -76,26 +86,27 @@ sudo systemctl restart apache2
 
 ## Configuration
 
-### Database (`includes/config.php`)
+All configuration lives in the **`.env` file** (root of the project) — copied from `.env.example`. The app reads environment variables first, then `.env`, then safe defaults.
 
-```php
-define('DB_HOST', 'localhost');
-define('DB_USER', 'your_db_user');
-define('DB_PASS', 'your_db_password');
-define('DB_NAME', 'your_db_name');
-define('BASE_URL', 'https://yourdomain.com/');
+### Database
+
+```
+DB_HOST=localhost
+DB_USER=your_db_user
+DB_PASS=your_db_password
+DB_NAME=your_db_name
 ```
 
 ### Email (SMTP)
 
-1. Set `MAIL_MODE` to `'smtp'` in `includes/config.php`
-2. Configure your SMTP credentials:
-   ```php
-   define('MAIL_HOST', 'smtp.gmail.com');
-   define('MAIL_PORT', 587);
-   define('MAIL_USER', 'your@email.com');
-   define('MAIL_PASS', 'your-app-password');
-   define('MAIL_ENCRYPTION', 'tls');
+1. Set `MAIL_MODE=smtp` in `.env` (default is `log` — writes to `logs/email.log`)
+2. Configure your SMTP credentials in `.env`:
+   ```
+   MAIL_HOST=smtp.gmail.com
+   MAIL_PORT=587
+   MAIL_USER=your@email.com
+   MAIL_PASS=your-app-password
+   MAIL_ENCRYPTION=tls
    ```
 3. For Gmail: use an App Password (not your regular password)
 
@@ -123,7 +134,7 @@ The complete schema is in `database/aerobook.sql`. Key tables:
 | Table | Purpose | Records |
 |-------|---------|---------|
 | `users` | User accounts | Core |
-| `flights` | Flight schedules | 84 sample flights (12/day) |
+| `flights` | Flight schedules | 84 sample flights (weekly schedule) |
 | `bookings` | Booking records | User bookings |
 | `notifications` | In-app notifications | Auto-created |
 | `transactions` | Payment records | Demo payment transactions |
@@ -140,12 +151,11 @@ The schema includes indexes for:
 
 ## Cron Jobs (Optional)
 
-```bash
-# Clean up old notifications (daily)
-0 3 * * * php /path/to/aerobook/cron/cleanup.php
+There is no `cron/` directory in this repo — maintenance (session GC, log rotation) is handled by the web server. If you want automated database backups on shared hosting, add a cron entry like:
 
-# Generate sitemap (weekly)
-0 5 * * 0 php /path/to/aerobook/cron/sitemap.php
+```bash
+# Automated database backup (daily at 2 AM)
+0 2 * * * mysqldump -u USER -pPASS DB_NAME > /backups/aerobook_$(date +\%Y\%m\%d).sql
 ```
 
 ## Backup Strategy
@@ -167,15 +177,15 @@ The schema includes indexes for:
 
 ## Security Checklist
 
-- [ ] `REQUIRE_EMAIL_VERIFICATION` set to `true` in production
+- [ ] `REQUIRE_EMAIL_VERIFICATION=true` in `.env` for production
 - [ ] `MAINTENANCE_MODE` handles update periods
 - [ ] Demo Payment is used in test mode
 - [ ] `MAIL_PASS` uses an app-specific password
-- [ ] `display_errors` is `Off` in production
+- [ ] `display_errors` is `Off` (set in `.htaccess` / PHP config)
 - [ ] HTTPS is enforced (see `.htaccess`)
 - [ ] Logs directory is not web-accessible
 - [ ] Uploads directory has proper permissions (775)
-- [ ] Default admin password (`admin123`) is changed
+- [ ] Default admin password (`admin123`) is changed after first login
 - [ ] File upload extensions are restricted
 
 ## Performance
@@ -196,12 +206,12 @@ The schema includes indexes for:
 
 | Problem | Solution |
 |---------|----------|
-| Blank page on login | Check `includes/config.php` database credentials |
+| Blank page on login | Check `.env` database credentials |
 | 500 Server Error | Check `logs/` directory for error logs |
 | Email not sending | Set `MAIL_MODE=log` to verify emails are being generated |
 | Payment fails | Check payment configuration settings
 | Images not uploading | Check `uploads/avatars/` permissions (775) |
-| Session expired | Increase `SESSION_TIMEOUT_MINUTES` in config |
+| Session expired | Increase `SESSION_TIMEOUT_MINUTES` in `.env` |
 
 ## Support
 

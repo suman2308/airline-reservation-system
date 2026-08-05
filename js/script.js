@@ -1,72 +1,12 @@
 /**
  * AeroBook – Main JavaScript
- * v1.0.2 — Theme system, loading states, accessible validation
+ * v1.1.1 — Dark-only theme (pinned in <head>), loading states, accessible validation
  */
 
-// ─── Theme System (Light / Dark) ───
-// Inline script in <head> sets data-theme before paint; this module handles
-// the toggle button, persistence, and system-preference fallback.
-(function () {
-    var STORAGE_KEY = 'aerobook-theme';
-    var root = document.documentElement;
+// ─── Theme ───
+// Dark mode is the only theme. The <html> data-theme="dark" attribute is pinned
+// by an inline script in the header before CSS paints, so nothing is needed here.
 
-    function currentTheme() {
-        return root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
-    }
-
-    function applyTheme(theme) {
-        root.setAttribute('data-theme', theme);
-        try { localStorage.setItem(STORAGE_KEY, theme); } catch (e) {}
-        syncToggleIcons(theme);
-    }
-
-    function syncToggleIcons(theme) {
-        document.querySelectorAll('.theme-toggle').forEach(function (btn) {
-            var icon = btn.querySelector('i');
-            if (icon) {
-                icon.className = theme === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill';
-            }
-            btn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
-        });
-    }
-
-    function initTheme() {
-        // Fallback in case the inline head script didn't run (e.g., JS-only toggle).
-        var saved = null;
-        try { saved = localStorage.getItem(STORAGE_KEY); } catch (e) {}
-        if (!root.hasAttribute('data-theme')) {
-            var theme = saved || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-            applyTheme(theme);
-        } else {
-            syncToggleIcons(currentTheme());
-        }
-
-        document.querySelectorAll('.theme-toggle').forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                applyTheme(currentTheme() === 'dark' ? 'light' : 'dark');
-            });
-        });
-
-        // Respect live system preference changes only when the user hasn't chosen manually.
-        if (window.matchMedia) {
-            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
-                var chosen = null;
-                try { chosen = localStorage.getItem(STORAGE_KEY); } catch (err) {}
-                if (!chosen) {
-                    applyTheme(e.matches ? 'dark' : 'light');
-                }
-            });
-        }
-    }
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initTheme);
-    } else {
-        initTheme();
-    }
-})();
-
-// ─── Navbar scroll effect ───
 window.addEventListener('scroll', function () {
     const navbar = document.getElementById('mainNavbar');
     if (navbar) {

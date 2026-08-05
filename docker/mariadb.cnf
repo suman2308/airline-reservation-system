@@ -1,0 +1,24 @@
+# ============================================================
+# AeroBook – Lean MariaDB configuration
+# ------------------------------------------------------------
+# Tuned for small free-tier containers (512 MB RAM) so that
+# Apache + PHP + MariaDB fit comfortably in one instance.
+# The database only serves the app inside this same container,
+# so it listens on localhost only.
+# ============================================================
+[mysqld]
+
+# ─── Memory tuning (keep MariaDB well under ~150 MB) ───
+innodb_buffer_pool_size        = 32M
+innodb_log_buffer_size         = 2M
+key_buffer_size                = 8M
+max_connections                = 30
+thread_cache_size              = 4
+performance_schema             = OFF
+
+# ─── Local-only (DB is internal to this container) ───
+bind-address                   = 127.0.0.1
+
+# ─── Durability vs. speed: group commits, no fsync per commit ───
+# Safe for a demo container; data is re-seeded on boot anyway.
+innodb_flush_log_at_trx_commit = 2

@@ -1,7 +1,7 @@
 <?php
 $pageTitle = 'Airline Analytics';
 require_once __DIR__ . '/includes/admin-header.php';
-require_once __DIR__ . '/../../includes/helpers.php';
+require_once __DIR__ . '/../includes/helpers.php';
 
 $revenueByMonth = getRevenueByMonth(12);
 $revenueByRoute = getRevenueByRoute();

@@ -14,7 +14,7 @@
 
 class AeroQR {
     private $size;
-    private $darkColor = '#051336';
+    private $darkColor = '#202A36';
     private $lightColor = '#ffffff';
 
     public function __construct($size = 200) {

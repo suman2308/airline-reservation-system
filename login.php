@@ -136,6 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     <div class="col-lg-7">
                         <div class="auth-form">
+                            <span class="kicker">Account access</span>
                             <h2>Login</h2>
                             <p class="subtitle">Enter your credentials to access your account</p>
                             <form method="POST" id="loginForm" novalidate class="needs-loading">
@@ -155,7 +156,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     </div>
                                     <a href="forgot-password.php" class="small text-accent fw-semibold">Forgot password?</a>
                                 </div>
-                                <button type="submit" class="btn btn-accent w-100 py-2 mb-3"><i class="bi bi-box-arrow-in-right me-2"></i>Login</button>
+                                <button type="submit" class="btn btn-accent w-100 py-2 mb-3 rounded-pill"><i class="bi bi-box-arrow-in-right me-2"></i>Login</button>
                                 <p class="text-center mb-0">Don't have an account? <a href="register.php" class="text-accent fw-bold">Register here</a></p>
                             </form>
                         </div>

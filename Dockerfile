@@ -12,6 +12,23 @@ RUN apt-get update && apt-get install -y libpng-dev libjpeg-dev libwebp-dev && \
     docker-php-ext-install gd && \
     docker-php-ext-enable gd
 
+# ─────────────────────────────────────────────────────────────
+# All-in-one mode: bundle MariaDB inside the container so the
+# app runs WITHOUT an external database (see docker/entrypoint.sh).
+# Override DB_HOST/DB_USER/DB_PASS/DB_NAME env vars to use an
+# external MySQL instead — the entrypoint skips the bundled DB.
+# ─────────────────────────────────────────────────────────────
+RUN apt-get update && apt-get install -y --no-install-recommends mariadb-server mariadb-client && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf /var/lib/mysql/*
+
+# Lean MariaDB config tuned for small free-tier instances (512 MB RAM)
+COPY docker/mariadb.cnf /etc/mysql/mariadb.conf.d/99-aerobook.cnf
+
+# Entrypoint: boots MariaDB, seeds schema, starts Apache
+COPY docker/entrypoint.sh /usr/local/bin/aerobook-entrypoint.sh
+RUN chmod +x /usr/local/bin/aerobook-entrypoint.sh
+
 # Set working directory
 WORKDIR /var/www/html
 
@@ -37,4 +54,5 @@ RUN echo "upload_max_filesize = 10M" >> /usr/local/etc/php/conf.d/aerobook.ini &
 
 EXPOSE 80
 
-CMD ["apache2-foreground"]
+# Boot MariaDB (if DB_HOST is localhost/127.0.0.1) + Apache
+CMD ["aerobook-entrypoint.sh"]

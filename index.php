@@ -1,136 +1,92 @@
-<?php $pageTitle = 'Home'; require_once 'includes/header.php'; ?>
-<!-- Hero Section -->
-<section class="hero-section position-relative">
-    <div class="container position-relative" style="z-index: 1;">
-        <div class="row align-items-center">
-            <div class="col-lg-12 text-center">
-                <div class="hero-content text-white py-5">
-                    <span class="section-badge bg-primary text-white border-0">✈ India's Trusted Flight Booking</span>
-                    <h1 class="display-3 fw-bold mb-3">Fly Beyond Your <span style="color: #00d4ff;">Imagination</span></h1>
-                    <p class="lead mb-5 text-white-50 mx-auto" style="max-width: 600px;">Discover the easiest way to book flights. Smart, fast and reliable platform with real-time availability.</p>
+<?php
+$pageTitle = 'Smart Flight Booking';
+$landingNav = true;
+require_once 'includes/header.php';
+require_once 'includes/helpers.php';
+?>
+<!-- ═══════════ Hero ═══════════ -->
+<section class="hero-lp" id="start">
+    <div class="hero-vignette"></div>
+    <div class="hero-content">
+        <div class="hero-main">
+            <div class="hero-copy">
+                <span class="hero-kicker">Flight Booking</span>
+                <h1 class="hero-headline">
+                    <span class="hero-line hero-line-1">Fly more.</span>
+                    <span class="hero-line hero-line-2">Pay less.</span>
+                </h1>
+                <p class="hero-subtitle">Search hundreds of flights, compare fares in seconds, and book with confidence — all in one place.</p>
+                <div class="hero-actions">
+                    <a href="#story" class="btn btn-gray btn-pill px-4 py-2">Explore</a>
+                    <a href="<?php echo BASE_URL; ?>search-flights.php" class="btn btn-ink btn-pill px-4 py-2">Search Flights</a>
+                </div>
+            </div>
+        </div>
 
-                    <!-- Portal Selection Cards -->
-                    <div class="row justify-content-center g-4 mb-4">
-                        <div class="col-md-5">
-                            <a href="<?php echo BASE_URL; ?>search-flights.php?region=domestic" class="text-decoration-none">
-                                <div class="portal-card text-center p-5 rounded-4 hover-lift" style="background: linear-gradient(135deg, rgba(2, 77, 236, 0.2), rgba(0, 212, 255, 0.1)); border: 2px solid rgba(2, 77, 236, 0.3); backdrop-filter: blur(10px);">
-                                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3" style="width: 80px; height: 80px; background: rgba(255,255,255,0.1);">
-                                        <span style="font-size: 2.5rem;">🇮🇳</span>
-                                    </div>
-                                    <h3 class="fw-bold text-white mb-2">Domestic Flights</h3>
-                                    <p class="text-white-50 mb-0">Explore flights across India's top cities</p>
-                                    <div class="d-flex justify-content-center gap-3 mt-3">
-                                        <span class="badge bg-primary-subtle text-white px-3 py-2 rounded-pill">Delhi</span>
-                                        <span class="badge bg-primary-subtle text-white px-3 py-2 rounded-pill">Mumbai</span>
-                                        <span class="badge bg-primary-subtle text-white px-3 py-2 rounded-pill">Bangalore</span>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="col-md-5">
-                            <a href="<?php echo BASE_URL; ?>search-flights.php?region=international" class="text-decoration-none">
-                                <div class="portal-card text-center p-5 rounded-4 hover-lift" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(0, 212, 255, 0.1)); border: 2px solid rgba(16, 185, 129, 0.3); backdrop-filter: blur(10px);">
-                                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3" style="width: 80px; height: 80px; background: rgba(255,255,255,0.1);">
-                                        <span style="font-size: 2.5rem;">🌍</span>
-                                    </div>
-                                    <h3 class="fw-bold text-white mb-2">International Flights</h3>
-                                    <p class="text-white-50 mb-0">Fly to destinations around the world</p>
-                                    <div class="d-flex justify-content-center gap-3 mt-3">
-                                        <span class="badge bg-success-subtle text-white px-3 py-2 rounded-pill">Dubai</span>
-                                        <span class="badge bg-success-subtle text-white px-3 py-2 rounded-pill">Singapore</span>
-                                        <span class="badge bg-success-subtle text-white px-3 py-2 rounded-pill">Bangkok</span>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
+        <!-- ═══ Flight Search Panel (visible in the hero) ═══ -->
+        <div class="hero-search-panel">
+            <form action="<?php echo BASE_URL; ?>fare-results.php" method="GET" class="hero-search-form">
+                <input type="hidden" name="region" value="domestic">
+                <div class="hs-field">
+                    <label class="hs-label" for="hsFrom"><i class="bi bi-geo-alt me-1"></i>From</label>
+                    <select name="source" id="hsFrom" class="form-select" required>
+                        <option value="">Select origin</option>
+                        <?php cityOptions(null, 'domestic'); ?>
+                    </select>
+                </div>
+                <div class="hs-field">
+                    <label class="hs-label" for="hsTo"><i class="bi bi-geo-alt-fill me-1"></i>To</label>
+                    <select name="destination" id="hsTo" class="form-select" required>
+                        <option value="">Select destination</option>
+                        <?php cityOptions(null, 'domestic'); ?>
+                    </select>
+                </div>
+                <div class="hs-field">
+                    <label class="hs-label" for="hsDate"><i class="bi bi-calendar3 me-1"></i>Travel date</label>
+                    <input type="date" name="travel_date" id="hsDate" class="form-control" min="<?php echo date('Y-m-d'); ?>" value="<?php echo date('Y-m-d'); ?>">
+                </div>
+                <button type="submit" class="btn btn-ink btn-pill hs-submit"><i class="bi bi-search me-1"></i>Search</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════ Story ═══════════ -->
+<section class="lp-section" id="story">
+    <div class="lp-section-inner">
+        <div class="row align-items-stretch g-5">
+            <div class="col-lg-6 reveal d-flex">
+                <div class="w-100 d-flex flex-column justify-content-center">
+                    <span class="kicker kicker-accent">Our Story</span>
+                    <h2 class="lp-heading">Flight booking, <span class="dim">reimagined</span> for the modern traveller.</h2>
+                    <p class="lp-lead mb-4">AeroBook was built on a simple belief: booking a flight shouldn't be a chore. We pair live fares, transparent pricing, and effortless booking — so your time is spent where it matters, not in endless tabs.</p>
+                    <p class="text-gray-500 mb-4">Every journey is handled end-to-end. Real-time availability, secure checkout, instant e-tickets, and 24/7 support — standard on every booking.</p>
+                    <a href="<?php echo BASE_URL; ?>about.php" class="btn btn-outline-accent btn-pill px-4 py-2 align-self-start">More about us</a>
+                </div>
+            </div>
+            <div class="col-lg-6 reveal d-flex" style="--reveal-delay: 120ms;">
+                <div class="lp-story-panel w-100">
+                    <i class="bi bi-airplane-engines plane-icon"></i>
+                    <div>
+                        <h3>From search to boarding pass.</h3>
+                        <p>Compare fares, pick your seat, and check in online — all before you even reach the airport.</p>
                     </div>
-
-                    <div class="d-flex gap-3 justify-content-center mt-4">
-                        <a href="<?php echo BASE_URL; ?>search-flights.php?region=domestic" class="btn btn-accent btn-lg px-5 fw-bold"><i class="bi bi-airplane me-2"></i>Book a Flight</a>
-                        <a href="<?php echo BASE_URL; ?>register.php" class="btn btn-outline-light btn-lg px-5 fw-bold">Join Now</a>
-                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
-
-<!-- Features Section -->
-<section class="py-5 bg-white">
-    <div class="container py-5">
-        <div class="text-center mb-5">
-            <h2 class="fw-bold">Why Choose AeroBook?</h2>
-            <p class="text-muted">Experience the next generation of flight booking with interactive seat selection</p>
-        </div>
-        <div class="row g-4">
-            <div class="col-md-3">
-                <div class="feature-card h-100 p-4 border rounded-4 text-center hover-lift">
-                    <div class="feature-icon mb-3 fs-1 text-accent"><i class="bi bi-grid-3x3-gap-fill"></i></div>
-                    <h3 class="h5 fw-bold">Interactive Seat Map</h3>
-                    <p class="text-muted mb-0">View live vacant & occupied seats on an airplane layout and pick your exact seats.</p>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="feature-card h-100 p-4 border rounded-4 text-center hover-lift">
-                    <div class="feature-icon mb-3 fs-1 text-accent"><i class="bi bi-lightning-charge"></i></div>
-                    <h3 class="h5 fw-bold">Instant Booking</h3>
-                    <p class="text-muted mb-0">Book your tickets in less than 2 minutes with automated real-time seat locks.</p>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="feature-card h-100 p-4 border rounded-4 text-center hover-lift">
-                    <div class="feature-icon mb-3 fs-1 text-accent"><i class="bi bi-shield-check"></i></div>
-                    <h3 class="h5 fw-bold">Secure Payments</h3>
-                    <p class="text-muted mb-0">Your data and transactions are protected by industry-grade encryption.</p>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="feature-card h-100 p-4 border rounded-4 text-center hover-lift">
-                    <div class="feature-icon mb-3 fs-1 text-accent"><i class="bi bi-headset"></i></div>
-                    <h3 class="h5 fw-bold">24/7 Assistance</h3>
-                    <p class="text-muted mb-0">Dedicated support team to assist with reservations and cancellations anytime.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Stats Section -->
-<section class="py-5 text-white text-center" style="background-color: var(--primary);">
-    <div class="container">
-        <div class="row g-4">
-            <div class="col-md-3"><h3>50+</h3><p class="mb-0 text-white" style="color: #ffffff !important; opacity: 0.9;">Airlines</p></div>
-            <div class="col-md-3"><h3>100k+</h3><p class="mb-0 text-white" style="color: #ffffff !important; opacity: 0.9;">Happy Travelers</p></div>
-            <div class="col-md-3"><h3>500+</h3><p class="mb-0 text-white" style="color: #ffffff !important; opacity: 0.9;">Daily Flights</p></div>
-            <div class="col-md-3"><h3>20+</h3><p class="mb-0 text-white" style="color: #ffffff !important; opacity: 0.9;">Major Cities</p></div>
-        </div>
-    </div>
-</section>
-
-<!-- Popular Routes -->
-<section class="py-5">
-    <div class="container py-5">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="fw-bold mb-0">Popular Domestic Routes</h2>
-            <a href="<?php echo BASE_URL; ?>search-flights.php?region=domestic" class="text-accent fw-bold text-decoration-none">View All <i class="bi bi-arrow-right"></i></a>
-        </div>
-        <div class="row g-4">
+        <div class="row mt-5 pt-3 g-3 reveal">
             <?php
-            $routes = [
-                ['Delhi', 'Mumbai', '₹4,599', '2h 15m'],
-                ['Mumbai', 'Bangalore', '₹5,250', '1h 45m'],
-                ['Kolkata', 'Delhi', '₹4,150', '2h 25m'],
-                ['Chennai', 'Hyderabad', '₹3,800', '1h 15m'],
+            $stats = [
+                ['120+', 'Routes'],
+                ['45+', 'Airlines'],
+                ['1M+', 'Happy travellers'],
+                ['24/7', 'Support'],
             ];
-            foreach ($routes as $r): ?>
-            <div class="col-md-6 col-lg-3">
-                <div class="flight-card text-center h-100 hover-lift">
-                    <h5 class="mb-1"><?php echo $r[0]; ?></h5>
-                    <i class="bi bi-arrow-down text-accent my-2"></i>
-                    <h5 class="mb-2"><?php echo $r[1]; ?></h5>
-                    <p class="text-muted small mb-2"><i class="bi bi-clock me-1"></i><?php echo $r[3]; ?></p>
-                    <div class="flight-price fs-4 fw-bold text-accent"><?php echo $r[2]; ?><small class="text-muted fs-6">/person</small></div>
-                    <a href="<?php echo BASE_URL; ?>search-flights.php?region=domestic&source=<?php echo urlencode($r[0]); ?>&destination=<?php echo urlencode($r[1]); ?>" class="btn btn-accent btn-sm mt-3 w-100">View Flights</a>
+            foreach ($stats as $s): ?>
+            <div class="col-6 col-md-3">
+                <div class="lp-stat">
+                    <div class="lp-stat-value"><?php echo $s[0]; ?></div>
+                    <div class="lp-stat-label"><?php echo $s[1]; ?></div>
                 </div>
             </div>
             <?php endforeach; ?>
@@ -138,12 +94,133 @@
     </div>
 </section>
 
-<!-- CTA Section -->
-<section class="cta-section py-5 text-center text-white">
-    <div class="container py-4">
-        <h2 class="display-5 fw-bold mb-3">Ready to Take Off?</h2>
-        <p class="lead mb-4">Join thousands of happy travelers who trust AeroBook for their flight bookings.</p>
-        <a href="<?php echo BASE_URL; ?>register.php" class="btn btn-light btn-lg px-5 fw-bold text-accent">Create Free Account</a>
+<!-- ═══════════ Fares ═══════════ -->
+<section class="lp-section" id="rates">
+    <div class="lp-section-inner">
+        <div class="text-center mb-5 reveal">
+            <span class="kicker kicker-accent">Fares</span>
+            <h2 class="lp-heading">Transparent fares. <span class="dim">Zero surprises.</span></h2>
+            <p class="lp-lead">Choose how you fly. No hidden fees, no last-minute markups — just clear pricing on every route.</p>
+        </div>
+        <div class="pricing-grid">
+            <div class="pricing-card reveal">
+                <div class="pricing-name">Saver</div>
+                <div class="pricing-desc">Pay-as-you-go fares, perfect for quick trips.</div>
+                <div class="pricing-price">₹2,499<small> / one-way</small></div>
+                <ul class="pricing-list">
+                    <li><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>1 cabin bag included</li>
+                    <li><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Standard seat selection</li>
+                    <li><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Online check-in</li>
+                    <li><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Free 24-hr cancellation</li>
+                </ul>
+                <a href="<?php echo BASE_URL; ?>search-flights.php" class="btn btn-gray btn-pill py-2 w-100">Book this fare</a>
+            </div>
+
+            <div class="pricing-card featured reveal" style="--reveal-delay: 120ms;">
+                <span class="popular">Most popular</span>
+                <div class="pricing-name">Flexi</div>
+                <div class="pricing-desc">More flexibility, more baggage, less to worry about.</div>
+                <div class="pricing-price">₹4,299<small> / one-way</small></div>
+                <ul class="pricing-list">
+                    <li><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>2 bags (1 checked)</li>
+                    <li><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Free date change</li>
+                    <li><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Priority boarding</li>
+                    <li><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Refundable fare</li>
+                </ul>
+                <a href="<?php echo BASE_URL; ?>search-flights.php" class="btn btn-white btn-pill py-2 w-100">Book your seat</a>
+            </div>
+
+            <div class="pricing-card reveal" style="--reveal-delay: 240ms;">
+                <div class="pricing-name">Business</div>
+                <div class="pricing-desc">Full comfort and priority treatment on every journey.</div>
+                <div class="pricing-price">₹8,999<small> / one-way</small></div>
+                <ul class="pricing-list">
+                    <li><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>2 checked bags</li>
+                    <li><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Extra legroom seat</li>
+                    <li><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Priority check-in & security</li>
+                    <li><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Dedicated support line</li>
+                </ul>
+                <a href="<?php echo BASE_URL; ?>search-flights.php" class="btn btn-gray btn-pill py-2 w-100">Book business</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════ Features ═══════════ -->
+<section class="lp-section" id="benefits">
+    <div class="lp-section-inner">
+        <div class="text-center mb-5 reveal">
+            <span class="kicker">Features</span>
+            <h2 class="lp-heading">Why fly <span class="dim">AeroBook.</span></h2>
+            <p class="lp-lead">Every detail engineered around one thing — getting you where you need to be, effortlessly.</p>
+        </div>
+        <div class="row g-4">
+            <?php
+            $benefits = [
+                ['bi bi-clock-history', 'Real-time availability', 'Live fares and seat maps, updated the moment airlines publish them.'],
+                ['bi bi-lightning-charge', 'Instant confirmation', 'Book in seconds and get your e-ticket delivered immediately.'],
+                ['bi bi-ticket-perforated', 'Smart seat selection', 'Pick your exact seat on an interactive cabin map before you pay.'],
+                ['bi bi-globe-asia-australia', 'Wide network', 'One booking, seamless connections across 120+ domestic and international routes.'],
+                ['bi bi-shield-lock', 'Secure payments', 'Bank-grade encryption with multiple payment options at checkout.'],
+                ['bi bi-headset', '24/7 support', 'A real person, any time of day, who sorts out the rest.'],
+            ];
+            foreach ($benefits as $b): ?>
+            <div class="col-md-6 col-lg-4 reveal">
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="<?php echo $b[0]; ?>"></i></div>
+                    <h3><?php echo $b[1]; ?></h3>
+                    <p><?php echo $b[2]; ?></p>
+                </div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════ FAQ ═══════════ -->
+<section class="lp-section" id="faq">
+    <div class="lp-section-inner" style="max-width: 52rem;">
+        <div class="text-center mb-5 reveal">
+            <span class="kicker kicker-accent">FAQ</span>
+            <h2 class="lp-heading">Answers, <span class="dim">before you ask.</span></h2>
+        </div>
+        <div class="accordion faq-accordion" id="faqAccordion">
+            <?php
+            $faqs = [
+                ['How far in advance should I book?', 'For domestic routes, booking 3–4 weeks ahead usually gets the best fares. International trips are best planned 6–8 weeks out.'],
+                ['What does my fare include?', 'Every fare includes airline taxes and standard cabin baggage. Seat selection, checked luggage, and meals are added transparently at checkout.'],
+                ['Can I change or cancel my booking?', 'Yes. Flexi fares include one free date change, and all fares can be cancelled within 24 hours of booking for a full refund. Full policies are shown before you pay.'],
+                ['How do I check in?', 'Online check-in opens 48 hours before departure. You can check in from your My Bookings page and download your boarding pass instantly.'],
+                ['How do I get my boarding pass?', 'After check-in, your boarding pass is available as a PDF or QR code on your confirmation page and in My Bookings.'],
+                ['Is my payment secure?', 'Absolutely. Payments run over encrypted connections with multiple gateway options, and refunds are processed back to your original payment method.'],
+            ];
+            foreach ($faqs as $i => $f): ?>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="faqHeading<?php echo $i; ?>">
+                    <button class="accordion-button <?php echo $i === 0 ? '' : 'collapsed'; ?>" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse<?php echo $i; ?>" aria-expanded="<?php echo $i === 0 ? 'true' : 'false'; ?>" aria-controls="faqCollapse<?php echo $i; ?>">
+                        <?php echo $f[0]; ?>
+                    </button>
+                </h2>
+                <div id="faqCollapse<?php echo $i; ?>" class="accordion-collapse collapse <?php echo $i === 0 ? 'show' : ''; ?>" aria-labelledby="faqHeading<?php echo $i; ?>" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body"><?php echo $f[1]; ?></div>
+                </div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════ CTA ═══════════ -->
+<section class="lp-section" id="book">
+    <div class="lp-section-inner">
+        <div class="lp-cta reveal">
+            <h2>Ready to take off?</h2>
+            <p>Your next journey is a few clicks away. Book with AeroBook and fly with confidence.</p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <a href="<?php echo BASE_URL; ?>search-flights.php" class="btn btn-white">Search Flights</a>
+                <a href="<?php echo BASE_URL; ?>register.php" class="btn btn-ghost-white">Create free account</a>
+            </div>
+        </div>
     </div>
 </section>
 

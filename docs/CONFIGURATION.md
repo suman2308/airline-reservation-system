@@ -69,6 +69,41 @@ PAYMENT_MODE=simulated          # 'simulated' (default) or 'curl'
 
 See [Payment Setup Guide](SETUP_PAYMENT.md) for detailed instructions.
 
+## AviationStack (Live Flight Data)
+
+AeroBook can enrich flight metadata from the [AviationStack](https://aviationstack.com) API.
+This is optional — the app works fully with its built-in sample data.
+
+```ini
+AVIATIONSTACK_API_KEY=your_access_key_here
+AVIATIONSTACK_ENABLED=true
+```
+
+- Get a free key from [aviationstack.com](https://aviationstack.com) → **Dashboard → API Key**.
+- `AVIATIONSTACK_API_KEY` is read from `.env` (or the environment) and is never exposed to
+  logs, HTML, or JavaScript.
+- `AVIATIONSTACK_ENABLED=true` shows the **Data Synchronization** page in the admin panel
+  (`admin/aviation-sync.php`), where an admin can sync airports, airlines, aircraft types,
+  countries, airplanes, and flights on demand.
+
+### Setup steps
+
+1. Import the aviation schema (creates `aviation_*` tables and `api_sync_logs`):
+   `mysql -u root aerobook_db < database/aviationstack.sql`
+2. Add your key to `.env` and set `AVIATIONSTACK_ENABLED=true`.
+3. Open **Admin → Data Synchronization** and click **Test Connection**, then run each sync.
+
+### Notes
+
+- The **free plan** allows a limited number of API requests per month (typically 100/month).
+  Each synced endpoint counts against that quota, so sync sparingly. If the API returns
+  `HTTP 429: Your monthly usage limit has been reached`, the quota is exhausted — upgrade
+  the plan or wait for the next billing cycle.
+- On Windows PHP builds without a system CA bundle, the app uses the bundled
+  `includes/cacert.pem` so HTTPS calls to the API succeed.
+- Synced data is stored read-only in the `aviation_*` tables and never overwrites bookings,
+  seats, or pricing in the main AeroBook tables.
+
 ## Security
 
 ```env

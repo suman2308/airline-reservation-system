@@ -7,8 +7,8 @@
                 <div class="col-lg-4 col-md-6">
                     <div class="footer-brand mb-3">
                         <a href="<?php echo BASE_URL; ?>" class="text-decoration-none d-flex align-items-center">
-                            <i class="bi bi-airplane-engines fs-3 me-2" style="color: #00d4ff;"></i>
-                            <span class="brand-text fs-3 text-white fw-bold" style="font-family: var(--font-heading);">Aero<span style="color: #00d4ff;">Book</span></span>
+                            <i class="bi bi-airplane-engines fs-3 me-2" style="color: #F4CEFF;"></i>
+                            <span class="brand-text fs-3 text-white fw-bold">Aero<span style="color: #F4CEFF;">Book</span></span>
                         </a>
                     </div>
                     <p class="footer-desc">Smart, Fast and Easy Flight Booking Platform. Book your next journey with confidence and ease.</p>
@@ -33,10 +33,10 @@
                 <div class="col-lg-3 col-md-6">
                     <h5 class="footer-heading">Popular Routes</h5>
                     <ul class="footer-links">
-                        <li><a href="#">Delhi → Mumbai</a></li>
-                        <li><a href="#">Mumbai → Bangalore</a></li>
-                        <li><a href="#">Kolkata → Delhi</a></li>
-                        <li><a href="#">Chennai → Hyderabad</a></li>
+                        <li><a href="<?php echo BASE_URL; ?>search-flights.php?region=domestic">Delhi → Mumbai</a></li>
+                        <li><a href="<?php echo BASE_URL; ?>search-flights.php?region=domestic">Mumbai → Bangalore</a></li>
+                        <li><a href="<?php echo BASE_URL; ?>search-flights.php?region=domestic">Kolkata → Delhi</a></li>
+                        <li><a href="<?php echo BASE_URL; ?>search-flights.php?region=international">Chennai → Singapore</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-6">
@@ -57,6 +57,7 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="<?php echo BASE_URL; ?>js/script.js"></script>
+    <script src="<?php echo BASE_URL; ?>js/script.js?v=<?php echo filemtime(__DIR__ . '/../js/script.js'); ?>"></script>
+    <script src="<?php echo BASE_URL; ?>js/aerobook.js?v=<?php echo filemtime(__DIR__ . '/../js/aerobook.js'); ?>"></script>
 </body>
 </html>

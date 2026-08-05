@@ -1,7 +1,7 @@
 <?php
 $pageTitle = 'Route Analytics';
 require_once __DIR__ . '/includes/admin-header.php';
-require_once __DIR__ . '/../../includes/helpers.php';
+require_once __DIR__ . '/../includes/helpers.php';
 
 $routeData = getRouteAnalytics();
 $occupancy = getOccupancyAnalysis();

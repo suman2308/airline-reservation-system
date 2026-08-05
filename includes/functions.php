@@ -96,7 +96,9 @@ function generateBookingRef() {
 // ──────────────────────────────────────────────
 
 function formatPrice($price) {
-    return '₹' . number_format($price, 2);
+    // Whole rupees only — decimals are never shown (cleaner, no cramped prices).
+    // number_format with 0 decimals already rounds.
+    return '₹' . number_format((float) $price, 0);
 }
 
 function formatDate($date) {
@@ -105,6 +107,17 @@ function formatDate($date) {
 
 function formatTime($datetime) {
     return date('h:i A', strtotime($datetime));
+}
+
+function timeSince($datetime) {
+    if (empty($datetime)) return 'Never';
+    $timestamp = strtotime($datetime);
+    $diff = time() - $timestamp;
+
+    if ($diff < 60) return 'Just now';
+    if ($diff < 3600) return floor($diff / 60) . ' min ago';
+    if ($diff < 86400) return floor($diff / 3600) . ' hr ago';
+    return date('d M Y', $timestamp);
 }
 
 function formatDateTime($datetime) {

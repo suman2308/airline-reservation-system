@@ -1,58 +1,87 @@
-<?php $pageTitle = 'About Us'; require_once 'includes/header.php'; ?>
-<div class="page-header">
+<?php $pageTitle = 'About Us'; $bareNav = true; require_once 'includes/header.php'; ?>
+<div class="page-hero-lite">
     <div class="container">
-        <h1><i class="bi bi-info-circle me-2"></i>About AeroBook</h1>
-        <p>Your trusted partner for seamless flight bookings in India</p>
+        <span class="kicker">Our Story</span>
+        <h1>Flying, <span class="dim">perfected.</span></h1>
+        <p>Your trusted partner for seamless, premium flight journeys — from quick domestic hops to long-haul international travel.</p>
     </div>
 </div>
-<div class="container py-5">
+
+<div class="container py-5" style="padding-top: 5rem;">
     <div class="row align-items-center g-5">
-        <div class="col-lg-6">
-            <h2 class="fw-bold mb-4">Redefining the Way You <span class="text-accent">Travel</span></h2>
-            <p class="lead text-muted">AeroBook was born out of a simple idea: making flight booking as easy as sending a text message.</p>
-            <p>Our platform combines cutting-edge technology with a user-centric design to provide you with the fastest and most reliable booking experience. Whether you're traveling for business or leisure, we ensure you get the best deals and a seamless journey from search to landing.</p>
-            <div class="row g-4 mt-2">
-                <div class="col-6">
-                    <h4 class="fw-bold text-accent mb-1">500+</h4>
-                    <p class="text-muted small mb-0">Daily Flights Tracked</p>
+        <div class="col-lg-6 reveal">
+            <span class="kicker">Who we are</span>
+            <h2 class="lp-heading">Redefining the way you <span class="dim">travel</span></h2>
+            <p class="lp-lead mb-4">AeroBook was born out of a simple idea: making flight booking as easy as sending a text message.</p>
+            <p class="text-gray-500 mb-4">Our platform combines cutting-edge technology with a user-centric design to provide you with the fastest and most reliable booking experience. Whether you're travelling for business or leisure, we ensure you get the best deals and a seamless journey from search to landing.</p>
+            <div class="row g-3">
+                <div class="col-6 col-md-6 col-xl-3">
+                    <div class="lp-stat">
+                        <div class="lp-stat-value">500+</div>
+                        <div class="lp-stat-label">Daily Flights Tracked</div>
+                    </div>
                 </div>
-                <div class="col-6">
-                    <h4 class="fw-bold text-accent mb-1">20+</h4>
-                    <p class="text-muted small mb-0">Major Cities Covered</p>
+                <div class="col-6 col-md-6 col-xl-3">
+                    <div class="lp-stat">
+                        <div class="lp-stat-value">20+</div>
+                        <div class="lp-stat-label">Major Cities Covered</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-6 col-xl-3">
+                    <div class="lp-stat">
+                        <div class="lp-stat-value">100k+</div>
+                        <div class="lp-stat-label">Happy Travelers</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-6 col-xl-3">
+                    <div class="lp-stat">
+                        <div class="lp-stat-value">50+</div>
+                        <div class="lp-stat-label">Partner Airlines</div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-lg-6">
-            <div class="about-image-wrapper p-4 bg-white rounded-4 shadow-sm border text-center">
-                 <i class="bi bi-airplane-engines" style="font-size:8rem; color:var(--accent);"></i>
-                 <h3 class="mt-3">AeroBook</h3>
-                 <p class="text-muted">Smart, Fast and Easy Flight Booking Platform</p>
+        <div class="col-lg-6 reveal" style="--reveal-delay: 120ms;">
+            <div class="lp-story-panel" style="min-height: 380px;">
+                <i class="bi bi-airplane-engines plane-icon"></i>
+                <div>
+                    <h3>Built for travellers, trusted by thousands.</h3>
+                    <p>Real-time availability, interactive seat maps, and instant confirmation — the modern way to fly.</p>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="row mt-5 pt-5 text-center">
-        <div class="col-md-4">
-            <div class="p-4 border rounded-4 bg-white h-100 shadow-sm card-hover">
-                <i class="bi bi-eye fs-1 text-accent mb-3"></i>
-                <h3 class="h4">Our Vision</h3>
-                <p class="text-muted mb-0">To be India's most loved and reliable travel companion, connecting people and places effortlessly.</p>
+    <div class="row mt-5 pt-5 g-4">
+        <?php
+        $values = [
+            ['bi bi-eye', 'Our Vision', 'To be India\'s most loved and reliable travel companion, connecting people and places effortlessly.'],
+            ['bi bi-bullseye', 'Our Mission', 'Providing a transparent, fast, and secure booking platform that empowers travellers with choice and convenience.'],
+            ['bi bi-heart', 'Our Values', 'Transparency, innovation, and a customer-first approach are the core principles that drive us forward.'],
+        ];
+        foreach ($values as $v): ?>
+        <div class="col-md-4 reveal">
+            <div class="benefit-card">
+                <div class="benefit-icon"><i class="<?php echo $v[0]; ?>"></i></div>
+                <h3><?php echo $v[1]; ?></h3>
+                <p><?php echo $v[2]; ?></p>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="p-4 border rounded-4 bg-white h-100 shadow-sm card-hover">
-                <i class="bi bi-bullseye fs-1 text-accent mb-3"></i>
-                <h3 class="h4">Our Mission</h3>
-                <p class="text-muted mb-0">Providing a transparent, fast, and secure booking platform that empowers travelers with choice and convenience.</p>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="p-4 border rounded-4 bg-white h-100 shadow-sm card-hover">
-                <i class="bi bi-heart fs-1 text-accent mb-3"></i>
-                <h3 class="h4">Our Values</h3>
-                <p class="text-muted mb-0">Transparency, innovation, and customer-first approach are the core principles that drive us forward.</p>
+        <?php endforeach; ?>
+    </div>
+</div>
+
+<!-- CTA -->
+<section class="lp-section" style="padding-top: 1rem;">
+    <div class="container">
+        <div class="lp-cta reveal">
+            <h2>Experience the difference.</h2>
+            <p>Join thousands of happy travellers who trust AeroBook for their flight bookings.</p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <a href="<?php echo BASE_URL; ?>search-flights.php" class="btn btn-white">Search Flights</a>
+                <a href="<?php echo BASE_URL; ?>register.php" class="btn btn-ghost-white">Create free account</a>
             </div>
         </div>
     </div>
-</div>
+</section>
 <?php require_once 'includes/footer.php'; ?>

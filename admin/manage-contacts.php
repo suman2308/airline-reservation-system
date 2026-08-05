@@ -1,8 +1,8 @@
 <?php
 $pageTitle = 'Support Queries';
 require_once __DIR__ . '/includes/admin-header.php';
-require_once __DIR__ . '/../../includes/helpers.php';
-require_once __DIR__ . '/../../includes/Paginator.php';
+require_once __DIR__ . '/../includes/helpers.php';
+require_once __DIR__ . '/../includes/Paginator.php';
 
 if (isset($_GET['delete'])) {
     if (!isset($_GET['token']) || !validateDeleteToken($_GET['token'])) {
@@ -43,7 +43,7 @@ mysqli_stmt_close($stmt);
 <div class="card border-0 shadow-sm rounded-4">
     <div class="card-header bg-white p-3 border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
         <h5 class="mb-0 fw-bold"><i class="bi bi-headset me-2 text-primary"></i>Support Queries</h5>
-        <a href="reports.php?export=1&type=bookings&from=<?php echo date('Y-m-d', strtotime('-1 year')); ?>&to=<?php echo date('Y-m-d'); ?>" class="btn btn-outline-secondary btn-sm"><i class="bi bi-download me-1"></i>Export</a>
+        <a href="reports.php?export=1&type=contacts&from=<?php echo date('Y-m-d', strtotime('-1 year')); ?>&to=<?php echo date('Y-m-d'); ?>" class="btn btn-outline-secondary btn-sm"><i class="bi bi-download me-1"></i>Export</a>
     </div>
     <div class="card-body p-3 bg-light border-bottom">
         <form method="GET" class="row g-2">
@@ -54,7 +54,7 @@ mysqli_stmt_close($stmt);
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
+            <table class="table table-hover align-middle mb-0 contacts-table">
                 <thead class="table-light">
                     <tr><th>Date</th><th>From</th><th>Subject</th><th>Message</th><th>Actions</th></tr>
                 </thead>
@@ -66,7 +66,7 @@ mysqli_stmt_close($stmt);
                         <td class="small"><?php echo formatDateTime($q['created_at']); ?></td>
                         <td><strong><?php echo htmlspecialchars($q['name']); ?></strong><br><small class="text-muted"><?php echo htmlspecialchars($q['email']); ?></small></td>
                         <td><span class="fw-semibold"><?php echo htmlspecialchars($q['subject']); ?></span></td>
-                        <td><div style="max-width:300px; font-size:0.85rem;" class="text-truncate" title="<?php echo htmlspecialchars($q['message']); ?>"><?php echo htmlspecialchars($q['message']); ?></div></td>
+                        <td><div class="contact-message text-truncate" style="max-width:300px; font-size:0.85rem;" title="<?php echo htmlspecialchars($q['message']); ?>"><?php echo htmlspecialchars($q['message']); ?></div></td>
                         <td>
                             <a href="<?php echo deleteLink('admin/manage-contacts.php', 'delete', $q['id'], 'Delete'); ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this query?')" aria-label="Delete query from <?php echo htmlspecialchars($q['name']); ?>"><i class="bi bi-trash"></i></a>
                         </td>

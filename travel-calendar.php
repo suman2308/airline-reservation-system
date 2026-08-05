@@ -35,9 +35,10 @@ $prevYear = $month === 1 ? $year - 1 : $year;
 $nextMonth = $month === 12 ? 1 : $month + 1;
 $nextYear = $month === 12 ? $year + 1 : $year;
 ?>
-<div class="page-header">
+<div class="page-hero-lite">
     <div class="container">
-        <h1><i class="bi bi-calendar3 me-2"></i>Travel Calendar</h1>
+        <span class="kicker">Planning</span>
+        <h1>Travel <span class="dim">Calendar</span></h1>
         <p>View your upcoming flights at a glance</p>
     </div>
 </div>

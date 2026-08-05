@@ -1,7 +1,7 @@
 <?php
 $pageTitle = 'Activity Log';
 require_once __DIR__ . '/includes/admin-header.php';
-require_once __DIR__ . '/../../includes/helpers.php';
+require_once __DIR__ . '/../includes/helpers.php';
 
 $page = max(1, intval($_GET['page'] ?? 1));
 $limit = 50;

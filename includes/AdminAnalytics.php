@@ -12,6 +12,11 @@ require_once __DIR__ . '/Cache.php';
 
 function logAdminAction($adminId, $action, $details = null) {
     global $conn;
+    // Guard: admin_logout.php runs without requireAdmin(), so an unauthenticated
+    // request reaches here with admin_id 0 — inserting that would violate the
+    // FK on admin_activity_log and crash with a 500. Only log valid sessions.
+    $adminId = intval($adminId);
+    if ($adminId <= 0) return;
     $ip = $_SERVER['REMOTE_ADDR'] ?? '';
     $stmt = mysqli_prepare($conn, "INSERT INTO admin_activity_log (admin_id, action, details, ip_address) VALUES (?, ?, ?, ?)");
     mysqli_stmt_bind_param($stmt, "isss", $adminId, $action, $details, $ip);

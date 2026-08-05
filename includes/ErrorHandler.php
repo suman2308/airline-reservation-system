@@ -39,17 +39,13 @@ function aerobookExceptionHandler($exception) {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Something Went Wrong – AeroBook</title>
         <script>
-            // Apply saved/system theme before CSS paints to avoid a flash of the wrong theme.
-            (function () {
-                try { var t = localStorage.getItem('aerobook-theme');
-                    if (!t) t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-                    document.documentElement.setAttribute('data-theme', t);
-                } catch (e) { document.documentElement.setAttribute('data-theme', 'light'); }
-            })();
+            // Dark mode is the only theme — pin it before CSS paints (no flash).
+            document.documentElement.setAttribute('data-theme', 'dark');
         </script>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-        <?php if (defined('BASE_URL')): ?><link href="<?php echo htmlspecialchars(BASE_URL . 'css/style.css'); ?>" rel="stylesheet"><?php endif; ?>
+        <?php if (defined('BASE_URL')): ?><link href="<?php echo htmlspecialchars(BASE_URL . 'css/style.css'); ?>" rel="stylesheet">
+        <link href="<?php echo htmlspecialchars(BASE_URL . 'css/aerobook.css'); ?>" rel="stylesheet"><?php endif; ?>
     </head>
     <body class="bg-light">
         <div class="container py-5 text-center">
@@ -104,13 +100,12 @@ function aerobookErrorHandler($errno, $errstr, $errfile, $errline) {
         <html lang="en">
         <head><meta charset="UTF-8"><title>Error – AeroBook</title>
         <script>
-            try { var t = localStorage.getItem('aerobook-theme');
-                if (!t) t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-                document.documentElement.setAttribute('data-theme', t);
-            } catch (e) { document.documentElement.setAttribute('data-theme', 'light'); }
+            // Dark mode is the only theme — pin it before CSS paints (no flash).
+            document.documentElement.setAttribute('data-theme', 'dark');
         </script>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-        <?php if (defined('BASE_URL')): ?><link href="<?php echo htmlspecialchars(BASE_URL . 'css/style.css'); ?>" rel="stylesheet"><?php endif; ?>
+        <?php if (defined('BASE_URL')): ?><link href="<?php echo htmlspecialchars(BASE_URL . 'css/style.css'); ?>" rel="stylesheet">
+        <link href="<?php echo htmlspecialchars(BASE_URL . 'css/aerobook.css'); ?>" rel="stylesheet"><?php endif; ?>
         </head>
         <body class="bg-light">
             <div class="container py-5 text-center">

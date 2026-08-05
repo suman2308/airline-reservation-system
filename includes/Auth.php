@@ -583,20 +583,6 @@ function getDeviceName($userAgent) {
     return "{$browser} on {$os}";
 }
 
-/**
- * Format time since last activity.
- */
-function timeSince($datetime) {
-    if (empty($datetime)) return 'Never';
-    $timestamp = strtotime($datetime);
-    $diff = time() - $timestamp;
-
-    if ($diff < 60) return 'Just now';
-    if ($diff < 3600) return floor($diff / 60) . ' min ago';
-    if ($diff < 86400) return floor($diff / 3600) . ' hr ago';
-    return date('d M Y', $timestamp);
-}
-
 // ──────────────────────────────────────────────
 // Profile Picture / Avatar
 // ──────────────────────────────────────────────

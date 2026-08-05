@@ -25,8 +25,9 @@ $diagnostics['php'] = [
     'post_max_size' => ini_get('post_max_size'),
 ];
 
-// Database Info
-$dbStatus = mysqli_ping($conn);
+// Database Info (mysqli_ping is deprecated in PHP 8.4 — a live connection is
+// implied if $conn exists and a lightweight query succeeds)
+$dbStatus = ($conn instanceof mysqli) && mysqli_connect_errno() === 0;
 $queryCount = 0;
 $dbSize = 0;
 if ($dbStatus) {
@@ -114,11 +115,13 @@ if ($format === 'json') {
                 <h6 class="mb-0 fw-bold"><i class="bi bi-code-square me-2 text-primary"></i>PHP Configuration</h6>
             </div>
             <div class="card-body">
+                <div class="table-responsive">
                 <table class="table table-sm">
                     <?php foreach ($diagnostics['php'] as $key => $value): ?>
                     <tr><td class="fw-semibold text-muted small"><?php echo htmlspecialchars($key); ?></td><td><?php echo htmlspecialchars($value); ?></td></tr>
                     <?php endforeach; ?>
                 </table>
+                </div>
             </div>
         </div>
     </div>
@@ -130,11 +133,13 @@ if ($format === 'json') {
                 <h6 class="mb-0 fw-bold"><i class="bi bi-database me-2 text-success"></i>Database</h6>
             </div>
             <div class="card-body">
+                <div class="table-responsive">
                 <table class="table table-sm">
                     <?php foreach ($diagnostics['database'] as $key => $value): ?>
                     <tr><td class="fw-semibold text-muted small"><?php echo htmlspecialchars($key); ?></td><td><?php echo htmlspecialchars((string)$value); ?></td></tr>
                     <?php endforeach; ?>
                 </table>
+                </div>
             </div>
         </div>
     </div>
@@ -146,11 +151,13 @@ if ($format === 'json') {
                 <h6 class="mb-0 fw-bold"><i class="bi bi-graph-up me-2 text-info"></i>Application Stats</h6>
             </div>
             <div class="card-body">
+                <div class="table-responsive">
                 <table class="table table-sm">
                     <?php foreach ($diagnostics['application'] as $key => $value): ?>
                     <tr><td class="fw-semibold text-muted small"><?php echo htmlspecialchars($key); ?></td><td><?php echo htmlspecialchars((string)$value); ?></td></tr>
                     <?php endforeach; ?>
                 </table>
+                </div>
             </div>
         </div>
     </div>
@@ -162,11 +169,13 @@ if ($format === 'json') {
                 <h6 class="mb-0 fw-bold"><i class="bi bi-shield-lock me-2 text-warning"></i>Session</h6>
             </div>
             <div class="card-body">
+                <div class="table-responsive">
                 <table class="table table-sm">
                     <?php foreach ($diagnostics['session'] as $key => $value): ?>
                     <tr><td class="fw-semibold text-muted small"><?php echo htmlspecialchars($key); ?></td><td><?php echo htmlspecialchars((string)$value); ?></td></tr>
                     <?php endforeach; ?>
                 </table>
+                </div>
             </div>
         </div>
     </div>

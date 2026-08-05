@@ -5,6 +5,71 @@ All notable changes to AeroBook are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.1] — 2026-08-04
+
+### Fixed
+- **Logout threw a 500 error** (critical, found in final audit): both `logout.php` and `admin/logout.php` called `redirect()`, `logInfo()`, and `logAdminAction()` without including `includes/functions.php`/`helpers.php` — so logging out crashed with "Call to undefined function". Both now include the required helpers; verified live (302 redirect, session cleared).
+- **Smoke tests strengthened**: the suite now asserts that user and admin logout return 302 (no 500) and that protected pages redirect after logout — so this class of regression is caught automatically.
+
+## [1.3.0] — 2026-08-04
+
+### Added
+- **All-in-one Docker deployment (no external database required)**: the `Dockerfile` now bundles MariaDB inside the app container. `docker/entrypoint.sh` boots it, creates the `aerobook` user + `aerobook_db`, and auto-seeds `database/aerobook.sql` (+ `aviationstack.sql`) on first boot — deployable to Render with one click and zero database setup.
+- **`docker/mariadb.cnf`** — lean MariaDB config (32M buffer pool, 30 connections, `performance_schema=OFF`) so Apache + PHP + DB fit comfortably in a 512 MB free-tier instance.
+- **`render.yaml`** — DB env vars pre-filled for all-in-one mode (`DB_HOST=127.0.0.1`, `DB_USER=aerobook`, `DB_PASS=aerobook_secret`, `DB_NAME=aerobook_db`); override them in the dashboard to switch to an external persistent MySQL.
+- **`.dockerignore`** — now allows `database/*.sql` through so the entrypoint can seed.
+
+### Notes
+- ⚠️ Render free tier has an **ephemeral filesystem** + spin-down: all runtime data (users, bookings) resets on restart/redeploy. The DB is re-seeded fresh each boot — ideal for demos/submissions. Use an external MySQL for persistent data.
+
+## [1.2.1] — 2026-08-04
+
+### Added
+- **Automated smoke test suite** (`tests/smoke.php`): dependency-free (no PHPUnit/Composer). Verifies page availability, auth guards, admin + user login flows, registration, flight search, booking validation, and DB integrity — 44 checks, exit code 0/1. Creates and cleans up its own test user.
+- **Contacts CSV export**: `reports.php` now supports `type=contacts`; the Support Queries page's Export button was previously pointing at `type=bookings` and exporting the wrong data.
+
+### Removed
+- `includes/RenderHelper.php` — dead code; `renderFlightCard()` had zero call sites. Removed its require from `includes/helpers.php`.
+
+## [1.2.0] — 2026-08-04
+
+### Added
+- **Live AviationStack integration configured**: `AVIATIONSTACK_API_KEY` set in `.env` and `AVIATIONSTACK_ENABLED=true`. Live connection verified (3,200 airports synced into the `aviation_*` tables). Admin → Data Synchronization now reports "API Key: Configured" and shows synced record counts.
+- **Bundled CA certificate** (`includes/cacert.pem`): Windows PHP builds without a system CA bundle can now reach `api.aviationstack.com` over HTTPS (previously failed with an OpenSSL "unable to get local issuer certificate" error).
+
+### Fixed
+- **notifications.php crashed** with "Call to undefined function timeSince()" — the helper lived in `includes/Auth.php`, which that page never loads. Moved `timeSince()` to `includes/functions.php` (loaded on every page) and removed the duplicate from `Auth.php`.
+- **user-dashboard.php crashed** with "mysqli_num_rows(): Argument must be of type mysqli_result, array given" — `getUserBookings()` returns an array but the page treated it as a statement result. Now iterates the array directly.
+- **`curl_close()` deprecation** in `AviationStackClient.php` (PHP 8.5): guarded so it only runs on PHP < 8.0.
+
+## [1.1.1] — 2026-08-04
+
+### Fixed
+- **Admin panel fully broken after login** (critical): all 13 top-level admin pages used `__DIR__ . '/../../includes/...'`, which resolved two levels *above* the project root and fatally failed. Corrected to `../includes/`. The admin dashboard, analytics, reports, flight/booking/user management, route analytics, and aviation sync pages all render again.
+- **Admin login 500 "Commands out of sync"**: the auth SELECT statement was still open when `logAdminAction()` ran a new query on the same connection. The statement is now closed before logging.
+- **Bookings were impossible with no add-ons**: `validateAddonCosts()` used strict `in_array(..., true)` against integer arrays while the handler passed `floatval()` values, so `0.0` never matched and every booking was rejected with "Invalid baggage add-on amount." Values are now cast to int.
+- **Admin default login broken**: the seeded `admin` hash in `database/aerobook.sql` didn't match `admin123`. Replaced with a valid `password_hash()` output; live DB updated too.
+- **Flight status "Live Operations" cards**: arrival status rendered raw CSS classes as text (`bg-success-subtle text-success…`). Sample array indices were mismatched — restructured so status, class, terminal, and belt each use their own index.
+- **Promo discount tampering**: the booking handler overwrote the server-calculated discount with the client-submitted `promo_discount` value. The server value is now authoritative; client values are ignored.
+- **Promo discount not persisted**: `promo_code`/`promo_discount` are now stored on each booking (`bookings` table) and shown on the confirmation page, so the total paid matches the wizard's discounted total.
+- **Minor**: deprecated `mysqli_ping()` replaced in `health.php`/`admin/diagnostics.php`; duplicated `mysqli_stmt_close()` removed in `admin/manage-flights.php`; `Logger.php` now keeps `message`/`file`/`line` so exception details actually reach the log; duplicate `IS_ADMIN_PANEL` constant definition guarded.
+
+## [1.1.0] — 2026-08-04
+
+### Changed
+- **Dark-only theme**: The light/dark toggle was removed everywhere. `data-theme="dark"` is now pinned by an inline `<head>` script on every entry point (public header, admin header, admin login, ticket page, error pages), so the site is always dark with no flash of light mode.
+- **Navbar trimmed**: About and Contact links removed from the app navbar (now Home · Search Flights · Flight Status only). About/Contact pages render a bare navbar with a centered "← Back to Home" item so Login/Register stay anchored right.
+- **Dark-mode contrast fixes**: mobile menu panels (landing + app), hero gradient/text, pricing cards, FAQ items, benefit-card headings, stat tiles, kicker pills, and CTA buttons all corrected so no text washes out on dark surfaces.
+- **Flight status page**: active tab now persists after submit (route searches stay on the Route tab); plane icons removed from result cards; `bg-primary` result headers/badges use a readable deep violet in dark mode.
+- **Admin login**: wider card, light-mode card styling, black typed text (incl. autofill), header visible on mobile, tighter spacing between the Login button and "Back to Website", button text shortened to "Login".
+- **Prices**: `formatPrice()` now rounds to whole rupees (no more `.00` decimals).
+
+### Removed
+- `flight-results.php` — orphaned legacy page; nothing linked to it (search now uses `fare-results.php`).
+- Dead `.theme-toggle` / `.theme-toggle-light` CSS in `css/style.css` and `css/aerobook.css`.
+- Dead `.hero-video` selector in the print media query (the hero video was removed earlier).
+- Theme-system JS (localStorage persistence, icon sync, system-preference listener) from `js/script.js`.
+
 ## [1.0.1] — 2026-07-31
 
 ### Added

@@ -1,8 +1,8 @@
 <?php
 $pageTitle = 'Manage Flights';
 require_once __DIR__ . '/includes/admin-header.php';
-require_once __DIR__ . '/../../includes/helpers.php';
-require_once __DIR__ . '/../../includes/Paginator.php';
+require_once __DIR__ . '/../includes/helpers.php';
+require_once __DIR__ . '/../includes/Paginator.php';
 
 if (isset($_GET['delete'])) {
     if (!isset($_GET['token']) || !validateDeleteToken($_GET['token'])) {
@@ -62,7 +62,6 @@ mysqli_stmt_execute($stmt);
 $flights_result = mysqli_stmt_get_result($stmt);
 $flights = [];
 while ($f = mysqli_fetch_assoc($flights_result)) $flights[] = $f;
-mysqli_stmt_close($stmt);
 mysqli_stmt_close($stmt);
 ?>
 <div class="card border-0 shadow-sm rounded-4">

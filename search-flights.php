@@ -9,16 +9,14 @@ $regionLabel = $isDomestic ? 'Across India' : 'Worldwide';
 $regionIcon = $isDomestic ? '🇮🇳' : '🌍';
 ?>
 
-<div class="page-header text-center">
+<div class="page-hero-lite">
     <div class="container">
-        <span class="badge bg-primary-subtle text-accent mb-2 px-3 py-1 border border-accent rounded-pill">
-            <i class="bi bi-airplane-fill me-1"></i>Easy Online Booking
-        </span>
-        <h1 class="fw-bold"><?php echo $regionIcon; ?> Search <?php echo $isDomestic ? 'Domestic' : 'International'; ?> Flights</h1>
-        <p class="text-muted">Compare prices, select seats, and book tickets with instant confirmation</p>
-        <div class="d-flex gap-2 justify-content-center mt-2">
-            <a href="?region=domestic" class="btn btn-sm <?php echo $isDomestic ? 'btn-accent' : 'btn-outline-secondary'; ?> fw-bold rounded-pill px-4">🇮🇳 Domestic</a>
-            <a href="?region=international" class="btn btn-sm <?php echo !$isDomestic ? 'btn-accent' : 'btn-outline-secondary'; ?> fw-bold rounded-pill px-4">🌍 International</a>
+        <span class="kicker"><?php echo $regionIcon; ?> Easy online booking</span>
+        <h1>Search <span class="dim"><?php echo $isDomestic ? 'Domestic' : 'International'; ?> Flights</span></h1>
+        <p>Compare prices, select seats, and book tickets with instant confirmation</p>
+        <div class="pill-tabs">
+            <a href="?region=domestic" class="<?php echo $isDomestic ? 'active' : ''; ?>">🇮🇳 Domestic</a>
+            <a href="?region=international" class="<?php echo !$isDomestic ? 'active' : ''; ?>">🌍 International</a>
         </div>
     </div>
 </div>
@@ -26,7 +24,7 @@ $regionIcon = $isDomestic ? '🇮🇳' : '🌍';
 <div class="container py-5">
     <?php showAlert(); ?>
 
-    <div class="search-panel shadow-lg rounded-4 p-4 mb-5" style="margin-top:0; background: var(--surface-card);">
+    <div class="search-panel p-4 mb-5" style="margin-top:0; background: var(--surface-card);">
         <form action="<?php echo BASE_URL; ?>fare-results.php" method="GET" class="needs-loading">
             <input type="hidden" name="region" value="<?php echo htmlspecialchars($region); ?>">
             <div class="row g-3 align-items-end">
@@ -49,7 +47,7 @@ $regionIcon = $isDomestic ? '🇮🇳' : '🌍';
                     <input type="date" name="travel_date" class="form-control form-control-lg fw-semibold" min="<?php echo date('Y-m-d'); ?>" value="<?php echo date('Y-m-d'); ?>">
                 </div>
                 <div class="col-md-3">
-                    <button type="submit" class="btn btn-accent btn-lg w-100 fw-bold py-3"><i class="bi bi-graph-up-arrow me-2"></i>Smart Search</button>
+                    <button type="submit" class="btn btn-accent btn-lg w-100 fw-bold py-3 rounded-pill"><i class="bi bi-graph-up-arrow me-2"></i>Smart Search</button>
                 </div>
             </div>
             <div class="row mt-3">

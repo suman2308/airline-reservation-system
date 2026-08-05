@@ -22,11 +22,33 @@ $first = $bookings[0];
 $is_multi = count($bookings) > 1;
 $userId = $_SESSION['user_id'];
 
-// Calculate total from bookings
+// Calculate total from bookings (base fare + business upgrade + add-ons - promo)
 $totalFare = 0;
+$businessSurcharge = 0;
+$addonTotal = 0;
 foreach ($bookings as $b) {
     $totalFare += floatval($b['price']);
+    // Business class upgrade: rows 1-2 cost +1000 per seat (mirrors booking.php)
+    $seatRow = intval(substr(trim($b['seat_number']), 0, -1));
+    if ($seatRow >= 1 && $seatRow <= 2) {
+        $businessSurcharge += 1000;
+    }
+    // Sum persisted add-ons (baggage/meal) for this booking
+    $addStmt = mysqli_prepare($conn, "SELECT addon_name, amount FROM booking_addons WHERE booking_id=?");
+    mysqli_stmt_bind_param($addStmt, "i", $b['booking_id']);
+    mysqli_stmt_execute($addStmt);
+    $addRes = mysqli_stmt_get_result($addStmt);
+    while ($a = mysqli_fetch_assoc($addRes)) {
+        $addonTotal += floatval($a['amount']);
+    }
+    mysqli_stmt_close($addStmt);
 }
+
+// Apply persisted promo discount (server-side value saved at booking time)
+$promoDiscount = floatval($first['promo_discount'] ?? 0);
+$promoCode = trim($first['promo_code'] ?? '');
+$promoDiscount = min($promoDiscount, $totalFare + $businessSurcharge + $addonTotal);
+$totalPaid = max(0, $totalFare + $businessSurcharge + $addonTotal - $promoDiscount);
 
 // Create notifications for each booking
 foreach ($bookings as $b) {
@@ -45,8 +67,9 @@ foreach ($bookings as $b) {
                 <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-success bg-opacity-10 mb-3" style="width: 80px; height: 80px;">
                     <i class="bi bi-check-circle-fill text-success fs-1"></i>
                 </div>
-                <h1 class="fw-bold mb-2">Booking Confirmed! 🎉</h1>
-                <p class="lead text-muted mb-1">Your flight from <strong><?php echo htmlspecialchars($first['source']); ?></strong> to <strong><?php echo htmlspecialchars($first['destination']); ?></strong> is confirmed.</p>
+                <span class="kicker kicker-accent d-inline-block mb-2"><i class="bi bi-check-circle me-1"></i> Booking Confirmed</span>
+                <h1 class="fw-bold mb-2">Your flight is <span class="dim">ready.</span></h1>
+                <p class="lead text-muted mb-1">From <strong><?php echo htmlspecialchars($first['source']); ?></strong> to <strong><?php echo htmlspecialchars($first['destination']); ?></strong> — we'll see you at the gate.</p>
 
             </div>
 
@@ -89,7 +112,7 @@ foreach ($bookings as $b) {
             <?php $qr = new AeroQR(); ?>
             <div class="card border-0 shadow-sm rounded-4 mb-4">
                 <div class="card-body p-4 text-center">
-                    <div style="display: inline-block; background: #fff; padding: 8px; border-radius: 8px; border: 2px dashed #e2e8f0;">
+                    <div style="display: inline-block; background: #fff; padding: 8px; border-radius: 12px; border: 2px dashed var(--border);">
                         <img src="<?php echo $qr->bookingQR($first['booking_ref'], 130); ?>" alt="QR Code" style="width:130px;height:130px;display:block;margin:0 auto;">
                     </div>
                     <div class="mt-2">
@@ -220,13 +243,31 @@ foreach ($bookings as $b) {
                         <span class="text-muted">Base Fare (<?php echo count($bookings); ?> seat<?php echo count($bookings) > 1 ? 's' : ''; ?>)</span>
                         <span class="fw-bold"><?php echo formatPrice($totalFare); ?></span>
                     </div>
+                    <?php if ($businessSurcharge > 0): ?>
+                    <div class="d-flex justify-content-between py-2 border-bottom">
+                        <span class="text-muted">Business Class Upgrade</span>
+                        <span class="fw-bold">+ <?php echo formatPrice($businessSurcharge); ?></span>
+                    </div>
+                    <?php endif; ?>
+                    <?php if ($addonTotal > 0): ?>
+                    <div class="d-flex justify-content-between py-2 border-bottom">
+                        <span class="text-muted">Baggage & Meals</span>
+                        <span class="fw-bold">+ <?php echo formatPrice($addonTotal); ?></span>
+                    </div>
+                    <?php endif; ?>
+                    <?php if ($promoDiscount > 0 && $promoCode): ?>
+                    <div class="d-flex justify-content-between py-2 border-bottom">
+                        <span class="text-success"><i class="bi bi-tag me-1"></i>Promo Discount (<?php echo htmlspecialchars($promoCode); ?>)</span>
+                        <span class="fw-bold text-success">- <?php echo formatPrice($promoDiscount); ?></span>
+                    </div>
+                    <?php endif; ?>
                     <div class="d-flex justify-content-between py-2 border-bottom">
                         <span class="text-muted">Taxes & Airport Fee</span>
                         <span class="fw-bold text-success">Included</span>
                     </div>
                     <div class="d-flex justify-content-between py-2">
                         <span class="fw-bold fs-5">Total Paid</span>
-                        <span class="fw-bold fs-5 text-accent"><?php echo formatPrice($totalFare); ?></span>
+                        <span class="fw-bold fs-5 text-accent"><?php echo formatPrice($totalPaid); ?></span>
                     </div>
                 </div>
             </div>
@@ -264,14 +305,11 @@ foreach ($bookings as $b) {
 
 <style>
 .timeline { position: relative; padding-left: 30px; }
-.timeline::before { content: ''; position: absolute; left: 10px; top: 5px; bottom: 5px; width: 2px; background: #e2e8f0; }
+.timeline::before { content: ''; position: absolute; left: 10px; top: 5px; bottom: 5px; width: 2px; background: var(--border); }
 .timeline-item { position: relative; padding-bottom: 1.5rem; }
 .timeline-item:last-child { padding-bottom: 0; }
-.timeline-marker { position: absolute; left: -24px; top: 4px; width: 16px; height: 16px; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 0 0 2px #e2e8f0; }
+.timeline-marker { position: absolute; left: -24px; top: 4px; width: 16px; height: 16px; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 0 0 2px var(--border); }
 .timeline-content { padding-left: 0.5rem; }
-.bg-accent { background-color: var(--accent) !important; color: #fff; }
-.btn-outline-accent { color: var(--accent); border-color: var(--accent); }
-.btn-outline-accent:hover { background: var(--accent); color: #fff; }
 </style>
 
 <?php require_once 'includes/footer.php'; ?>

@@ -47,18 +47,15 @@ if ($filter === 'upcoming') {
     $bookings = getUserBookings($user_id);
 }
 ?>
-<div class="page-header">
+<div class="page-hero-lite">
     <div class="container">
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-            <div>
-                <h1><i class="bi bi-journal-bookmark me-2"></i>My Bookings</h1>
-                <p class="mb-0">Manage all your flight reservations in one place</p>
-            </div>
-            <div class="d-flex gap-2">
-                <span class="badge bg-primary fs-6 px-3 py-2"><?php echo $totalCount; ?> Total</span>
-                <span class="badge bg-success fs-6 px-3 py-2"><?php echo $activeCount; ?> Active</span>
-                <span class="badge bg-danger fs-6 px-3 py-2"><?php echo $cancelledCount; ?> Cancelled</span>
-            </div>
+        <span class="kicker">Reservations</span>
+        <h1>My <span class="dim">Bookings</span></h1>
+        <p class="mb-0">Manage all your flight reservations in one place</p>
+        <div class="d-flex gap-2 justify-content-center mt-3">
+            <span class="badge-status bg-primary"><?php echo $totalCount; ?> Total</span>
+            <span class="badge-status bg-success"><?php echo $activeCount; ?> Active</span>
+            <span class="badge-status bg-danger"><?php echo $cancelledCount; ?> Cancelled</span>
         </div>
     </div>
 </div>
@@ -77,7 +74,7 @@ if ($filter === 'upcoming') {
         <form method="GET" class="d-flex gap-2">
             <input type="hidden" name="filter" value="<?php echo htmlspecialchars($filter); ?>">
             <input type="text" name="search" class="form-control form-control-sm" placeholder="Search by ref, flight, route..." value="<?php echo htmlspecialchars($search); ?>" style="min-width: 200px;">
-            <button type="submit" class="btn btn-sm btn-outline-accent"><i class="bi bi-search"></i></button>
+            <button type="submit" class="btn btn-accent rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 34px; height: 34px; padding: 0; flex-shrink: 0;" aria-label="Search"><i class="bi bi-search text-white small"></i></button>
         </form>
     </div>
 

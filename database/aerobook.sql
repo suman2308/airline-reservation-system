@@ -49,7 +49,11 @@ CREATE TABLE IF NOT EXISTS flights (
     seats_available INT NOT NULL DEFAULT 180,
     price DECIMAL(10, 2) NOT NULL,
     status ENUM('Scheduled', 'Delayed', 'Cancelled', 'Completed') DEFAULT 'Scheduled',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    -- Seat sanity guard: a flight can never advertise more seats than it has.
+    -- This keeps the admin Data Quality panel clean and prevents stale seeds
+    -- (older versions defaulted seats_available to 180 even for 160-seat aircraft).
+    CONSTRAINT chk_flights_seats CHECK (seats_available <= total_seats)
 ) ENGINE=InnoDB;
 
 -- =============================================
@@ -67,6 +71,8 @@ CREATE TABLE IF NOT EXISTS bookings (
     travel_date DATE NOT NULL,
     seat_number VARCHAR(5) NOT NULL,
     booking_status ENUM('Confirmed', 'Cancelled') DEFAULT 'Confirmed',
+    promo_code VARCHAR(20) DEFAULT NULL,
+    promo_discount DECIMAL(10,2) NOT NULL DEFAULT 0.00,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (flight_id) REFERENCES flights(flight_id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
@@ -76,7 +82,7 @@ CREATE TABLE IF NOT EXISTS bookings (
 -- Password: admin123 (hashed with password_hash)
 -- =============================================
 INSERT INTO admins (username, password) VALUES 
-('admin', '$2y$10$8K1p/a0dR1xLX8uGq7mnSOGy0O9xTBKrecYFQr0JBV3xbRvN1Dxqi');
+('admin', '$2y$12$bWVCjab6QG667kpA1N.rzekVNzZgLTUb6GwoD/6pKdqmFywWeH.G6'); -- password_hash('admin123')
 
 -- =============================================
 -- Table: email_verifications

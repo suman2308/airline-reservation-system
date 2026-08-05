@@ -283,6 +283,11 @@ function validateAddonCosts($baggageCost, $mealCost) {
     $allowedBaggage = [0, 800, 1400];
     $allowedMeals = [0, 350, 450];
 
+    // Normalize to int so strict in_array works (float 0.0 !== int 0),
+    // otherwise a no-add-on booking (cost 0) is wrongly rejected.
+    $baggageCost = intval(round(floatval($baggageCost)));
+    $mealCost = intval(round(floatval($mealCost)));
+
     if (!in_array($baggageCost, $allowedBaggage, true)) {
         $errors[] = 'Invalid baggage add-on amount.';
     }

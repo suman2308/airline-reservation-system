@@ -35,8 +35,9 @@ function loggerWrite($level, $message, array $context = []) {
     $time = date('H:i:s');
     $file = $logDir . "/{$date}.log";
 
-    // Sanitize: remove sensitive fields from context
-    $safeKeys = ['user_id', 'booking_ref', 'flight_id', 'ip', 'action', 'duration_ms', 'status', 'affected_rows'];
+    // Sanitize: remove sensitive fields from context.
+    // Keep diagnostic keys (message/file/line) so exceptions are actually traceable.
+    $safeKeys = ['user_id', 'booking_ref', 'flight_id', 'ip', 'action', 'duration_ms', 'status', 'affected_rows', 'message', 'file', 'line'];
     $safeContext = [];
     foreach ($safeKeys as $k) {
         if (isset($context[$k])) {

@@ -25,9 +25,10 @@ function emitSecurityHeaders() {
     // Content Security Policy
     $csp = "default-src 'self'; "
          . "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; "
-         . "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; "
-         . "font-src 'self' https://cdn.jsdelivr.net https://fonts.gstatic.com; "
+         . "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com https://db.onlinewebfonts.com; "
+         . "font-src 'self' https://cdn.jsdelivr.net https://fonts.gstatic.com https://db.onlinewebfonts.com; "
          . "img-src 'self' data:; "
+         . "media-src 'self' https://d8j0ntlcm91z4.cloudfront.net; "
          . "connect-src 'self'; "
          . "frame-ancestors 'self'; "
          . "form-action 'self'; "

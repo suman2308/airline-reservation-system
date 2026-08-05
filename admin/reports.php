@@ -3,14 +3,14 @@
 if (isset($_GET['export']) && isset($_GET['type'])) {
     $isSubDir = true;
     define('IS_ADMIN_PANEL', true);
-    require_once __DIR__ . '/../../includes/config.php';
-    require_once __DIR__ . '/../../includes/functions.php';
-    require_once __DIR__ . '/../../includes/Security.php';
-    require_once __DIR__ . '/../../includes/helpers.php';
+    require_once __DIR__ . '/../includes/config.php';
+    require_once __DIR__ . '/../includes/functions.php';
+    require_once __DIR__ . '/../includes/Security.php';
+    require_once __DIR__ . '/../includes/helpers.php';
     emitSecurityHeaders();
     requireAdmin();
 
-    $type = preg_match('/^(bookings|flights|revenue|passengers|routes)$/', $_GET['type']) ? $_GET['type'] : 'bookings';
+    $type = preg_match('/^(bookings|flights|revenue|passengers|routes|contacts)$/', $_GET['type']) ? $_GET['type'] : 'bookings';
     $rawFrom = $_GET['from'] ?? date('Y-m-d', strtotime('-1 year'));
     $rawTo = $_GET['to'] ?? date('Y-m-d');
     $from = preg_match('/^\d{4}-\d{2}-\d{2}$/', $rawFrom) ? $rawFrom : date('Y-m-d', strtotime('-1 year'));
@@ -24,25 +24,29 @@ if (isset($_GET['export']) && isset($_GET['type'])) {
     $output = fopen('php://output', 'w');
 
     if ($type === 'bookings') {
-        fputcsv($output, ['Ref', 'Passenger', 'Age', 'Gender', 'Flight', 'Airline', 'Route', 'Seat', 'Travel Date', 'Status', 'Booking Date']);
+        fputcsv($output, ['Ref', 'Passenger', 'Age', 'Gender', 'Flight', 'Airline', 'Route', 'Seat', 'Travel Date', 'Status', 'Booking Date'], ',', '"', '\\');
         $r = mysqli_query($conn, "SELECT b.*, f.flight_number, f.airline_name, f.source, f.destination FROM bookings b JOIN flights f ON b.flight_id=f.flight_id WHERE DATE(b.booking_date) BETWEEN '$fromEsc' AND '$toEsc' ORDER BY b.booking_date DESC");
-        while ($row = mysqli_fetch_assoc($r)) fputcsv($output, [$row['booking_ref'], $row['passenger_name'], $row['age'], $row['gender'], $row['flight_number'], $row['airline_name'], $row['source'].'->'.$row['destination'], $row['seat_number'], $row['travel_date'], $row['booking_status'], $row['booking_date']]);
+        while ($row = mysqli_fetch_assoc($r)) fputcsv($output, [$row['booking_ref'], $row['passenger_name'], $row['age'], $row['gender'], $row['flight_number'], $row['airline_name'], $row['source'].'->'.$row['destination'], $row['seat_number'], $row['travel_date'], $row['booking_status'], $row['booking_date']], ',', '"', '\\');
     } elseif ($type === 'flights') {
-        fputcsv($output, ['Flight #', 'Airline', 'Route', 'Departure', 'Arrival', 'Total Seats', 'Available', 'Price', 'Status']);
+        fputcsv($output, ['Flight #', 'Airline', 'Route', 'Departure', 'Arrival', 'Total Seats', 'Available', 'Price', 'Status'], ',', '"', '\\');
         $r = mysqli_query($conn, "SELECT * FROM flights WHERE DATE(departure_time) BETWEEN '$fromEsc' AND '$toEsc' ORDER BY departure_time ASC");
-        while ($row = mysqli_fetch_assoc($r)) fputcsv($output, [$row['flight_number'], $row['airline_name'], $row['source'].'->'.$row['destination'], $row['departure_time'], $row['arrival_time'], $row['total_seats'], $row['seats_available'], $row['price'], $row['status']]);
+        while ($row = mysqli_fetch_assoc($r)) fputcsv($output, [$row['flight_number'], $row['airline_name'], $row['source'].'->'.$row['destination'], $row['departure_time'], $row['arrival_time'], $row['total_seats'], $row['seats_available'], $row['price'], $row['status']], ',', '"', '\\');
     } elseif ($type === 'revenue') {
-        fputcsv($output, ['Month', 'Bookings', 'Revenue']);
+        fputcsv($output, ['Month', 'Bookings', 'Revenue'], ',', '"', '\\');
         $r = mysqli_query($conn, "SELECT DATE_FORMAT(b.booking_date, '%Y-%m') as month, COUNT(*) as bookings, SUM(f.price) as revenue FROM bookings b JOIN flights f ON b.flight_id=f.flight_id WHERE b.booking_status='Confirmed' AND DATE(b.booking_date) BETWEEN '$fromEsc' AND '$toEsc' GROUP BY month ORDER BY month");
-        while ($row = mysqli_fetch_assoc($r)) fputcsv($output, [$row['month'], $row['bookings'], $row['revenue']]);
+        while ($row = mysqli_fetch_assoc($r)) fputcsv($output, [$row['month'], $row['bookings'], $row['revenue']], ',', '"', '\\');
     } elseif ($type === 'passengers') {
-        fputcsv($output, ['Ref', 'Passenger', 'Age', 'Gender', 'Flight', 'Route', 'Seat', 'Travel Date', 'Status']);
+        fputcsv($output, ['Ref', 'Passenger', 'Age', 'Gender', 'Flight', 'Route', 'Seat', 'Travel Date', 'Status'], ',', '"', '\\');
         $r = mysqli_query($conn, "SELECT b.*, f.flight_number, f.source, f.destination FROM bookings b JOIN flights f ON b.flight_id=f.flight_id WHERE DATE(b.travel_date) BETWEEN '$fromEsc' AND '$toEsc' ORDER BY b.travel_date DESC");
-        while ($row = mysqli_fetch_assoc($r)) fputcsv($output, [$row['booking_ref'], $row['passenger_name'], $row['age'], $row['gender'], $row['flight_number'], $row['source'].'->'.$row['destination'], $row['seat_number'], $row['travel_date'], $row['booking_status']]);
+        while ($row = mysqli_fetch_assoc($r)) fputcsv($output, [$row['booking_ref'], $row['passenger_name'], $row['age'], $row['gender'], $row['flight_number'], $row['source'].'->'.$row['destination'], $row['seat_number'], $row['travel_date'], $row['booking_status']], ',', '"', '\\');
     } elseif ($type === 'routes') {
-        fputcsv($output, ['Route', 'Bookings', 'Revenue', 'Avg Fare']);
+        fputcsv($output, ['Route', 'Bookings', 'Revenue', 'Avg Fare'], ',', '"', '\\');
         $r = mysqli_query($conn, "SELECT f.source, f.destination, COUNT(*) as bookings, SUM(f.price) as revenue, ROUND(AVG(f.price),2) as avg_fare FROM bookings b JOIN flights f ON b.flight_id=f.flight_id WHERE b.booking_status='Confirmed' AND DATE(b.booking_date) BETWEEN '$fromEsc' AND '$toEsc' GROUP BY f.source, f.destination ORDER BY revenue DESC");
-        while ($row = mysqli_fetch_assoc($r)) fputcsv($output, [$row['source'].'->'.$row['destination'], $row['bookings'], $row['revenue'], $row['avg_fare']]);
+        while ($row = mysqli_fetch_assoc($r)) fputcsv($output, [$row['source'].'->'.$row['destination'], $row['bookings'], $row['revenue'], $row['avg_fare']], ',', '"', '\\');
+    } elseif ($type === 'contacts') {
+        fputcsv($output, ['Name', 'Email', 'Subject', 'Message', 'Date'], ',', '"', '\\');
+        $r = mysqli_query($conn, "SELECT * FROM contacts WHERE DATE(created_at) BETWEEN '$fromEsc' AND '$toEsc' ORDER BY created_at DESC");
+        while ($row = mysqli_fetch_assoc($r)) fputcsv($output, [$row['name'], $row['email'], $row['subject'], $row['message'], $row['created_at']], ',', '"', '\\');
     }
     fclose($output);
     logAdminAction($_SESSION['admin_id'], 'export_report', "Exported $type report ($from to $to)");
@@ -52,7 +56,7 @@ if (isset($_GET['export']) && isset($_GET['type'])) {
 // ─── Normal page rendering ───
 $pageTitle = 'Downloadable Reports';
 require_once __DIR__ . '/includes/admin-header.php';
-require_once __DIR__ . '/../../includes/helpers.php';
+require_once __DIR__ . '/../includes/helpers.php';
 ?>
 <div class="row mb-4">
     <div class="col-12">

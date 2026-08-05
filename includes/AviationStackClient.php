@@ -106,8 +106,7 @@ class AviationStackClient {
     private function request($endpoint, $params) {
         $url = $this->baseUrl . $endpoint . '?' . http_build_query($params);
 
-        $ch = curl_init();
-        curl_setopt_array($ch, [
+        $options = [
             CURLOPT_URL => $url,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_TIMEOUT => $this->timeout,
@@ -116,12 +115,24 @@ class AviationStackClient {
             CURLOPT_MAXREDIRS => 3,
             CURLOPT_SSL_VERIFYPEER => true,
             CURLOPT_USERAGENT => 'AeroBook/1.0',
-        ]);
+        ];
+
+        // Use a bundled CA bundle when the PHP runtime has none configured
+        // (e.g. Windows builds). Falls back to the system default otherwise.
+        $caFile = $this->findCaBundle();
+        if ($caFile !== null) {
+            $options[CURLOPT_CAINFO] = $caFile;
+        }
+
+        $ch = curl_init();
+        curl_setopt_array($ch, $options);
 
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $curlError = curl_error($ch);
-        curl_close($ch);
+        if (PHP_VERSION_ID < 80000) {
+            curl_close($ch);
+        }
 
         // Handle cURL errors
         if ($response === false) {
@@ -204,5 +215,29 @@ class AviationStackClient {
      */
     public function isConfigured() {
         return !empty($this->apiKey);
+    }
+
+    /**
+     * Locate a CA certificate bundle for cURL.
+     *
+     * Priority: system-configured curl.cainfo / openssl.cafile, then the
+     * project-bundled includes/cacert.pem. Returns null to let cURL fall
+     * back to its compiled-in defaults.
+     */
+    private function findCaBundle() {
+        static $cached = null;
+        if ($cached !== null) return $cached;
+
+        $configured = ini_get('curl.cainfo') ?: ini_get('openssl.cafile');
+        if ($configured && is_file($configured)) {
+            return $cached = $configured;
+        }
+
+        $bundled = __DIR__ . '/cacert.pem';
+        if (is_file($bundled)) {
+            return $cached = $bundled;
+        }
+
+        return $cached = false; // let cURL use defaults
     }
 }

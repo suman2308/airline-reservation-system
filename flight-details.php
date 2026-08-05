@@ -17,9 +17,10 @@ if (!$f) {
 
 $selected_date = validateTravelDate($_GET['date'] ?? '', $f['departure_time']);
 ?>
-<div class="page-header">
+<div class="page-hero-lite">
     <div class="container">
-        <h1><i class="bi bi-airplane me-2"></i><?php echo htmlspecialchars($f['airline_name'] . ' – ' . $f['flight_number']); ?></h1>
+        <span class="kicker">Flight Details</span>
+        <h1><?php echo htmlspecialchars($f['airline_name'] . ' – ' . $f['flight_number']); ?></h1>
         <p><?php echo htmlspecialchars($f['source'] . ' → ' . $f['destination']); ?></p>
     </div>
 </div>

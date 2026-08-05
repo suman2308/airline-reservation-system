@@ -1,0 +1,1440 @@
+/* ═══════════════════════════════════════════════════════════════
+   AeroBook Design System — Premium redesign layer
+   Loaded AFTER css/style.css so these overrides win the cascade.
+
+   Design language: modern premium · editorial typography ·
+   generous whitespace · navy ink #192837 + violet #7342E2 + light
+   violet canvas #F4EFFA · pill CTAs · navy nav · soft shadows
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── 1. Design Tokens ──────────────────────────────────────── */
+:root {
+    /* Brand scale — navy ink surfaces, violet actions, lavender brand pop */
+    --ink: #192837;
+    /* Gray scale — violet-tinted to sit on the light-violet #F4EFFA canvas */
+    --gray-50: #F8F6FC;
+    --gray-100: #F1EDF9;
+    --gray-200: #E6DFF1;
+    --gray-300: #D4CCE8;
+    --gray-400: #A79DC6;
+    --gray-500: #8A80A8;
+    --gray-600: #5F587C;
+    --gray-700: #4A4461;
+    --gray-800: #2F2A3D;
+    --gray-900: #1B1826;
+    /* Surfaces — light-violet canvas everywhere (no white page bands) */
+    --surface: #F4EFFA;
+    --surface-card: #FFFFFF;
+    --border: #E4DEF2;
+    /* Legacy app palette — remapped onto the new system (navy surfaces, violet actions) */
+    --primary: #192837;
+    --primary-light: #26384A;
+    /* Brand accent — AeroBook violet (Bootstrap primary remapped here) */
+    --accent: #7342E2;
+    --accent-hover: #8A5CF0;
+    --accent-glow: rgba(115, 66, 226, 0.22);
+    --gradient-accent: linear-gradient(135deg, #7342E2, #8A5CF0);
+    --bs-primary: #7342E2;
+    --bs-primary-rgb: 115, 66, 226;
+    --bs-link-color: #7342E2;
+    --bs-link-hover-color: #8A5CF0;
+    --bs-link-color-rgb: 115, 66, 226;
+    --bs-link-hover-color-rgb: 138, 92, 240;
+    /* Shadows — soft & diffused */
+    --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.04);
+    --shadow-md: 0 8px 24px rgba(16, 24, 40, 0.06);
+    --shadow-lg: 0 24px 48px rgba(16, 24, 40, 0.08);
+    --shadow-glow: 0 0 20px rgba(32, 42, 54, 0.2);
+    /* Radius — generous */
+    --radius-sm: 10px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    /* Type */
+    --font-primary: 'Inter', sans-serif;
+    --font-heading: 'Helvetica Now Display Bold', 'Inter', sans-serif;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ─── 2. Base & Typography ──────────────────────────────────── */
+body {
+    font-family: var(--font-primary);
+    background: var(--surface);
+    color: var(--text-primary);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+}
+p { color: inherit; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+::selection { background: rgba(115, 66, 226, 0.22); }
+
+/* ─── 3. Spec Utilities (Tailwind-compatible naming) ────────── */
+.text-2xl { font-size: 1.5rem; line-height: 2rem; }
+.text-6xl { font-size: 3.75rem; line-height: 1; }
+.text-7xl { font-size: 4.5rem; line-height: 1; }
+.text-8xl { font-size: 6rem; line-height: 1; }
+.font-normal { font-weight: 400; }
+.font-medium { font-weight: 500; }
+.font-semibold { font-weight: 600; }
+.tracking-wider { letter-spacing: 0.05em; }
+.tracking-tighter { letter-spacing: -0.05em; }
+.leading-none { line-height: 1; }
+.text-gray-500 { color: var(--gray-500) !important; }
+.text-gray-600 { color: var(--gray-600) !important; }
+.text-gray-800 { color: var(--gray-800) !important; }
+.text-gray-900 { color: var(--gray-900) !important; }
+.bg-gray-50 { background-color: var(--gray-50) !important; }
+.bg-gray-300 { background-color: var(--gray-300) !important; }
+.max-w-2xl { max-width: 42rem; }
+.rounded-full { border-radius: 9999px !important; }
+.transition-colors { transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease; }
+
+/* ─── 4. Buttons ────────────────────────────────────────────── */
+.btn { border-radius: 9999px; font-weight: 600; transition: var(--transition); }
+.btn:hover { transform: translateY(-1px); }
+.btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Brand primary buttons — royal blue accent (app) and royal blue (landing spec) */
+.btn-accent, .btn-ink {
+    background: var(--accent); color: #fff; border: none;
+    transition: background-color 0.25s ease, color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+}
+.btn-accent { background: var(--accent); }
+/* Landing spec keeps .btn-ink at font-medium (500); app .btn-accent inherits 600 from .btn */
+.btn-ink { font-weight: 500; }
+.btn-accent:hover, .btn-ink:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px rgba(115, 66, 226, 0.28);
+}
+.btn-accent:hover { background: var(--accent-hover); color: #fff; }
+.btn-ink:hover { background: var(--accent-hover); color: #fff; }
+.btn-outline-accent, a.btn-outline-accent {
+    color: var(--accent); border-color: var(--accent);
+}
+.btn-outline-accent:hover, a.btn-outline-accent:hover {
+    background: var(--accent); color: #fff; border-color: var(--accent);
+}
+.btn-outline-secondary {
+    color: var(--gray-600); border-color: var(--gray-300);
+}
+.btn-outline-secondary:hover {
+    background: var(--gray-100); color: var(--gray-900); border-color: var(--gray-400);
+}
+.btn-light {
+    background: #fff; color: var(--ink); border: 1px solid var(--gray-200);
+}
+.btn-light:hover { background: var(--gray-100); color: var(--ink); }
+
+/* Pill ghost used on dark surfaces */
+.btn-outline-light {
+    color: #fff; border: 1px solid rgba(255, 255, 255, 0.45);
+}
+.btn-outline-light:hover { background: rgba(255, 255, 255, 0.12); color: #fff; border-color: #fff; }
+
+/* Landing hero CTAs */
+.btn-pill { border-radius: 9999px; padding: 0.5rem 1rem; }
+.btn-gray {
+    background: #E8E4DB; color: #192837; font-weight: 500;
+    border: 1px solid transparent;
+    transition: background-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+.btn-gray:hover { background: #DDD8CB; color: #192837; transform: translateY(-1px); }
+/* Standalone white pill button (pricing featured cards, CTA bands).
+   Text stays hardcoded ink (#192837) since this button always sits on a dark
+   violet surface — var(--ink) flips light in dark mode and would turn the
+   button white-on-white. */
+.btn-white {
+    background: #fff; color: #192837;
+    border-radius: 9999px; font-weight: 600; padding: 0.8rem 2rem;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.btn-white:hover { transform: translateY(-2px); box-shadow: 0 16px 32px rgba(0, 0, 0, 0.28); color: #192837; }
+
+/* ─── 5. Cards & Surfaces ───────────────────────────────────── */
+.card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--surface-card);
+    box-shadow: var(--shadow-sm);
+}
+.card-hover:hover {
+    border-color: var(--gray-300); box-shadow: var(--shadow-md); transform: translateY(-3px);
+}
+.feature-card {
+    background: var(--gradient-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 2.25rem 2rem;
+    transition: transform 0.35s var(--ease-premium), box-shadow 0.35s var(--ease-premium), border-color 0.3s ease;
+}
+.feature-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--gray-300);
+}
+.feature-icon {
+    width: 60px; height: 60px;
+    background: var(--primary);
+    border-radius: 18px;
+    box-shadow: 0 10px 20px rgba(32, 42, 54, 0.18);
+}
+.flight-card {
+    background: var(--surface-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.3s var(--ease-premium), box-shadow 0.3s var(--ease-premium), border-color 0.3s ease;
+}
+.flight-card:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--gray-300);
+    transform: translateY(-2px);
+}
+.stat-card {
+    background: var(--gradient-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+}
+.stat-icon { border-radius: 14px; }
+.stat-info h3 { font-weight: 700; letter-spacing: -0.02em; }
+
+/* ─── 6. Forms ──────────────────────────────────────────────── */
+.form-control, .form-select {
+    border: 1px solid var(--gray-200);
+    border-radius: 12px;
+    background-color: #fff;
+    padding: 0.72rem 1rem;
+    font-size: 0.95rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+.form-control:focus, .form-select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(115, 66, 226, 0.12);
+    background-color: #fff;
+}
+.form-label {
+    font-weight: 600;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--gray-600);
+}
+.form-check-input:checked { background-color: var(--ink); border-color: var(--ink); --bs-form-check-bg: #fff; }
+[data-theme="dark"] .form-check-input:checked {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    --bs-form-check-bg: #1A1130;
+}
+.uppercase-label { color: var(--gray-500); }
+
+/* ─── 7. Landing Navigation ─────────────────────────────────── */
+.landing-body { background: var(--gray-50); min-height: 100vh; }
+
+.landing-nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1030;
+    background: rgba(25, 40, 55, 0.94);   /* deep navy #192837 — matches footer */
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+.landing-nav.scrolled {
+    background: rgba(25, 40, 55, 0.98);
+    box-shadow: 0 8px 24px rgba(16, 24, 40, 0.2);
+}
+/* Dark mode: keep the landing nav exactly on the footer navy so both surfaces match */
+[data-theme="dark"] .landing-nav { background: rgba(16, 26, 35, 0.94); }
+[data-theme="dark"] .landing-nav.scrolled { background: rgba(16, 26, 35, 0.98); }
+.landing-nav-inner {
+    max-width: 80rem;            /* max-w-7xl */
+    margin: 0 auto;
+    padding: 1.5rem 2rem;        /* px-8 py-6 */
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 1rem;
+    position: relative;          /* anchors the absolutely-centered menu */
+}
+.landing-brand {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-size: 1.5rem;           /* text-2xl */
+    font-weight: 600;            /* font-semibold */
+    color: #fff;                 /* brand wordmark in white on the navy bar — matches footer */
+    letter-spacing: -0.03em;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+.landing-brand:hover { color: rgba(255, 255, 255, 0.85); }
+.landing-brand .landing-brand-icon { font-size: 1.35rem; color: #F4CEFF; }
+.landing-brand em { font-style: normal; color: #F4CEFF; }
+
+/* Desktop menu — hidden on mobile */
+.landing-menu { display: none; }
+@media (min-width: 768px) {
+    .landing-menu {
+        display: flex; align-items: center; gap: 2.25rem;
+        /* Truly centered on the page regardless of brand/auth widths */
+        position: absolute; left: 50%; transform: translateX(-50%);
+    }
+}.landing-menu a { color: rgba(255, 255, 255, 0.85); font-weight: 500; font-size: 0.95rem; text-decoration: none; transition: color 0.2s ease; position: relative; }
+.landing-menu a:hover { color: #fff; }
+.landing-menu a::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: -6px;
+    height: 2px; border-radius: 2px;
+    background: var(--accent);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.3s var(--ease-premium);
+}
+.landing-menu a:hover::after,
+.landing-menu a.active::after { transform: scaleX(1); }
+
+/* Right-side actions */
+.landing-actions { display: none; align-items: center; gap: 1rem; }
+@media (min-width: 768px) { .landing-actions { display: flex; } }
+.landing-signin {
+    color: rgba(255, 255, 255, 0.75); font-size: 0.9rem; font-weight: 500;
+    text-decoration: none; transition: color 0.2s ease;
+}
+.landing-signin:hover { color: #fff; }
+.landing-register {
+    color: #fff; font-size: 0.9rem; font-weight: 600;
+    padding: 0.45rem 1.15rem;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 9999px;
+    text-decoration: none;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+.landing-register:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: #fff;
+    color: #fff;
+}
+
+/* Hamburger — mobile only */
+.landing-burger {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 44px; height: 44px; border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+.landing-burger:hover { background: rgba(255, 255, 255, 0.18); transform: translateY(-1px); }
+.landing-burger svg { width: 22px; height: 22px; }
+@media (min-width: 768px) { .landing-burger { display: none; } }
+
+/* Mobile dropdown panel — white/95 + blur + rounded + shadow */
+.landing-menu-panel {
+    display: none;
+    position: absolute; top: calc(100% + 0.5rem); left: 1rem; right: 1rem;
+    background: rgba(255, 255, 255, 0.95);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 1.25rem;
+    box-shadow: 0 24px 48px rgba(16, 24, 40, 0.14);
+    padding: 0.75rem;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+.landing-menu-panel.open { display: flex; }
+.landing-menu-panel a {
+    padding: 0.8rem 1rem;
+    border-radius: 0.75rem;
+    color: var(--gray-900);
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+.landing-menu-panel a:hover { background: var(--gray-100); color: var(--gray-700); }
+.landing-menu-panel .landing-cta { margin-top: 0.5rem; text-align: center; }
+
+/* Mobile dropdown — white panel, so Sign in stays dark text and Register becomes a dark pill */
+.landing-menu-panel .landing-register {
+    color: var(--gray-900);
+    border: 1px solid var(--gray-300);
+    background: var(--gray-100);
+    padding: 0.45rem 1.15rem;
+    font-weight: 600;
+}
+.landing-menu-panel .landing-register:hover {
+    background: var(--gray-200);
+    border-color: var(--gray-400);
+    color: var(--gray-900);
+}
+.landing-menu-panel .landing-auth-links {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.35rem 1rem;
+}
+.landing-menu-panel .landing-auth-links a { padding: 0.4rem 0.25rem; }
+.landing-menu-panel .landing-auth-links .landing-register { padding: 0.45rem 1.15rem; }
+
+/* Logged-in chip inside the landing mobile panel */
+.landing-menu-panel .landing-user-chip {
+    display: flex; align-items: center; gap: 0.65rem;
+    padding: 0.4rem 0.25rem;
+    color: var(--gray-900); font-weight: 600;
+}
+.landing-menu-panel .landing-user-avatar {
+    width: 34px; height: 34px; flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--primary); color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 0.9rem; font-weight: 700;
+}
+.landing-menu-panel .landing-auth-links-loggedin { justify-content: space-between; padding: 0.35rem 1rem; }
+
+.hero-lp {
+    position: relative;
+    height: 100vh;
+    min-height: 680px;
+    overflow: hidden;
+    /* Premium static backdrop (video removed): warm editorial gradient */
+    background:
+        radial-gradient(1200px 600px at 85% -10%, rgba(115, 66, 226, 0.14) 0%, transparent 60%),
+        linear-gradient(160deg, #EDE9F5 0%, #E6E1D6 100%);
+}
+.hero-vignette {
+    position: absolute; inset: 0;
+    background:
+        linear-gradient(180deg, rgba(244, 239, 250, 0.55) 0%, rgba(244, 239, 250, 0.22) 32%, rgba(244, 239, 250, 0) 58%),
+        linear-gradient(0deg, rgba(244, 239, 250, 0.25) 0%, rgba(244, 239, 250, 0) 30%);
+}
+.hero-content {
+    position: relative; z-index: 2;
+    height: 100%;
+    display: flex; flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2.5rem;                  /* even rhythm: kicker → headline → CTA → search panel */
+    padding: 7rem 1.5rem 3rem;    /* clears the fixed nav, no dead space */
+}
+.hero-main {
+    width: 100%;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0;
+}
+.hero-copy {
+    text-align: center;
+    margin-top: 0;
+}
+.hero-kicker {
+    display: inline-block;
+    font-size: 0.875rem;           /* text-sm */
+    font-weight: 600;              /* font-semibold */
+    color: var(--gray-600);
+    letter-spacing: 0.05em;        /* tracking-wider */
+    text-transform: uppercase;
+    margin-bottom: 1rem;           /* mb-4 */
+}
+.hero-headline { margin: 0; }
+.hero-line {
+    display: block;
+    font-size: 3.75rem;            /* text-6xl */
+    font-weight: 400;              /* font-normal */
+    line-height: 1;                /* leading-none */
+    letter-spacing: -0.05em;       /* tracking-tighter */
+}
+.hero-line-1 { color: var(--gray-500); }
+.hero-line-2 { color: var(--primary); margin-top: -12px; }  /* overlap */
+.hero-subtitle {
+    font-size: 1.125rem;           /* text-lg */
+    color: var(--gray-600);
+    margin: 1.5rem auto 1.75rem;
+    max-width: 42rem;              /* max-w-2xl */
+    font-weight: 400;
+}
+.hero-actions {
+    display: flex; align-items: center; justify-content: center;
+    gap: 1rem;                     /* gap-4 */
+    flex-wrap: wrap;
+}
+
+/* Flight search panel — frosted card floating in the hero */
+.hero-search-panel {
+    position: relative; z-index: 3;
+    flex-shrink: 0;                /* never clip on short viewports */
+    width: min(100% - 2rem, 900px);
+    margin: 0 auto;                /* sits in-flow beneath the hero copy */
+    background: rgba(255, 255, 255, 0.94);
+    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(18px);
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    border-radius: 1.5rem;
+    box-shadow: 0 24px 48px rgba(25, 40, 55, 0.16);
+    padding: 1.1rem;
+}
+/* The search card is always white frosted — pin dark-friendly colors inside it */
+.hero-search-panel .hs-label { color: #5C564D; }
+.hero-search-panel .form-select,
+.hero-search-panel .form-control {
+    background-color: #fff !important;
+    border-color: #E2DDD3 !important;
+    color: #192837 !important;
+}
+.hero-search-panel .form-select:focus,
+.hero-search-panel .form-control:focus {
+    background-color: #fff !important;
+}
+.hero-search-panel .form-select option { color: #192837; }
+.hero-search-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr auto;
+    gap: 0.75rem;
+    align-items: end;
+}
+.hero-search-form .hs-label {
+    display: block;
+    font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    color: var(--gray-600);
+    margin-bottom: 0.35rem;
+}
+.hero-search-form .form-select,
+.hero-search-form .form-control {
+    border: 1px solid var(--border);
+    background-color: #fff;
+    border-radius: 0.9rem;
+    padding: 0.65rem 0.9rem;
+    font-size: 0.95rem; font-weight: 500;
+}
+.hero-search-form .form-select:focus,
+.hero-search-form .form-control:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+}
+.hero-search-form .hs-submit {
+    padding: 0.7rem 1.6rem;
+    font-weight: 600;
+}
+@media (max-width: 767.98px) {
+    .hero-search-form { grid-template-columns: 1fr; }
+    .hero-search-form .hs-submit { width: 100%; }
+}
+
+@media (min-width: 768px) {
+    .hero-line { font-size: 4.5rem; }    /* md:text-7xl */
+    .hero-subtitle { font-size: 1.25rem; margin-bottom: 1.5rem; }  /* md:text-xl mb-6 */
+}
+@media (min-width: 1024px) {
+    .hero-line { font-size: 6rem; }      /* lg:text-8xl */
+}
+
+/* ─── 9. Landing Sections ───────────────────────────────────── */
+.lp-section { padding: 6rem 1.5rem; scroll-margin-top: 88px; }
+@media (min-width: 768px) { .lp-section { padding: 8rem 1.5rem; } }
+.lp-section-inner { max-width: 80rem; margin: 0 auto; }
+
+.kicker {
+    display: inline-block;
+    font-size: 0.8rem; font-weight: 600;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--gray-500);
+    margin-bottom: 1rem;
+    padding: 0.35rem 0.9rem;
+    border: 1px solid var(--gray-200);
+    border-radius: 9999px;
+    background: #fff;
+}
+.kicker-accent { color: var(--accent); border-color: rgba(115, 66, 226, 0.3); }
+
+.lp-heading {
+    font-size: clamp(2.25rem, 5vw, 3.5rem);
+    font-weight: 600;
+    letter-spacing: -0.035em;
+    line-height: 1.08;
+    margin-bottom: 1.25rem;
+}
+.lp-heading .dim { color: var(--gray-500); font-weight: 400; }
+.lp-lead {
+    font-size: 1.125rem;
+    color: var(--gray-600);
+    max-width: 40rem;
+    margin: 0 auto;
+}
+
+/* Story stats */
+.lp-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+@media (min-width: 768px) { .lp-stats { grid-template-columns: repeat(4, 1fr); } }
+.lp-stat {
+    background: var(--surface-card);
+    border: 1px solid var(--gray-200);
+    border-radius: 1.25rem;
+    padding: 1.75rem 1.25rem;
+    text-align: center;
+    overflow: hidden;               /* keep big numbers (100k+) inside the tile */
+    transition: transform 0.3s var(--ease-premium), box-shadow 0.3s var(--ease-premium);
+}
+.lp-stat:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.lp-stat-value {
+    font-size: clamp(1.4rem, 3vw, 1.75rem); font-weight: 700; letter-spacing: -0.03em;
+    color: var(--accent); line-height: 1.1; white-space: nowrap;
+}
+.lp-stat-label { font-size: 0.78rem; line-height: 1.35; color: var(--gray-500); margin-top: 0.5rem; font-weight: 500; overflow-wrap: anywhere; }
+
+/* Editorial story panel */
+.lp-story-panel {
+    position: relative;
+    border-radius: 2rem;
+    background: linear-gradient(145deg, #5B2FCB 0%, #8B5CF6 100%);
+    color: #fff;
+    padding: 2.25rem;
+    min-height: 420px;
+    height: 100%;
+    overflow: hidden;
+    display: flex; align-items: flex-end;
+    box-shadow: 0 24px 48px rgba(115, 66, 226, 0.35);
+}
+.lp-story-panel::before {
+    content: '';
+    position: absolute; top: -40%; right: -20%;
+    width: 420px; height: 420px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+}
+.lp-story-panel .plane-icon {
+    position: absolute; top: 2rem; right: 2rem;
+    font-size: 6rem; opacity: 1; color: #F4CEFF;
+}
+.lp-story-panel h3 { color: #fff; font-weight: 600; font-size: 1.6rem; letter-spacing: -0.02em; }
+.lp-story-panel p { color: rgba(255, 255, 255, 0.72); margin: 0; max-width: 26rem; }
+
+/* Rates — pricing cards */
+.pricing-grid { display: grid; gap: 1.5rem; }
+@media (min-width: 768px) { .pricing-grid { grid-template-columns: repeat(3, 1fr); } }
+.pricing-card {
+    background: #fff;
+    border: 1px solid var(--gray-200);
+    border-radius: 1.75rem;
+    padding: 2.25rem 2rem;
+    display: flex; flex-direction: column;
+    transition: transform 0.35s var(--ease-premium), box-shadow 0.35s var(--ease-premium), border-color 0.3s ease;
+}
+.pricing-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); border-color: var(--gray-300); }
+.pricing-card.featured {
+    background: linear-gradient(160deg, #4A2FA0 0%, #2A1B54 100%); color: #fff;
+    border-color: #4A2FA0;
+    position: relative;
+    padding-top: 3.5rem;          /* room for the badge fully inside the card */
+}
+.pricing-card.featured:hover { box-shadow: 0 24px 48px rgba(115, 66, 226, 0.35); }
+.pricing-card.featured .popular {
+    position: absolute; top: 1.35rem; left: 50%; transform: translateX(-50%);
+    background: var(--accent); color: #fff;
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 0.35rem 1.1rem; border-radius: 9999px;
+    box-shadow: 0 8px 20px rgba(115, 66, 226, 0.3); white-space: nowrap;
+}
+.pricing-name { font-size: 0.95rem; font-weight: 600; letter-spacing: 0.02em; text-transform: uppercase; }
+.pricing-card.featured .pricing-name { color: rgba(255, 255, 255, 0.75); }
+.pricing-desc { font-size: 0.9rem; color: var(--gray-500); margin-bottom: 1.75rem; }
+.pricing-card.featured .pricing-desc { color: rgba(255, 255, 255, 0.65); }
+.pricing-price { font-size: 2.5rem; font-weight: 700; letter-spacing: -0.04em; line-height: 1; color: var(--ink); }
+.pricing-card.featured .pricing-price { color: #fff; }
+.pricing-price small { font-size: 0.95rem; font-weight: 500; color: var(--gray-500); letter-spacing: 0; }
+.pricing-card.featured .pricing-price small { color: rgba(255, 255, 255, 0.65); }
+.pricing-list { list-style: none; padding: 0; margin: 1.75rem 0 2rem; flex: 1; }
+.pricing-list li {
+    display: flex; align-items: center; gap: 0.65rem;
+    padding: 0.45rem 0; font-size: 0.92rem; color: var(--gray-700);
+}
+.pricing-card.featured .pricing-list li { color: rgba(255, 255, 255, 0.85); }
+.pricing-list li svg { flex-shrink: 0; color: var(--accent); }
+.pricing-card.featured .pricing-list li svg { color: #fff; }
+
+/* Benefits grid */
+.benefit-card {
+    background: var(--surface-card);
+    border: 1px solid var(--gray-200);
+    border-radius: 1.5rem;
+    padding: 2rem 1.75rem;
+    height: 100%;
+    transition: transform 0.35s var(--ease-premium), box-shadow 0.35s var(--ease-premium), border-color 0.3s ease;
+}
+.benefit-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); border-color: var(--gray-300); }
+.benefit-icon {
+    width: 52px; height: 52px; border-radius: 16px;
+    background: var(--gray-100);
+    color: var(--ink);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem;
+    margin-bottom: 1.25rem;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s var(--ease-premium);
+}
+.benefit-card:hover .benefit-icon { background: var(--gradient-accent); color: #fff; transform: scale(1.06); }
+.benefit-card h3 { font-size: 1.15rem; font-weight: 600; margin-bottom: 0.5rem; }
+.benefit-card p { font-size: 0.94rem; color: var(--gray-500); margin: 0; }
+
+/* FAQ */
+.faq-accordion .accordion-item {
+    border: 1px solid var(--gray-200);
+    border-radius: 1.25rem !important;
+    margin-bottom: 1rem;
+    background: #fff;
+    overflow: hidden;
+}
+.faq-accordion .accordion-button {
+    font-weight: 600; color: var(--ink);
+    background: #fff; font-size: 1.02rem;
+    padding: 1.4rem 1.5rem;
+    box-shadow: none;
+}
+.faq-accordion .accordion-button:not(.collapsed) { background: #fff; color: var(--ink); box-shadow: none; }
+.faq-accordion .accordion-button:focus { box-shadow: none; border-color: transparent; }
+.faq-accordion .accordion-body { color: var(--gray-600); font-size: 0.95rem; padding: 0 1.5rem 1.5rem; }
+.faq-accordion .accordion-button::after { background-size: 1rem; opacity: 0.6; }
+
+/* CTA band */
+.lp-cta {
+    background: linear-gradient(135deg, #5B2FCB 0%, #7342E2 100%);
+    color: #fff;
+    border-radius: 2.5rem;
+    padding: 5rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 24px 48px rgba(115, 66, 226, 0.3);
+}
+.lp-cta::before {
+    content: '';
+    position: absolute; top: -60%; left: 50%; transform: translateX(-50%);
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+    border-radius: 50%;
+}
+.lp-cta h2 { color: #fff; font-size: clamp(2rem, 4.5vw, 3rem); font-weight: 600; letter-spacing: -0.035em; }
+.lp-cta p { color: rgba(255, 255, 255, 0.7); max-width: 34rem; margin: 1rem auto 2rem; }
+.lp-cta .btn-ghost-white {
+    color: #fff; border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 9999px; padding: 0.8rem 2rem; font-weight: 600;
+    transition: background-color 0.25s ease;
+}
+.lp-cta .btn-ghost-white:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
+
+/* ─── 10. Inner Page Header (hero-lite) ─────────────────────── */
+.page-hero-lite {
+    background: var(--gradient-hero);
+    padding: 9rem 1.5rem 4.5rem;
+    text-align: center;
+    border-bottom: 1px solid var(--gray-100);
+    scroll-margin-top: 80px;
+}
+.page-hero-lite h1 {
+    font-size: clamp(2.5rem, 5vw, 3.75rem);
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+    margin: 1.25rem 0 1rem;
+    color: var(--ink);
+}
+.page-hero-lite h1 .dim { color: var(--gray-500); font-weight: 400; }
+.page-hero-lite p { color: var(--gray-600); font-size: 1.15rem; max-width: 40rem; margin: 0 auto; }
+
+/* Pill tab group (region toggles) */
+.pill-tabs {
+    display: inline-flex;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid var(--gray-200);
+    border-radius: 9999px;
+    padding: 0.3rem;
+    gap: 0.2rem;
+    margin-top: 1.75rem;
+    box-shadow: var(--shadow-sm);
+}
+.pill-tabs a {
+    padding: 0.55rem 1.4rem;
+    border-radius: 9999px;
+    font-size: 0.9rem; font-weight: 600;
+    color: #111827;              /* pinned: container stays light in both themes */
+    text-decoration: none;
+    transition: background-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+}
+.pill-tabs a:hover { color: var(--ink); }
+.pill-tabs a.active {
+    background: var(--accent); color: #fff;
+    box-shadow: 0 6px 16px rgba(32, 42, 54, 0.25);
+}
+
+/* Legacy .page-header harmonized with the system */
+.page-header {
+    background: var(--gradient-hero);
+    padding: 9rem 0 4rem;
+    color: var(--ink);
+    text-align: center;
+    border-bottom: 1px solid var(--gray-100);
+}
+.page-header h1 {
+    font-size: clamp(2.25rem, 4.5vw, 3.25rem);
+    font-weight: 600; letter-spacing: -0.04em; color: var(--ink);
+}
+.page-header p { color: var(--gray-600); font-size: 1.1rem; }
+
+/* ─── 11. App Navigation ────────────────────────────────────── */
+#mainNavbar {
+    background: rgba(25, 40, 55, 0.94);   /* same deep navy as the landing nav */
+    padding: 0.9rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+}
+#mainNavbar.scrolled { background: rgba(25, 40, 55, 0.98); box-shadow: 0 8px 24px rgba(16, 24, 40, 0.2); }
+#mainNavbar .navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.82);
+    font-weight: 500;
+    font-size: 0.95rem;
+    border-radius: 9999px;
+    padding: 0.55rem 1.1rem;
+}
+#mainNavbar .navbar-nav .nav-link:hover,
+#mainNavbar .navbar-nav .nav-link.active {
+    color: #fff; background: rgba(255, 255, 255, 0.1);
+}
+#mainNavbar .brand-text { color: #fff; }
+#mainNavbar .brand-accent { color: #F4CEFF; }
+#mainNavbar .nav-user-link { color: rgba(255, 255, 255, 0.82); font-weight: 500; font-size: 0.92rem; }
+#mainNavbar .nav-user-link:hover { color: #F4CEFF; }
+#mainNavbar .profile-menu-btn { color: rgba(255, 255, 255, 0.85); font-size: 0.92rem; text-decoration: none !important; }
+#mainNavbar .profile-menu-btn:hover { color: #F4CEFF; text-decoration: none !important; }
+.brand-text { font-family: var(--font-heading); font-weight: 700; letter-spacing: -0.02em; }
+/* The avatar trigger is a Bootstrap .btn-link, which underlines by default —
+   kill that so the profile icon never shows a link underline. */
+.profile-menu-btn,
+.profile-menu-btn:hover,
+.profile-menu-btn:focus,
+.profile-menu-btn:active { text-decoration: none !important; }
+/* Avatar chip — premium gradient ring, subtle glow, smooth hover */
+.profile-avatar {
+    background: linear-gradient(135deg, #A78BFA 0%, #8B5CF6 100%);
+    color: #fff;
+    border: 2px solid rgba(255, 255, 255, 0.35);
+    box-shadow: 0 0 0 2px rgba(115, 66, 226, 0.15), 0 4px 12px rgba(115, 66, 226, 0.2);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, opacity 0.3s ease;
+    cursor: pointer;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+.profile-avatar:hover {
+    transform: scale(1.08);
+    box-shadow: 0 0 0 3px rgba(115, 66, 226, 0.25), 0 6px 20px rgba(115, 66, 226, 0.3);
+    opacity: 1;
+}
+[data-theme="dark"] .profile-avatar {
+    background: linear-gradient(135deg, #A78BFA 0%, #8B5CF6 100%);
+    color: #fff;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 0 2px rgba(167, 139, 250, 0.12), 0 4px 12px rgba(167, 139, 250, 0.15);
+}
+[data-theme="dark"] .profile-avatar:hover {
+    box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.25), 0 6px 20px rgba(167, 139, 250, 0.25);
+}
+#mainNavbar .navbar-toggler { border: none; color: #fff; }
+#mainNavbar .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255,255,255,0.9)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+/* Dark mode: app nav flips to deep navy frosted glass */
+[data-theme="dark"] #mainNavbar {
+    background: rgba(16, 26, 35, 0.94);
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+[data-theme="dark"] #mainNavbar .navbar-nav .nav-link { color: rgba(255, 255, 255, 0.78); }
+[data-theme="dark"] #mainNavbar .navbar-nav .nav-link:hover,
+[data-theme="dark"] #mainNavbar .navbar-nav .nav-link.active { color: #fff; background: rgba(167, 139, 250, 0.16); }
+[data-theme="dark"] #mainNavbar .brand-text { color: #fff; }
+[data-theme="dark"] #mainNavbar .brand-accent { color: #F4CEFF; }
+[data-theme="dark"] #mainNavbar .nav-user-link { color: rgba(255, 255, 255, 0.78); }
+[data-theme="dark"] #mainNavbar .nav-user-link:hover { color: #A78BFA; }
+[data-theme="dark"] #mainNavbar .profile-menu-btn { color: rgba(255, 255, 255, 0.85); }
+[data-theme="dark"] #mainNavbar .profile-menu-btn:hover { color: #A78BFA; }
+[data-theme="dark"] #mainNavbar .navbar-toggler { color: #fff; }
+[data-theme="dark"] #mainNavbar .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255,255,255,0.9)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+/* Only force flex layout on desktop — on mobile Bootstrap's collapse must own
+   visibility (display:none until the hamburger is tapped). The unscoped version
+   overrode `.collapse:not(.show)` and left the dropdown panel permanently stuck
+   open under the navbar on every non-landing page. */
+@media (min-width: 992px) {
+    #mainNavbar .navbar-collapse {
+        display: flex;
+        flex: 1 1 auto;
+    }
+}
+#mainNavbar .navbar-nav.nav-center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+#mainNavbar .nav-actions {
+    margin-left: auto;
+    flex-shrink: 0;
+}
+@media (max-width: 991.98px) {
+    /* Mobile dropdown panel — white/95 + blur + rounded + shadow */
+    #mainNavbar .navbar-collapse {
+        position: relative;
+        background: rgba(255, 255, 255, 0.96);
+        -webkit-backdrop-filter: blur(16px);
+        backdrop-filter: blur(16px);
+        border-radius: 1.25rem;
+        margin-top: 1rem;
+        padding: 1rem;
+        box-shadow: 0 24px 48px rgba(16, 24, 40, 0.16);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+    }
+    #mainNavbar .navbar-nav.nav-center {
+        position: static;
+        transform: none;
+    }
+    /* Panel is always white — pin link colors so dark mode can't invert them */
+    #mainNavbar .navbar-collapse .nav-link {
+        color: #111827 !important;
+        border-radius: 0.75rem;
+        padding: 0.75rem 1rem !important;
+    }
+    #mainNavbar .navbar-collapse .nav-link:hover,
+    #mainNavbar .navbar-collapse .nav-link.active { background: #F3F4F6 !important; color: #111827 !important; }
+
+    /* Dark mode: the app navbar's mobile dropdown matches the landing panel */
+    [data-theme="dark"] #mainNavbar .navbar-collapse {
+        background: rgba(23, 30, 40, 0.96);
+        border-color: rgba(38, 48, 59, 0.9);
+        box-shadow: 0 24px 48px rgba(0, 0, 0, 0.55);
+    }
+    [data-theme="dark"] #mainNavbar .navbar-collapse .nav-link { color: #E8EDF4 !important; }
+    [data-theme="dark"] #mainNavbar .navbar-collapse .nav-link:hover,
+    [data-theme="dark"] #mainNavbar .navbar-collapse .nav-link.active { background: rgba(167, 139, 250, 0.16) !important; color: #fff !important; }
+}
+
+/* ─── 12. Footer ────────────────────────────────────────────── */
+.site-footer {
+    background: var(--primary);
+    color: rgba(255, 255, 255, 0.7);
+    padding: 4.5rem 0 0;
+    margin-top: 5rem;
+    position: relative;
+    overflow: hidden;
+}
+.site-footer::before {
+    content: '';
+    position: absolute; top: -40%; right: -15%;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+    border-radius: 50%;
+}
+.footer-heading {
+    color: #fff; font-weight: 600; font-size: 0.85rem;
+    letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 1.4rem;
+}
+.footer-links li a { color: rgba(255, 255, 255, 0.6); }
+.footer-links li a:hover { color: #fff; padding-left: 4px; }
+.footer-contact li i { color: #fff; opacity: 0.8; }
+.social-links a:hover { background: #fff; color: var(--ink); }
+.footer-bottom p { color: rgba(255, 255, 255, 0.4); }
+.footer-divider { border-color: rgba(255, 255, 255, 0.1); }
+
+/* ─── 13. Auth pages ────────────────────────────────────────── */
+.auth-section { padding-top: 5.5rem; }
+.auth-card {
+    border-radius: 1.75rem;
+    box-shadow: 0 32px 64px rgba(16, 24, 40, 0.1);
+    border: 1px solid var(--gray-100);
+    overflow: hidden;
+}
+.auth-sidebar {
+    background: var(--primary);
+    padding: 4rem 3rem;
+    position: relative;
+    overflow: hidden;
+}
+.auth-sidebar::after {
+    content: '';
+    position: absolute; bottom: -30%; right: -20%;
+    width: 380px; height: 380px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+    border-radius: 50%;
+}
+.auth-sidebar h2,
+.auth-sidebar h4,
+.auth-sidebar h5,
+.auth-sidebar small { color: #fff; }
+.auth-sidebar h2 { font-weight: 600; letter-spacing: -0.03em; }
+.auth-sidebar .auth-icon { color: rgba(255, 255, 255, 0.9); }
+.auth-sidebar .text-info { color: rgba(255, 255, 255, 0.9) !important; }
+.auth-form { padding: 3.5rem 3rem; }
+.auth-form h2 { font-weight: 700; letter-spacing: -0.03em; color: var(--ink); }
+.auth-form .form-control { padding: 0.8rem 1rem; }
+.btn-accent.w-100 { border-radius: 9999px; }
+
+/* ─── 14. Alerts, badges, tables, misc ──────────────────────── */
+.alert { border-radius: 1rem; font-size: 0.9rem; }
+.badge-status { border-radius: 9999px; }
+.section-badge { border-radius: 9999px; }
+.search-panel { border-radius: 1.75rem !important; box-shadow: var(--shadow-lg) !important; }
+.table th {
+    font-size: 0.72rem; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--gray-500);
+}
+.spinner { border-top-color: var(--accent); }
+.upcoming-trip-card { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); }
+.route-line::before { background: linear-gradient(90deg, var(--accent), var(--gray-200), var(--accent)); }
+.route-line i { color: var(--accent); }
+.flight-price { color: var(--accent); }
+.text-accent { color: var(--accent) !important; }
+.btn-search { background: var(--accent); }
+.btn-search:hover { background: var(--accent-hover); }
+.cta-section {
+    background: var(--primary);
+    border-radius: 2.5rem;
+    margin: 5rem auto;
+    max-width: 80rem;
+    padding: 5rem 2rem !important;
+    position: relative; overflow: hidden;
+}
+.cta-section::before {
+    content: '';
+    position: absolute; top: -60%; left: 50%; transform: translateX(-50%);
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+    border-radius: 50%;
+}
+.cta-section h2 { color: #fff; }
+.cta-section p { color: rgba(255, 255, 255, 0.7); }
+
+/* Contact info items */
+.contact-info-item .icon-box {
+    width: 52px; height: 52px; flex-shrink: 0;
+    border-radius: 16px;
+    background: var(--gray-100);
+    color: var(--ink);
+    display: flex; align-items: center; justify-content: center;
+}
+.contact-info-item h5 { font-weight: 600; }
+.contact-info-item p { color: var(--gray-500); font-size: 0.95rem; }
+
+/* ─── 15. Reveal-on-scroll animation ────────────────────────── */
+/* Reveal is gated behind a `js` class added by the header inline script, so
+   content stays visible if JavaScript is unavailable (progressive enhancement). */
+.js .reveal {
+    opacity: 0;
+    transform: translateY(26px);
+    transition: opacity 0.8s var(--ease-premium), transform 0.8s var(--ease-premium);
+    transition-delay: var(--reveal-delay, 0ms);
+    will-change: opacity, transform;
+}
+.js .reveal.revealed { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+    .js .reveal { opacity: 1; transform: none; transition: none; }
+}
+
+/* ─── 16. Dark mode harmonization ───────────────────────────── */
+[data-theme="dark"] {
+    --ink: #E8EDF4;            /* text-ink inverts on dark surfaces */
+    --gray-50: #10151C;
+    --gray-100: #161D26;
+    --gray-200: #26303B;
+    --gray-300: #3A4754;
+    --gray-400: #5A6A7A;
+    --gray-500: #8B99A9;
+    --gray-600: #A7B4C2;
+    --gray-700: #C3CDD8;
+    --gray-800: #DCE3EA;
+    --gray-900: #EFF2F6;
+    --surface: #10151C;
+    --surface-card: #171E28;
+    --border: #26303B;
+    --primary: #101A23;
+    --primary-light: #1B2836;
+    --accent: #A78BFA;
+    --accent-hover: #B99EFC;
+    --accent-glow: rgba(167, 139, 250, 0.28);
+    --gradient-accent: linear-gradient(135deg, #8B5CF6, #A78BFA);
+    --bs-primary: #A78BFA;
+    --bs-primary-rgb: 167, 139, 250;
+    --bs-link-color: #A78BFA;
+    --bs-link-hover-color: #B99EFC;
+    --bs-link-color-rgb: 167, 139, 250;
+    --bs-link-hover-color-rgb: 185, 158, 252;
+    --text-primary: #E8EDF4;
+    --text-secondary: #A7B4C2;
+    --text-light: #5A6A7A;
+    --gradient-card: linear-gradient(145deg, #1A2230 0%, #141B24 100%);
+    --gradient-hero: linear-gradient(135deg, #121826 0%, #0F141A 100%);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 24px 48px rgba(0, 0, 0, 0.6);
+    color-scheme: dark;
+}
+[data-theme="dark"] .card,
+[data-theme="dark"] .flight-card,
+[data-theme="dark"] .feature-card,
+[data-theme="dark"] .stat-card { background: var(--surface-card); }
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select { background-color: var(--surface-card); }
+[data-theme="dark"] .form-control:focus,
+[data-theme="dark"] .form-select:focus { background-color: var(--surface-card); }
+[data-theme="dark"] .search-panel { background: var(--surface-card) !important; }
+[data-theme="dark"] .page-header h1,
+[data-theme="dark"] .page-hero-lite h1 { color: var(--text-primary); }
+[data-theme="dark"] .btn-accent { background: #8B5CF6; color: #fff; }
+[data-theme="dark"] .btn-accent:hover { background: #9F70F8; color: #fff; }
+[data-theme="dark"] .btn-ink { background: var(--primary); color: #fff; }
+[data-theme="dark"] .btn-ink:hover { background: var(--primary-light); color: #fff; }
+/* Dark mode: violet accent needs dark text on filled surfaces (step circles, selected seats) */
+[data-theme="dark"] .step.active .step-circle,
+[data-theme="dark"] .step.current .step-circle,
+[data-theme="dark"] .economy-seat.selected,
+[data-theme="dark"] .business-seat.selected,
+[data-theme="dark"] .seat-item.selected,
+[data-theme="dark"] .legend-box.selected {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #1A1130;
+    box-shadow: 0 0 0 4px var(--accent-glow);
+}
+
+/* Landing page stays premium-light regardless of the user's theme preference.
+   Pinning the custom properties on .landing-body means inline var() usages
+   inside the landing subtree always resolve to the light premium palette. */
+.landing-body {
+    --gray-50: #FAF9F6;
+    --gray-100: #F3F1EC;
+    --gray-200: #E7E3DA;
+    --gray-300: #D6D0C5;
+    --gray-500: #80796E;
+    --gray-600: #5C564D;
+    --gray-700: #47423A;
+    --gray-800: #2E2A24;
+    --gray-900: #1A1814;
+    --surface: #F4EFFA;
+    --surface-card: #FFFFFF;
+    --border: #E4DEF2;
+    --ink: #192837;
+    --primary: #192837;
+    --primary-light: #26384A;
+    --accent: #7342E2;
+    --accent-hover: #8A5CF0;
+    --text-primary: #192837;
+    --text-secondary: #5A6472;
+    --text-light: #8B93A0;
+    background: #F4EFFA;
+}
+.landing-body .landing-menu-panel,
+.landing-body .hero-lp,
+.landing-body .lp-cta { background-color: transparent; }
+.landing-body .landing-brand { color: #fff; }
+.landing-body .landing-brand:hover { color: rgba(255, 255, 255, 0.85); }
+.landing-body .landing-brand .landing-brand-icon,
+.landing-body .landing-brand em { color: #F4CEFF; }
+.landing-body .landing-menu a { color: rgba(255, 255, 255, 0.85); }
+.landing-body .landing-menu a:hover { color: #fff; }
+.landing-body .landing-signin { color: rgba(255, 255, 255, 0.75); }
+.landing-body .landing-signin:hover { color: #fff; }
+.landing-body .landing-menu-panel a { color: var(--gray-900); }
+.landing-body .landing-menu-panel a:hover { color: var(--gray-700); }
+.landing-body .lp-stat,
+.landing-body .pricing-card:not(.featured),
+.landing-body .benefit-card,
+.landing-body .faq-accordion .accordion-item,
+.landing-body .faq-accordion .accordion-button { background: #fff; }
+.landing-body .hero-line-1 { color: var(--gray-500); }
+.landing-body .hero-line-2 { color: var(--primary); }
+.landing-body .hero-kicker { color: var(--accent); }
+.landing-body .hero-subtitle { color: var(--gray-600); }
+.landing-body .lp-heading { color: var(--gray-900); }
+.landing-body .lp-heading .dim { color: var(--gray-500); }
+/* Seamless flow: one continuous light-violet canvas across every landing section */
+.landing-body #story,
+.landing-body #benefits,
+.landing-body #rates,
+.landing-body #faq,
+.landing-body #book { background: transparent; }
+/* Keep brand buttons on-brand in dark mode (override the global dark btn swap) */
+.landing-body .btn-ink { background: var(--accent); color: #fff; }
+.landing-body .btn-ink:hover { background: var(--accent-hover); color: #fff; }
+/* In dark mode the landing accent is light lavender — keep dark ink text on it
+   so accent buttons never end up white-on-light. */
+[data-theme="dark"] .landing-body .btn-accent { background: var(--accent); color: #1A1130; }
+[data-theme="dark"] .landing-body .btn-accent:hover { background: var(--accent-hover); color: #1A1130; }
+.landing-body .btn-accent { background: var(--accent); color: #fff; }
+.landing-body .btn-accent:hover { background: var(--accent-hover); color: #fff; }
+
+/* Dark mode: the landing page follows the theme too (the navbar toggle is
+   always available). The hero keeps its premium-light treatment — its text
+   sits on the light video vignette — while the sections below flip to navy. */
+[data-theme="dark"] .landing-body {
+    --gray-50: #10151C;
+    --gray-100: #161D26;
+    --gray-200: #26303B;
+    --gray-300: #3A4754;
+    --gray-500: #8B99A9;
+    --gray-600: #A7B4C2;
+    --gray-700: #C3CDD8;
+    --gray-800: #DCE3EA;
+    --gray-900: #EFF2F6;
+    --surface: #10151C;
+    --surface-card: #171E28;
+    --border: #26303B;
+    --ink: #E8EDF4;
+    --primary: #101A23;
+    --primary-light: #1B2836;
+    --accent: #A78BFA;
+    --accent-hover: #B99EFC;
+    --text-primary: #E8EDF4;
+    --text-secondary: #A7B4C2;
+    --text-light: #5A6A7A;
+    background: #10151C;
+}
+/* Dark mode: the hero flips to deep navy with light text (dark is the only theme) */
+[data-theme="dark"] .hero-lp {
+    background:
+        radial-gradient(1200px 600px at 85% -10%, rgba(167, 139, 250, 0.18) 0%, transparent 60%),
+        linear-gradient(160deg, #141B26 0%, #0E141B 100%);
+}
+[data-theme="dark"] .hero-vignette {
+    background:
+        linear-gradient(180deg, rgba(16, 21, 28, 0.55) 0%, rgba(16, 21, 28, 0.2) 32%, rgba(16, 21, 28, 0) 58%),
+        linear-gradient(0deg, rgba(16, 21, 28, 0.4) 0%, rgba(16, 21, 28, 0) 30%);
+}
+[data-theme="dark"] .landing-body .hero-line-1 { color: #8B99A9; }
+[data-theme="dark"] .landing-body .hero-line-2 { color: #F2F4F7; }
+[data-theme="dark"] .landing-body .hero-kicker { color: #A78BFA; }
+[data-theme="dark"] .landing-body .hero-subtitle { color: #A7B4C2; }
+/* Sections below flip to dark navy */
+[data-theme="dark"] .landing-body .lp-heading { color: var(--gray-900); }
+[data-theme="dark"] .landing-body .lp-heading .dim { color: var(--gray-500); }
+[data-theme="dark"] .landing-body .kicker { background: var(--surface-card); color: var(--gray-500); border-color: var(--border); }
+[data-theme="dark"] .landing-body .kicker-accent { color: var(--accent); border-color: rgba(167, 139, 250, 0.3); }
+[data-theme="dark"] .landing-body .lp-lead,
+[data-theme="dark"] .landing-body .text-gray-500,
+[data-theme="dark"] .landing-body .benefit-card p { color: var(--gray-500); }
+
+/* Dark mode: the white-frosted pieces of the landing page flip to navy so no
+   bright-white cards break the dark canvas (text flips via the dark gray scale) */
+[data-theme="dark"] .landing-body .landing-menu-panel {
+    background: rgba(23, 30, 40, 0.96);
+    border-color: rgba(38, 48, 59, 0.9);
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.55);
+}
+[data-theme="dark"] .landing-body .pricing-card:not(.featured),
+[data-theme="dark"] .landing-body .faq-accordion .accordion-item,
+[data-theme="dark"] .landing-body .faq-accordion .accordion-button { background: var(--surface-card); }
+
+/* Dark mode: kickers on non-landing pages (about, contact, booking, etc.) */
+[data-theme="dark"] .kicker {
+    background: var(--surface-card);
+    color: var(--gray-500);
+    border-color: var(--border);
+}
+
+/* ─── Dark-only polish ────────────────────────────────────────── */
+/* Decorative glows must never block clicks on CTA/story buttons */
+.lp-cta::before, .lp-story-panel::before, .cta-section::before, .auth-sidebar::after { pointer-events: none; }
+
+/* Inner-page heroes (About, Contact): kicker reads a touch bigger */
+.page-hero-lite .kicker { font-size: 0.92rem; padding: 0.5rem 1.2rem; }
+
+/* Landing stat tiles stay white in dark mode — pin dark labels + deep violet values */
+[data-theme="dark"] .landing-body .lp-stat-label { color: #1B1826; }
+[data-theme="dark"] .landing-body .lp-stat-value { color: #5B2FCB; }
+
+/* Warning badges keep dark text in dark mode (Smart Fare Engine pill) */
+[data-theme="dark"] .badge.bg-warning { color: #1F2937 !important; }
+
+/* Dark mode: .bg-primary resolves to light lavender — deep-violet the places
+   that put white text on it (flight-status result headers + badges) */
+[data-theme="dark"] .card-header.bg-primary,
+[data-theme="dark"] .badge.bg-primary { background-color: #8B5CF6 !important; color: #fff; }
+
+/* Benefit cards stay white in the landing design — pin dark headings/body text */
+[data-theme="dark"] .landing-body .benefit-card h3 { color: #1B1826; }
+[data-theme="dark"] .landing-body .benefit-card p { color: #5F587C; }
+
+/* ─── 17. Internal & Admin Components ──────────────────────── */
+/* Editorial micro-headers for cards (uppercase kicker system) */
+.card-header {
+    background: var(--surface-card);
+    border-bottom: 1px solid var(--border);
+    font-weight: 600;
+}
+.card-header h6 { letter-spacing: -0.01em; }
+
+/* Empty states — soft, calm, centered */
+.empty-state {
+    border-radius: 1.5rem;
+    border: 1px solid var(--gray-200);
+}
+.empty-state i { color: var(--gray-400); }
+.empty-state h4 { font-weight: 600; letter-spacing: -0.02em; }
+
+/* KPI cards (admin ops) */
+.ops-kpi {
+    background: var(--surface-card);
+    border: 1px solid var(--gray-200);
+    border-radius: 1.25rem;
+    padding: 1.25rem 1rem;
+    text-align: center;
+    transition: transform 0.3s var(--ease-premium), box-shadow 0.3s var(--ease-premium), border-color 0.3s ease;
+}
+.ops-kpi:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--gray-300); }
+.ops-kpi .kpi-value { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.03em; color: var(--text-primary); }
+.ops-kpi .kpi-label { font-size: 0.66rem; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.06em; }
+.ops-kpi i { font-size: 1.1rem; }
+.ops-kpi small { font-size: 0.62rem; }
+
+/* Mini stat tiles (user travel stats) */
+.stat-card-sm {
+    background: var(--surface-card);
+    border: 1px solid var(--gray-200);
+    border-radius: 1rem;
+    padding: 0.9rem 0.5rem;
+    text-align: center;
+    transition: transform 0.3s var(--ease-premium), box-shadow 0.3s var(--ease-premium);
+}
+.stat-card-sm:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.stat-card-sm .stat-value { font-size: 1.15rem; font-weight: 700; letter-spacing: -0.02em; }
+.stat-card-sm .stat-label { font-size: 0.62rem; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.05em; }
+
+/* Admin shell */
+.admin-sidebar { background: var(--primary); }
+.sidebar-brand { border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+.sidebar-brand h4 { font-weight: 700; letter-spacing: -0.02em; }
+.sidebar-label {
+    font-size: 0.64rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.45); padding: 1rem 1.25rem 0.35rem;
+}
+.sidebar-nav li a {
+    border-radius: 0.75rem;
+    margin: 0.1rem 0.6rem;
+    border-left: none;
+    font-size: 0.88rem;
+}
+.sidebar-nav li a:hover, .sidebar-nav li a.active {
+    background: rgba(255, 255, 255, 0.08);
+    border-left: none;
+    color: #fff;
+}
+.sidebar-nav li a.active { background: rgba(255, 255, 255, 0.12); }
+.sidebar-nav li hr { margin: 0.5rem 1rem; opacity: 0.18; }
+
+/* Modals & tabs & input groups */
+.modal-content { border-radius: 1.5rem; border: 1px solid var(--gray-100); }
+.modal-header h5 { font-weight: 700; letter-spacing: -0.02em; }
+.nav-pills .nav-link { border-radius: 9999px; color: var(--gray-600); font-weight: 500; padding: 0.55rem 1.25rem; transition: var(--transition); }
+.nav-pills .nav-link.active { background: var(--accent); color: #fff; box-shadow: 0 6px 16px rgba(32, 42, 54, 0.22); }
+.input-group-text { background: var(--gray-100); border-color: var(--gray-200); color: var(--gray-500); border-radius: 12px 0 0 12px; }
+
+/* Dark surfaces inside cards (ticket headers, status bars) */
+.card-header.bg-primary { background: var(--primary) !important; }
+
+/* Timeline rows & list dividers — use --border so dividers stay visible in dark mode */
+.border-bottom, .border-top { border-color: var(--border) !important; }
+
+/* ─── 18. Bootstrap primary unification (ink everywhere) ───── */
+.btn-primary { background-color: var(--accent); border-color: var(--accent); color: #fff; }
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active {
+    background-color: var(--accent-hover); border-color: var(--accent-hover); color: #fff;
+}
+.btn-outline-primary { color: var(--accent); border-color: var(--accent); }
+.btn-outline-primary:hover, .btn-outline-primary:focus, .btn-outline-primary:active {
+    background-color: var(--accent); border-color: var(--accent); color: #fff;
+}
+.btn-info { background-color: var(--accent); border-color: var(--accent); color: #fff; }
+.btn-info:hover { background-color: var(--accent-hover); border-color: var(--accent-hover); color: #fff; }
+.btn-outline-info { color: var(--accent); border-color: var(--accent); }
+.btn-outline-info:hover { background-color: var(--accent); border-color: var(--accent); color: #fff; }
+
+.badge.bg-primary { background-color: var(--primary); color: #fff; }
+.bg-primary { background-color: rgba(var(--bs-primary-rgb), 1) !important; }
+.bg-primary.bg-opacity-10 { background-color: rgba(115, 66, 226, 0.08) !important; }
+.text-primary { color: var(--accent) !important; }
+
+/* Accent helper classes used across pages */
+/* NOTE: .bg-accent intentionally fills with the navy surface (--primary); .text-accent/.border-accent use violet (--accent) */
+.bg-accent { background-color: var(--primary) !important; color: #fff; }
+.bg-accent.bg-opacity-10 { background-color: rgba(115, 66, 226, 0.08) !important; color: var(--accent); }
+.border-accent { border-color: var(--accent) !important; }
+/* Higher-specificity override so flight-card + border-info combos can't leak Bootstrap cyan */
+.flight-card.border-info { border-color: var(--accent) !important; }
+
+/* Info color — remapped from Bootstrap cyan to the ink system */
+.text-info { color: var(--accent) !important; }
+.bg-info { background-color: var(--primary-light) !important; color: #fff; }
+.badge.bg-info { background-color: var(--primary); color: #fff; }
+.bg-info.bg-opacity-10 { background-color: rgba(115, 66, 226, 0.08) !important; color: var(--accent); }
+.bg-info-subtle { background-color: rgba(115, 66, 226, 0.06) !important; color: var(--accent); }
+.border-info { border-color: var(--accent) !important; }
+
+/* Soft status pill for brand-primary (violet-tinted) */
+.badge-status.bg-primary { background: rgba(115, 66, 226, 0.1) !important; color: var(--accent) !important; }
+.badge-status.bg-info { background: rgba(115, 66, 226, 0.1) !important; color: var(--accent) !important; }
+.section-badge { background: rgba(115, 66, 226, 0.1); color: var(--accent); }
+.stat-icon.blue { background: rgba(115, 66, 226, 0.1); color: var(--accent); }
+
+/* Dark-mode equivalents (violet on dark ink surfaces) */
+[data-theme="dark"] .btn-primary { background-color: #A78BFA; border-color: #A78BFA; color: #1A1130; }
+[data-theme="dark"] .btn-primary:hover,
+[data-theme="dark"] .btn-primary:focus,
+[data-theme="dark"] .btn-primary:active { background-color: #B99EFC; border-color: #B99EFC; color: #1A1130; }
+[data-theme="dark"] .btn-outline-primary { color: #A78BFA; border-color: #A78BFA; }
+[data-theme="dark"] .btn-outline-primary:hover { background-color: #A78BFA; color: #1A1130; }
+[data-theme="dark"] .btn-info { background-color: #A78BFA; border-color: #A78BFA; color: #1A1130; }
+[data-theme="dark"] .btn-info:hover { background-color: #B99EFC; border-color: #B99EFC; color: #1A1130; }
+[data-theme="dark"] .btn-outline-info { color: #A78BFA; border-color: #A78BFA; }
+[data-theme="dark"] .btn-outline-info:hover { background-color: #A78BFA; color: #1A1130; }
+[data-theme="dark"] .badge.bg-primary { background-color: #A78BFA; color: #1A1130; }
+[data-theme="dark"] .bg-primary { background-color: #A78BFA !important; }
+[data-theme="dark"] .bg-primary.bg-opacity-10 { background-color: rgba(167, 139, 250, 0.16) !important; }
+[data-theme="dark"] .bg-accent { background-color: #A78BFA !important; color: #1A1130; }
+[data-theme="dark"] .bg-accent.bg-opacity-10 { background-color: rgba(167, 139, 250, 0.16) !important; color: #A78BFA; }
+[data-theme="dark"] .badge-status.bg-primary { background: rgba(167, 139, 250, 0.16) !important; color: #A78BFA !important; }
+[data-theme="dark"] .section-badge { background: rgba(167, 139, 250, 0.14); color: #A78BFA; }
+[data-theme="dark"] .stat-icon.blue { background: rgba(167, 139, 250, 0.14); color: #A78BFA; }
+
+/* Remap remaining legacy blue in style.css (table hover, info alerts, focus rings) */
+.table-hover tbody tr:hover { background: rgba(115, 66, 226, 0.05) !important; }
+/* Light lavender hover (was a dark purple wash) — and pin the hover text color
+   so Bootstrap's light-mode default (#000) can't turn row text black. */
+[data-theme="dark"] .table-hover {
+    --bs-table-hover-bg: rgba(167, 139, 250, 0.2);
+    --bs-table-hover-color: #E8EDF4;
+}
+[data-theme="dark"] .table-hover tbody tr:hover { background: rgba(167, 139, 250, 0.2) !important; }
+.alert-info { background: rgba(115, 66, 226, 0.08); color: var(--accent); border-color: var(--border); }
+[data-theme="dark"] .alert-info { background: rgba(167, 139, 250, 0.14); color: #A78BFA; border-color: var(--border); }
+[data-theme="dark"] .dropdown-item:focus { background: rgba(167, 139, 250, 0.12); color: var(--text-primary); }
+[data-theme="dark"] .cockpit-glass { background: var(--primary-light); }
+[data-theme="dark"] .text-info { color: #A78BFA !important; }
+[data-theme="dark"] .bg-info { background-color: rgba(167, 139, 250, 0.14) !important; color: #A78BFA; }
+[data-theme="dark"] .badge.bg-info { background-color: #A78BFA; color: #1A1130; }
+[data-theme="dark"] .bg-info.bg-opacity-10 { background-color: rgba(167, 139, 250, 0.14) !important; color: #A78BFA; }
+[data-theme="dark"] .bg-info-subtle { background-color: rgba(167, 139, 250, 0.1) !important; color: #A78BFA; }
+[data-theme="dark"] .border-info { border-color: #A78BFA !important; }
+[data-theme="dark"] .badge-status.bg-info { background: rgba(167, 139, 250, 0.14) !important; color: #A78BFA !important; }
+
+/* ─── 19. Print ─────────────────────────────────────────────── */
+@media print {
+    .landing-nav, .landing-menu-panel, .hero-vignette { display: none !important; }
+}
+
+/* ─── 20. Responsive refinements ────────────────────────────── */
+@media (max-width: 767.98px) {
+    .lp-section { padding: 4.5rem 1.25rem; }
+    .hero-lp { height: auto; min-height: 100vh; }
+    .hero-content { padding: 6rem 1.25rem 2rem; gap: 1.5rem; justify-content: flex-start; }
+    .pricing-card { padding: 1.75rem 1.5rem; }
+    .pricing-card.featured { padding-top: 3.25rem; }
+}
+@media (max-width: 575.98px) {
+    .landing-nav-inner { padding: 1.1rem 1.25rem; }
+    .hero-line { font-size: 3.25rem; }
+    .page-hero-lite, .page-header { padding: 7.5rem 1rem 3rem; }
+    .auth-form { padding: 2.25rem 1.5rem; }
+}

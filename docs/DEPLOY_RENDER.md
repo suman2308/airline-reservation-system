@@ -1,75 +1,79 @@
 # AeroBook — Render Deployment Guide
 
-Deploy AeroBook to [Render](https://render.com) as a Docker web service. The repo already ships a `Dockerfile` (`php:8.2-apache` with `mysqli` + `gd`), a `render.yaml` Blueprint, and a `/health.php` health endpoint — so the heavy lifting is done.
+Deploy AeroBook to [Render](https://render.com) as a Docker web service. The repo already ships a `Dockerfile` (`php:8.2-apache` with `mysqli` + `gd` **+ bundled MariaDB**), a `render.yaml` Blueprint, and a `/health.php` health endpoint — so the heavy lifting is done.
 
-> **Time:** ~30 minutes · **Cost:** Free (web service) + external MySQL
+> **Time:** ~5 minutes (all-in-one) or ~30 minutes (persistent MySQL) · **Cost:** Free
 
 ---
 
 ## 0. The one thing to know up front
 
-**Render does not offer managed MySQL** — only PostgreSQL and Redis. AeroBook is a `mysqli` app, so you must host MySQL yourself. Two options:
+**Render does not offer managed MySQL** — only PostgreSQL and Redis. AeroBook is a `mysqli` app, so it needs MySQL from somewhere. Three options:
 
-**Option A (free, recommended): external MySQL provider**
+**Option 1 (free, zero-setup, DEFAULT): all-in-one container**
+- The `Dockerfile` now bundles **MariaDB inside the app container**. `docker/entrypoint.sh` boots it, creates the database/user, and seeds `database/aerobook.sql` automatically on first boot.
+- `render.yaml` already points at the bundled DB (`DB_HOST=127.0.0.1`) — **deploy with one click, no database to create anywhere**.
+- ⚠️ **Demo caveat:** Render's free tier uses an *ephemeral filesystem* and spins down after ~15 min idle — so **all runtime data (users, bookings) resets on every restart/redeploy**. Flights and search always work (re-seeded each boot). Perfect for a college submission or demo.
+
+**Option 2 (free, persistent data): external MySQL provider**
 - **Aiven** (aiven.io) — MySQL free tier: create service → **Enable "require_ssl" = OFF** (AeroBook's plain `mysqli` connection doesn't do TLS).
 - **TiDB Cloud** serverless — MySQL-compatible, free tier (port `4000`).
 - **Clever Cloud**, **DigitalOcean** (paid), etc.
-- Put the host **including port** into `DB_HOST` (e.g. `mysql-abc.aivencloud.com:12345`) — `mysqli_connect` accepts `host:port`.
+- Put the host **including port** into `DB_HOST` (e.g. `mysql-abc.aivencloud.com:12345`) — `mysqli_connect` accepts `host:port`. In the Render dashboard, override `DB_HOST`/`DB_USER`/`DB_PASS`/`DB_NAME` and import the schema there.
 
-**Option B (paid, all-in-Render): MySQL as a second Render service**
+**Option 3 (paid, all-in-Render): MySQL as a second Render service**
 - Create a second web service from the `mysql:8.0` Docker image with a **persistent disk** mounted at `/var/lib/mysql`, seeded via `database/aerobook.sql`. Requires a paid instance — not viable on free (ephemeral disk + spin-down would wipe your data).
 
 ---
 
 ## 1. Prepare the database
 
-1. Create the database (see above) and note: **host, port, database name, user, password**.
-2. Import the schema + seed data. The seed now ships **August 2–8, 2026** flights (upcoming):
+**All-in-one mode (Option 1):** skip this step entirely — the entrypoint seeds `database/aerobook.sql` (+ `database/aviationstack.sql`) on first boot. The seed ships **August 2–8, 2026** flights (upcoming), all tables, indexes, FKs, and the default admin.
+
+**External MySQL (Option 2):** create the database and note **host, port, database name, user, password**, then import:
    ```bash
    mysql -h <HOST> -P <PORT> -u <USER> -p <DBNAME> < database/aerobook.sql
    ```
-   (Or via your provider's web console.) Creates all tables, indexes, FKs, the default admin, and the flight schedule. You may also import `database/aviationstack.sql` after it for the aviation tables.
+   (Or via your provider's web console.) You may also import `database/aviationstack.sql` after it for the aviation tables.
 
 ---
 
-## 2. Option 1 — Blueprint deploy (one click, recommended)
+## 2. Blueprint deploy (one click, recommended)
 
 1. Push this repo to GitHub (`main` branch) — the `render.yaml` at the root is the Blueprint.
 2. Go to **https://dashboard.render.com/blueprints** → **New Blueprint Instance**.
 3. Connect your GitHub account → select `suman2308/airline-reservation-system`.
-4. Render detects `render.yaml` and shows the `aerobook` web service. Click **Apply**.
-5. During creation, fill the env vars marked `sync: false`:
-
-   | Variable | Value |
-   |---|---|
-   | `DB_HOST` | `host:port` from your MySQL provider |
-   | `DB_USER` | MySQL user |
-   | `DB_PASS` | MySQL password |
-   | `DB_NAME` | MySQL database name |
-   | `BASE_URL` | **leave empty** — auto-detects `https://…onrender.com/` behind Render's TLS proxy |
-   | `AVIATIONSTACK_API_KEY` | *(optional)* your key |
-
+4. Render detects `render.yaml` and shows the `aerobook` web service. Click **Apply** — all DB values are pre-filled for all-in-one mode.
+5. *(Optional)* To use external persistent MySQL instead, override in the dashboard: `DB_HOST` (`host:port`), `DB_USER`, `DB_PASS`, `DB_NAME`, and set `AVIATIONSTACK_API_KEY` if you have one.
 6. Wait for the build + deploy. Verify `https://aerobook.onrender.com/health.php` → `{"status":"ok",...}`.
 
 ---
 
-## 3. Option 2 — Manual web service (if you skip render.yaml)
+## 3. Manual web service (if you skip render.yaml)
 
 Dashboard → **New + → Web Service** → **Connect your GitHub repo** → select it:
 
 | Field | Value |
 |---|---|
 | **Name** | `aerobook` |
-| **Region** | Same region as your MySQL (e.g. Singapore) |
+| **Region** | Closest to your users (e.g. Singapore) |
 | **Branch** | `main` |
 | **Runtime / Environment** | **Docker** (Render auto-detects the `Dockerfile`) |
 | **Instance Type** | **Free** (spins down after ~15 min idle, cold start ~1 min) or **Starter** $7/mo (always-on) |
 | **Health Check Path** | `/health.php` |
 | **Port** | `80` (matches `EXPOSE 80` in the Dockerfile) |
 
-**Advanced → Environment Variables** — same table as step 5 above. **Do NOT set `IS_DOCKER=true`** (that would flip the app into dev mode; `IS_PRODUCTION` is derived from the hostname, which on Render is non-localhost → production mode is automatic).
+**Advanced → Environment Variables** — for all-in-one mode set `DB_HOST=127.0.0.1`, `DB_USER=aerobook`, `DB_PASS=aerobook_secret`, `DB_NAME=aerobook_db` (or use external MySQL values). **Do NOT set `IS_DOCKER=true`** (that would flip the app into dev mode; `IS_PRODUCTION` is derived from the hostname, which on Render is non-localhost → production mode is automatic).
 
 ---
+
+## 3.5 All-in-one container details
+
+- **Boot order:** `docker/entrypoint.sh` initializes MariaDB if needed → starts it → waits for readiness (up to 60 s) → creates `aerobook` user + `aerobook_db` → seeds `database/aerobook.sql` (+ `aviationstack.sql`) → starts Apache.
+- **Data dir:** `/var/lib/mysql` (the Dockerfile clears it at build; the entrypoint re-initializes on boot). On Render free tier the filesystem is ephemeral, so the DB is fresh every boot — by design for demos.
+- **Lean config:** `docker/mariadb.cnf` (32M buffer pool, 30 connections, `performance_schema=OFF`) keeps MariaDB under ~150 MB so Apache + PHP + DB fit a 512 MB free instance.
+- **External-DB escape hatch:** if you set `DB_HOST` to anything other than `127.0.0.1`, the entrypoint still boots (harmless) but the app connects to your external MySQL — the bundled DB is simply unused.
+- **Local test:** `docker build -t aerobook . && docker run -p 8080:80 -e DB_HOST=127.0.0.1 -e DB_USER=aerobook -e DB_PASS=aerobook_secret -e DB_NAME=aerobook_db aerobook`
 
 ## 4. Why no code changes were needed (what I fixed in this repo)
 

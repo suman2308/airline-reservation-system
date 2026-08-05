@@ -59,6 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="auth-card text-center">
                 <div class="auth-form" style="padding: 4rem;">
                     <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem; display: block; margin-bottom: 1.5rem;"></i>
+                    <span class="kicker kicker-accent d-inline-block mb-2">Password updated</span>
                     <h2 class="mb-3">Password Reset Complete</h2>
                     <p class="text-muted mb-4">Your password has been changed successfully. You can now login with your new password.</p>
                     <p class="text-muted small mb-4">All your active sessions have been invalidated for security.</p>
@@ -72,6 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="auth-card text-center">
                 <div class="auth-form" style="padding: 4rem;">
                     <i class="bi bi-exclamation-triangle-fill text-warning" style="font-size: 4rem; display: block; margin-bottom: 1.5rem;"></i>
+                    <span class="kicker kicker-accent d-inline-block mb-2">Link expired</span>
                     <h2 class="mb-3">Invalid or Expired Link</h2>
                     <p class="text-muted mb-4">This password reset link is invalid or has expired. Password reset links expire after 1 hour.</p>
                     <a href="<?php echo BASE_URL; ?>forgot-password.php" class="btn btn-accent btn-lg px-5">
@@ -85,6 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="auth-form" style="padding: 3rem;">
                     <div class="text-center mb-4">
                         <i class="bi bi-shield-check text-accent" style="font-size: 3rem; display: block; margin-bottom: 1rem;"></i>
+                        <span class="kicker kicker-accent d-inline-block mb-2">Account security</span>
                         <h2>Create New Password</h2>
                         <p class="text-muted">Choose a strong password for your account.</p>
                     </div>

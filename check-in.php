@@ -126,10 +126,11 @@ function checkinWindow($departureTime) {
     return ['status' => 'closed', 'label' => 'Check-in closed'];
 }
 ?>
-<div class="page-header">
+<div class="page-hero-lite">
     <div class="container">
-        <h1><i class="bi bi-door-open me-2 text-accent"></i>Online Check-in</h1>
-        <p class="text-muted mb-0">Check in for your upcoming flights and download your boarding pass</p>
+        <span class="kicker">Check-in</span>
+        <h1>Online <span class="dim">Check-in</span></h1>
+        <p>Check in for your upcoming flights and download your boarding pass</p>
     </div>
 </div>
 
