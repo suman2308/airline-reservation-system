@@ -7,7 +7,7 @@
 | PHP | 8.0+ | 8.2 recommended |
 | MySQL | 8.0+ | 5.7 compatible |
 | Apache | 2.4+ | With mod_rewrite, mod_headers, mod_expires |
-| PHP Extensions | mysqli, gd, json, mbstring | |
+| PHP Extensions | mysqli, gd, json, mbstring, fileinfo, curl | |
 
 ## Option 1: Standard Installation (Shared Hosting)
 
@@ -80,7 +80,7 @@ define('BASE_URL', 'https://yourdomain.com/');
 
 Visit `https://yourdomain.com/` — you should see the AeroBook homepage.
 
-**Admin panel:** `https://yourdomain.com/admin/`
+**Admin panel:** `https://yourdomain.com/admin/login.php`
 - Username: `admin`
 - Password: `admin123`
 
@@ -121,7 +121,7 @@ define('BASE_URL', 'http://localhost/airline-reservation-system/');
 ### Step 5: Access
 
 - Website: `http://localhost/airline-reservation-system/`
-- Admin: `http://localhost/airline-reservation-system/admin/`
+- Admin: `http://localhost/airline-reservation-system/admin/login.php`
 
 ## Post-Installation Checklist
 
@@ -129,7 +129,7 @@ define('BASE_URL', 'http://localhost/airline-reservation-system/');
 - [ ] Configure SMTP for email (see [SMTP Setup](SETUP_SMTP.md))
 - [ ] Configure Demo Payment for payments (see [Payment Setup](SETUP_PAYMENT.md))
 - [ ] Set `REQUIRE_EMAIL_VERIFICATION = true` in production
-- [ ] Enable HTTPS (see `.htaccess` for HSTS configuration)
+- [ ] Enable HTTPS — the HSTS header is pre-configured but commented out in `.htaccess`; uncomment it once HTTPS is live
 - [ ] Set up log rotation (see PRODUCTION.md)
 
 ## Troubleshooting

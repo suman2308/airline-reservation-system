@@ -12,7 +12,7 @@ docker-compose up -d --build
 open http://localhost:8080
 
 # Access the admin panel
-open http://localhost:8080/admin/
+open http://localhost:8080/admin/login.php
 
 # Default admin credentials: admin / admin123
 ```

@@ -57,13 +57,7 @@ See [SMTP Setup Guide](SETUP_SMTP.md) for detailed instructions.
 
 ## Payment (Demo Payment)
 
-```env
-PAYMENT_MODE=simulated          # 'simulated' (default) or 'curl'
-```
-
-**Simulated Mode (default):** No external API calls. Payment is processed entirely within the application. Suitable for development and testing.
-
-**cURL Mode:** Sends a real cURL request to a configurable payment endpoint. Requires additional configuration.
+AeroBook uses a built-in **Demo Payment System** — there is **no payment gateway** and **no `PAYMENT_MODE`/cURL configuration**. Every checkout is simulated: the server validates the card format (16-digit number, 3-digit CVV) but never charges, stores, or logs real card details.
 
 **Important:** No credit card information is ever stored or logged.
 
@@ -166,7 +160,6 @@ export DB_PASS=secure_password
 | `ALLOWED_AVATAR_EXTENSIONS` | `jpg,jpeg,png,gif,webp` | Allowed avatar file types |
 | `MAX_AVATAR_SIZE` | `2097152` | Max avatar size in bytes |
 | `MAINTENANCE_MODE` | `false` | Enable maintenance mode |
-| `PAYMENT_MODE` | `simulated` | Payment mode: 'simulated' or 'curl' |
 | `MAIL_MODE` | `log` | Email mode: 'log' or 'smtp' |
 | `MAIL_FROM` | `noreply@aerobook.in` | From email address |
 | `MAIL_HOST` | `` | SMTP hostname |

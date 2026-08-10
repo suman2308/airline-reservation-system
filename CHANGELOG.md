@@ -5,6 +5,14 @@ All notable changes to AeroBook are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+- **Seed flight dates were hardcoded** (`2026-08-02` … `2026-08-08` in `database/aerobook.sql`): any install after ~Aug 8, 2026 had **zero upcoming flights**, so search, booking, check-in, and the Travel Hub's upcoming trips were empty. The seed now uses **relative dates** (`CURDATE()+1` … `+7` days), so a fresh install always ships a full week of upcoming flights regardless of when it's deployed.
+
+### Changed
+- **README screenshots refreshed**: replaced the four-image gallery with 14 live captures covering the public site, Travel Hub, and Admin Operations Center.
+
 ## [1.3.1] — 2026-08-04
 
 ### Fixed

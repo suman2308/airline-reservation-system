@@ -27,7 +27,7 @@ aerobook/
 | MySQL | 8.0 or higher (5.7 compatible) |
 | Apache | 2.4+ with mod_rewrite, mod_headers, mod_expires |
 | Disk | 100MB minimum (50MB for code, rest for uploads/logs) |
-| PHP Extensions | `mysqli`, `gd`, `json`, `mbstring` |
+| PHP Extensions | `mysqli`, `gd`, `json`, `mbstring`, `fileinfo`, `curl` |
 
 ## Installation
 
@@ -114,7 +114,7 @@ DB_NAME=your_db_name
 
 AeroBook uses a **Demo Payment** system for testing. No real payment gateway is required.
 
-The demo payment page simulates successful payment processing. All transaction records are stored in the `transactions` table. The system supports both simulated and cURL-based modes.
+The demo payment page simulates successful payment processing. All transaction records are stored in the `transactions` table. Payment is simulated-only — no real gateway or cURL API is called.
 
 **Important:** No credit card information is ever stored or logged.
 

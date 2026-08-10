@@ -30,7 +30,7 @@ AeroBook follows a **modular monolithic architecture** designed for shared hosti
 │  │  │ .php     │ │ .php     │ │ .php     │ │ .php    │ │   │
 │  │  └──────────┘ └──────────┘ └──────────┘ └─────────┘ │   │
 │  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌─────────┐ │   │
-│  │  │ Mailer   │ │ QRCode   │ │  PDF     │ │Payment  │ │   │
+│  │  │ Mailer   │ │ QRCode   │ │  PDF     │ │AvStack  │ │   │
 │  │  │ .php     │ │ .php     │ │ .php     │ │ .php    │ │   │
 │  │  └──────────┘ └──────────┘ └──────────┘ └─────────┘ │   │
 │  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌─────────┐ │   │
@@ -312,12 +312,12 @@ Configuration loads from `.env` file, system environment variables, or hardcoded
 
 ```
 ┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐
-│  Mailer  │    │  Payment │    │  QRCode  │    │    PDF   │
+│  Mailer  │    │   ICS    │    │  QRCode  │    │    PDF   │
 │ .php     │    │ .php     │    │ .php     │    │ .php     │
 └────┬─────┘    └────┬─────┘    └────┬─────┘    └────┬─────┘
      │               │               │               │
-     │ SMTP/cURL     │ cURL API      │ Pure PHP      │ HTML/tFPDF
-     │ fallback: log │ fallback: sim │ SVG output    │ fallback: HTML
+     │ SMTP/log      │ Simulated     │ Pure PHP      │ HTML/tFPDF
+     │ fallback: log │ in-app        │ SVG output    │ fallback: HTML
      ▼               ▼               ▼               ▼
 ┌──────────────────────────────────────────────────────────────┐
 │                    Application Pages (callers)                 │

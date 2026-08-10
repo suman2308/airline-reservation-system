@@ -28,7 +28,7 @@ Deploy AeroBook to [Render](https://render.com) as a Docker web service. The rep
 
 ## 1. Prepare the database
 
-**All-in-one mode (Option 1):** skip this step entirely — the entrypoint seeds `database/aerobook.sql` (+ `database/aviationstack.sql`) on first boot. The seed ships **August 2–8, 2026** flights (upcoming), all tables, indexes, FKs, and the default admin.
+**All-in-one mode (Option 1):** skip this step entirely — the entrypoint seeds `database/aerobook.sql` (+ `database/aviationstack.sql`) on first boot. The seed generates a week of **upcoming** flights (departures from tomorrow through +7 days, relative to the install date), all tables, indexes, FKs, and the default admin.
 
 **External MySQL (Option 2):** create the database and note **host, port, database name, user, password**, then import:
    ```bash
@@ -81,7 +81,7 @@ Render terminates TLS at its proxy, so PHP never sees `HTTPS=on` — the app's `
 
 - **`includes/config.php`** — new `isSecureRequest()` helper that trusts `X-Forwarded-Proto` (set by Render) in addition to `$_SERVER['HTTPS']`/port 443; used for the `BASE_URL` scheme and session cookie params.
 - **`includes/Auth.php`** + **`includes/Security.php`** — remember-me cookies and session cookie params use the same helper (was duplicated inline 3×).
-- **`database/aerobook.sql`** — seed schedule shifted to Aug 2–8, 2026 so check-in/upcoming trips work on a fresh deploy.
+- **`database/aerobook.sql`** — seed flight dates are now **relative** (`CURDATE()+1` through `+7` days), so check-in and upcoming trips work on any fresh deploy regardless of when it's installed.
 - **`render.yaml`** — Blueprint for one-click deploys.
 
 ---
@@ -93,7 +93,7 @@ Render terminates TLS at its proxy, so PHP never sees `HTTPS=on` — the app's `
 | App + DB healthy | `https://aerobook-2snu.onrender.com/health.php` |
 | Site styled correctly | `https://aerobook-2snu.onrender.com/` |
 | Admin panel | `https://aerobook-2snu.onrender.com/admin/login.php` → `admin` / `admin123` (change immediately) |
-| Flight search | Homepage → search a route (weekday schedule Aug 2–8) |
+| Flight search | Homepage → search a route (weekly schedule; flights start tomorrow) |
 | Secure cookies | DevTools → Application → Cookies → `Secure` flag set on session cookie |
 
 ---
@@ -115,4 +115,4 @@ Render terminates TLS at its proxy, so PHP never sees `HTTPS=on` — the app's `
   ```
   Generate the hash with PHP's `password_hash()` or a bcrypt tool.
 - **Emails** default to `MAIL_MODE=log` (written to `logs/email.log`) — the verification/reset flow works without SMTP. To send real mail, set `MAIL_MODE=smtp` + `MAIL_HOST/PORT/USER/PASS`.
-- **Add flights beyond Aug 8** via Admin → Add Flight (the seed covers one week).
+- **Add flights beyond the seeded week** via Admin → Add Flight (the seed covers one week).

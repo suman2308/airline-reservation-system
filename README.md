@@ -401,7 +401,7 @@ MAIL_ENCRYPTION=tls
 | **Email (PHPMailer)** | ✅ Backend complete | 4 HTML templates, log fallback |
 | **QR Code Generator** | ✅ Complete | Scannable SVG, standard byte encoding |
 | **PDF Documents** | ✅ Backend complete | Boarding pass/invoice/summary, tFPDF optional |
-| **Demo Payment** | ✅ Backend complete | Simulated mode, cURL API, transaction storage |
+| **Demo Payment** | ✅ Backend complete | Simulated mode, transaction storage |
 | **ICS Calendar** | ✅ Complete | RFC 5545 ICS + Google Calendar links |
 | **In-App Notifications** | ✅ Complete | Create, fetch, mark read, header dropdown, center page |
 | **Avatar Upload** | ✅ Complete | MIME via finfo, WebP, dimension/size validation |
@@ -427,7 +427,7 @@ MAIL_ENCRYPTION=tls
 ## 🚀 Quick Start
 
 ### Prerequisites
-- PHP 8.0+ with `mysqli`, `gd`, `json`, `mbstring` extensions
+- PHP 8.0+ with `mysqli`, `gd`, `json`, `mbstring`, `fileinfo`, `curl` extensions
 - MySQL 8.0 / MariaDB
 - Apache 2.4+ with mod_rewrite
 
@@ -494,13 +494,31 @@ Exit code `0` = all green, `1` = failures. The suite creates and cleans up its o
 
 ## 📸 Screenshots
 
+Captured from a live local run of the app (PHP 8.5 + MariaDB 11.4).
+
 <p align="center">
-  <img src="screenshots/landing.png" alt="AeroBook landing page" width="48%"/>
-  <img src="screenshots/fare-results.png" alt="Smart Fare Engine results" width="48%"/>
+  <img src="screenshots/landing.png" alt="AeroBook landing page" width="32%"/>
+  <img src="screenshots/search-flights.png" alt="Flight search" width="32%"/>
+  <img src="screenshots/fare-results.png" alt="Smart Fare Engine results" width="32%"/>
 </p>
 <p align="center">
-  <img src="screenshots/login.png" alt="User login" width="48%"/>
-  <img src="screenshots/admin-login.png" alt="Admin login" width="48%"/>
+  <img src="screenshots/flight-status.png" alt="Flight status tracker" width="32%"/>
+  <img src="screenshots/register.png" alt="Create account" width="32%"/>
+  <img src="screenshots/login.png" alt="User login" width="32%"/>
+</p>
+<p align="center">
+  <img src="screenshots/contact.png" alt="Contact page" width="32%"/>
+  <img src="screenshots/about.png" alt="About page" width="32%"/>
+  <img src="screenshots/user-dashboard.png" alt="Travel Hub dashboard" width="32%"/>
+</p>
+<p align="center">
+  <img src="screenshots/my-bookings.png" alt="My bookings" width="32%"/>
+  <img src="screenshots/admin-login.png" alt="Admin login" width="32%"/>
+  <img src="screenshots/admin-dashboard.png" alt="Admin operations dashboard" width="32%"/>
+</p>
+<p align="center">
+  <img src="screenshots/admin-manage-flights.png" alt="Admin flight management" width="32%"/>
+  <img src="screenshots/admin-analytics.png" alt="Admin airline analytics" width="32%"/>
 </p>
 
 ---
