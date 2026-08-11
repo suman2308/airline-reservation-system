@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - **README screenshots refreshed**: replaced the four-image gallery with 14 live captures covering the public site, Travel Hub, and Admin Operations Center.
+- **README now documents every page**: added a full Site Map section (24 passenger pages + 16 admin pages) and expanded the screenshot gallery to 35 live captures covering all major pages — including previously undocumented features like **Online Check-in**, **Cancel Booking**, **Flight Details**, and the **Notifications Center**.
+- **Smart Fare Engine docs corrected to match the code**: weights were listed as 40/25/20/15 and layover 1h–6h; the real constants (`includes/FareEngine.php`) are **50/25/15/10** with a **90-min min / 8-h max** layover window, 1 connection max, and a ₹200 savings-badge threshold.
+- **AviationStack live-data retrieval documented**: added a step-by-step "how it works" section to the README and `docs/CONFIGURATION.md` (client → paginated cURL fetch → mapper → `aviation_*` upsert → `api_sync_logs`), confirming the key is never exposed and sync is admin-triggered only.
 
 ## [1.3.1] — 2026-08-04
 

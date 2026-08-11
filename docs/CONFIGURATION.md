@@ -80,6 +80,30 @@ AVIATIONSTACK_ENABLED=true
   (`admin/aviation-sync.php`), where an admin can sync airports, airlines, aircraft types,
   countries, airplanes, and flights on demand.
 
+### How live data retrieval works
+
+The sync is fully **admin-triggered, on demand** — no background jobs and no API calls from
+passenger-facing pages:
+
+1. **Trigger** — the admin clicks **Test Connection** or a per-endpoint button on
+   `admin/aviation-sync.php`.
+2. **Client** — `includes/AviationStackClient.php` issues cURL requests to
+   `https://api.aviationstack.com/v1/{endpoint}` (e.g. `/v1/airports`, `/v1/airlines`,
+   `/v1/flights`) with `AVIATIONSTACK_API_KEY` appended as `access_key`.
+3. **Pagination** — responses are fetched 100 records per page and looped automatically,
+   stopping at the free-plan cap of 10,000 records; each request has a 15-second timeout,
+   retry handling, and a bundled CA bundle (`includes/cacert.pem`) for SSL verification.
+4. **Mapping** — `includes/AviationMapper.php` maps each raw API record to AeroBook's
+   column names (e.g. `mapAirport()`, `mapAirline()`, `mapFlight()`).
+5. **Upsert** — records are written with `INSERT … ON DUPLICATE KEY UPDATE` into the
+   `aviation_*` tables (`aviation_airports`, `aviation_airlines`, `aviation_aircraft_types`,
+   `aviation_countries`, `aviation_flights`, `aviation_airplanes`), so re-syncing updates
+   existing rows instead of duplicating them.
+6. **Logging** — every sync result is written to `api_sync_logs` and the application
+   logger; the admin page shows record counts and last-sync times per endpoint.
+
+The API key is never logged, echoed to HTML, or exposed to JavaScript.
+
 ### Setup steps
 
 1. Import the aviation schema (creates `aviation_*` tables and `api_sync_logs`):
@@ -162,9 +186,12 @@ export DB_PASS=secure_password
 | `MAINTENANCE_MODE` | `false` | Enable maintenance mode |
 | `MAIL_MODE` | `log` | Email mode: 'log' or 'smtp' |
 | `MAIL_FROM` | `noreply@aerobook.in` | From email address |
+| `MAIL_FROM_NAME` | `AeroBook` | From name shown on emails |
 | `MAIL_HOST` | `` | SMTP hostname |
 | `MAIL_PORT` | `587` | SMTP port |
 | `MAIL_USER` | `` | SMTP username |
 | `MAIL_PASS` | `` | SMTP password |
 | `MAIL_ENCRYPTION` | `tls` | SMTP encryption method |
+| `AVIATIONSTACK_API_KEY` | `` | AviationStack API key (optional — app works without it) |
+| `AVIATIONSTACK_ENABLED` | `false` | `true` shows the admin Data Synchronization page |
 | `IS_DOCKER` | `false` | Set to `true` in Docker environment |
