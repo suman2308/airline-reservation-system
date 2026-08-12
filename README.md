@@ -32,7 +32,7 @@
 | **Travel Hub Dashboard** | ✅ Stats + milestones | ❌ | ✅ |
 | **Email Integration** | ✅ PHPMailer | ❌ | ✅ |
 | **Payment** | ✅ Demo (Simulated) | ❌ | ✅ |
-| **Admin Operations Center** | ✅ 14-page panel | ❌ Basic CRUD | ✅ |
+| **Admin Operations Center** | ✅ 16-page panel | ❌ Basic CRUD | ✅ |
 | **Airline Analytics** | ✅ Revenue + trends | ❌ | ✅ |
 | **CSV Reports** | ✅ 6 report types | ❌ | ✅ |
 | **Activity Log / Audit Trail** | ✅ Search + filter | ❌ | ✅ |
@@ -163,6 +163,7 @@ graph LR
         CFG[".htaccess, .env.example ⬜"]
     end
 
+    ADMIN --> ALOGIN[login.php]
     ADMIN --> ADASH[dashboard.php]
     ADMIN --> AANA[analytics.php]
     ADMIN --> AROUTE[route-analytics.php]
@@ -170,8 +171,14 @@ graph LR
     ADMIN --> ALOG[activity-log.php]
     ADMIN --> ADIAG[diagnostics.php]
     ADMIN --> AFLT[manage-flights.php]
+    ADMIN --> AADD[add-flight.php]
+    ADMIN --> AEDIT[edit-flight.php]
+    ADMIN --> ASEAT[manage-seats.php]
     ADMIN --> ABK[manage-bookings.php]
     ADMIN --> AUSR[manage-users.php]
+    ADMIN --> ACON[manage-contacts.php]
+    ADMIN --> AVSYNC[aviation-sync.php]
+    ADMIN --> ALOGOUT[logout.php]
 
     INC --> ICONF[config.php]
     INC --> IFUNC[functions.php]
@@ -198,7 +205,7 @@ graph LR
     classDef white fill:#e2e8f0,color:#1e293b
 
     class ROOT_FILES blue
-    class ADMIN,ADASH,AANA,AROUTE,AREP,ALOG,ADIAG,AFLT,ABK,AUSR red
+    class ADMIN,ALOGIN,ADASH,AANA,AROUTE,AREP,ALOG,ADIAG,AFLT,AADD,AEDIT,ASEAT,ABK,AUSR,ACON,AVSYNC,ALOGOUT red
     class CSS purple
     class JS yellow
     class INC,ICONF,IFUNC,IHELP,IAUTH,ISEC,IVAL,ILOG,IERR,ICACHE,IML,IQR,IPDF,IICS,INOT,IAV green
@@ -449,7 +456,7 @@ AeroBook can pull real airport / airline / aircraft / flight metadata from the [
 
 | Integration | Status | Details |
 |-------------|--------|---------|
-| **Email (PHPMailer)** | ✅ Backend complete | 4 HTML templates, log fallback |
+| **Email (PHPMailer)** | ✅ Backend complete | 2 HTML templates (verification + password reset), log fallback |
 | **QR Code Generator** | ✅ Complete | Scannable SVG, standard byte encoding |
 | **PDF Documents** | ✅ Backend complete | Boarding pass/invoice/summary, tFPDF optional |
 | **Demo Payment** | ✅ Backend complete | Simulated mode, transaction storage |
@@ -462,7 +469,7 @@ AeroBook can pull real airport / airline / aircraft / flight metadata from the [
 
 ## 🗺️ Site Map — Every Page
 
-AeroBook ships **24 passenger pages** and **16 operations-center pages** (including the JSON health endpoint). Every page is a real, working screen of the app.
+AeroBook ships **24 passenger pages** and **16 operations-center pages** (including `logout.php`). Every page is a real, working screen of the app.
 
 ### 🧑‍✈️ Passenger Portal (public root)
 
@@ -502,12 +509,14 @@ AeroBook ships **24 passenger pages** and **16 operations-center pages** (includ
 | `activity-log.php` | Searchable admin audit trail with filters and pagination |
 | `diagnostics.php` | System diagnostics + 7 automated data-quality checks |
 | `manage-flights.php` | Flight CRUD with search, filters, occupancy bars |
-| `add-flight.php` / `edit-flight.php` | Create / update flights |
+| `add-flight.php` | Create a new flight |
+| `edit-flight.php` | Update an existing flight |
 | `manage-seats.php` | Per-flight seat availability and status updates |
 | `manage-bookings.php` | Booking management, status filters, admin cancellation |
 | `manage-users.php` | Search, view, and delete user accounts |
 | `manage-contacts.php` | Review and manage contact-form submissions |
 | `aviation-sync.php` | One-click AviationStack data sync with status and logs |
+| `logout.php` | Admin session termination with audit log entry |
 
 ---
 
@@ -517,7 +526,7 @@ AeroBook ships **24 passenger pages** and **16 operations-center pages** (includ
 |-------|-----------|
 | **Frontend** | HTML5, CSS3 (Variables, Flexbox/Grid, Animations), Bootstrap 5.3, Bootstrap Icons, Vanilla JS (ES6+) |
 | **Backend** | PHP 8.0+ (Prepared Statements, Sessions, CSRF, Transactions) |
-| **Database** | MySQL 8.0 / MariaDB (InnoDB, Foreign Keys, 10 Indexes) |
+| **Database** | MySQL 8.0 / MariaDB (InnoDB, Foreign Keys, 13 Indexes) |
 | **Server** | Apache 2.4+ (mod_rewrite, mod_headers, mod_expires) |
 | **Payments** | Simulated demo payment (no real gateway) |
 | **Email** | PHPMailer (SMTP, optional) |

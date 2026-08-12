@@ -132,7 +132,7 @@ AeroBook is a full-stack airline reservation and flight operations management pl
 - **Interactive Seat Map** — Real-time 2D Airbus A320 cabin layout with Business/Economy, exit rows, and seat type indicators.
 - **Multi-Step Booking** — Passengers → Seats → Add-ons → Review & Pay with progress indicator.
 - **Travel Hub** — Upcoming trip timeline, travel statistics, milestones, saved routes, price watches.
-- **Admin Operations Center** — 15-page admin panel with dashboard, analytics, reports, activity log, and diagnostics.
+- **Admin Operations Center** — 16-page admin panel with dashboard, analytics, reports, activity log, diagnostics, flight/booking/user/contact management, seat management, and AviationStack data sync.
 - **Full Account Security** — Email verification, forgot password, remember-me, session management, login history, account locking.
 - **Production Integrations** — Email (PHPMailer), QR codes, PDF documents, Demo Payment, ICS calendar, in-app notifications.
 - **Docker Support** — One-command deployment with docker-compose.

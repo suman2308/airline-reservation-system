@@ -103,7 +103,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Travel Hub**: Centralized dashboard with upcoming trip timeline, travel statistics, milestones (First Flight, 5 Trips, Window Seat Lover), saved routes, price watches, and profile completion bar.
 - **Travel Calendar**: Monthly calendar view of user trips with navigation and trip details.
 - **Travel Documents**: Centralized access to boarding passes, e-tickets, and trip summaries.
-- **Admin Operations Center**: 12-page admin panel with operations dashboard, airline analytics, route analytics, CSV reports, activity log, and system diagnostics.
+- **Admin Operations Center**: 16-page admin panel with operations dashboard, airline analytics, route analytics, CSV reports, activity log, system diagnostics, flight/booking/user/contact management, seat management, and AviationStack data sync.
 - **Admin Analytics**: Revenue by month/route/airline, occupancy analysis, top customers, booking/cancellation trends.
 - **Admin Activity Log**: Searchable audit trail with action filter, date range, pagination.
 - **Admin Diagnostics**: Database status, PHP info, application stats, 7 automated data quality checks.
